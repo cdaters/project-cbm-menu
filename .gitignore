@@ -1,0 +1,15 @@
+.DS_Store
+*.log
+*.tmp
+*.bak
+*.swp
+*.zip
+*.img
+*.img.xz
+*.gz
+*.7z
+
+# Runtime/local junk
+*.pid
+*.lock
+.cache/
