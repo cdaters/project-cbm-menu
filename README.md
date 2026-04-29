@@ -48,3 +48,12 @@ Review `docs/Project CBM v6.5 Build Notes and Documentation.md` before using thi
 ## Legal/distribution note
 
 Project CBM does not include or distribute copyrighted Commodore ROMs, commercial software, disk images, demos, or game collections. Users are responsible for supplying their own legally obtained content.
+## Documentation Map
+
+- [Project CBM Menu v1.0.0 Build Notes and Documentation](docs/Project%20CBM%20Menu%20v1.0.0%20Build%20Notes%20and%20Documentation.md)
+- [Public Image Release Workflow](docs/PUBLIC-IMAGE-RELEASE-WORKFLOW.md)
+- [Audit Notes](docs/AUDIT-NOTES.md)
+- [Versioning Notes](docs/VERSIONING.md)
+- [Menu Repo Setup](docs/MENU-REPO-SETUP.md)
+
+The `project-cbm-menu` repository is the private source and build-notes repo for the menu system. The public `project-cbm` repository remains the user-facing release home for SD card images, public documentation, checksums, and release notes.
