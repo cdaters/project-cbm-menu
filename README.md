@@ -1,3 +1,9 @@
+![Static Badge](https://img.shields.io/badge/platform-raspberry%20pi-%23C51A4A)
+![GitHub Release](https://img.shields.io/github/v/release/cdaters/project-cbm-menu)
+![GitHub License](https://img.shields.io/github/license/cdaters/project-cbm-menu?color=orange)
+![GitHub last commit](https://img.shields.io/github/last-commit/cdaters/project-cbm-menu)
+![GitHub Issues](https://img.shields.io/github/issues/cdaters/project-cbm-menu)
+
 # Project CBM Menu
 
 Private source repository for the Project CBM menu system, helper scripts, configuration examples, splash cover assets, build notes, release workflow documentation, and bundle packaging tools.
