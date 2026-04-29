@@ -67,7 +67,7 @@ show_about() {
 Raspberry Pi / Commodore machine distribution
 
 Image version: ${PCBM_VERSION:-dev}
-Menu system: ${PCBM_MENU_VERSION:-6.5}
+Menu system: -e
 Build: ${PCBM_BUILD:-local}
 Author: ${PCBM_AUTHOR:-Craig Daters}
 Repository: ${PCBM_REPO:-not set}

@@ -57,7 +57,7 @@ while true; do
   smbd=$(pcbm_service_active smbd)
   audio_mode=$(awk -F= '/^MODE=/ {print $2}' /home/pi/.config/pcbm/audio.conf 2>/dev/null)
   [[ -z "$audio_mode" ]] && audio_mode="auto"
-  prompt="${PCBM_PROJECT_NAME:-Project CBM} image v${PCBM_VERSION:-dev} | menu v${PCBM_MENU_VERSION:-6.5} (${PCBM_BUILD:-local})\nNetwork sharing (Samba): $smbd\nBBS service (TCPser): $tcpser\nAudio mode: $audio_mode\n\nPlease select a control panel option."
+  prompt="${PCBM_PROJECT_NAME:-Project CBM} image v${PCBM_VERSION:-dev} | menu v-e (${PCBM_BUILD:-local})\nNetwork sharing (Samba): $smbd\nBBS service (TCPser): $tcpser\nAudio mode: $audio_mode\n\nPlease select a control panel option."
   pcbm_show_menu "Project CBM Control Panel" "$prompt" "${control_items[@]}"
 
   case "$PCBM_STATUS" in

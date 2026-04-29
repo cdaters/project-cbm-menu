@@ -1,16 +1,19 @@
-# Project CBM v6.5 Build Notes and Documentation
+# Project CBM Menu v1.0.0 Build Notes and Documentation
 
 ## Purpose
 
-Project CBM v6.5 is the menu-system and build-diary reference for the Project CBM v1.0.0 public Raspberry Pi image.
+Project CBM Menu v1.0.0 is the first formal repository release of the menu system and build-diary reference for the Project CBM v1.0.0 public Raspberry Pi image.
 
 It follows the v6.4 documentation style: build philosophy first, then repeatable phases, then folder/config/script inventories, then appendices with source listings.
 
-The image currently published as Project CBM v1.0.0 can remain v1.0.0 while this private menu system repository tracks the menu as v6.5. That separation is intentional.
+The image currently published as Project CBM v1.0.0 can remain v1.0.0 while this private menu system repository tracks the formal menu source as v1.0.0.
+
+This release descends from the internal v6.5 build-notes lineage used during development of the Project CBM v1.0.0 public image.
 
 ```text
 Project CBM public image/build version: 1.0.0
-Project CBM menu system version:       6.5
+Project CBM menu system version:       1.0.0
+Legacy internal menu lineage:          v6.5
 ```
 
 v6.5 rolls forward the v6.4 foundation and formally adds:
@@ -33,7 +36,7 @@ The design goal remains simple: Project CBM should feel like a dedicated Commodo
 
 ## What Changed from v6.4
 
-- Added `PCBM_MENU_VERSION="6.5"` while keeping `PCBM_VERSION="1.0.0"` for the public image.
+- Added `PCBM_MENU_VERSION="1.0.0"` and `PCBM_MENU_LEGACY_VERSION="6.5"` while keeping `PCBM_VERSION="1.0.0"` for the public image.
 - Added machine-family cover naming and normalized emulator-to-cover routing.
 - Added generic splash-on-menu-entry and machine-family splash-on-launch behavior.
 - Added fallback random cover handling when a machine-family cover is missing.
@@ -84,11 +87,12 @@ PCBM_MENU_VERSION = menu system version
 PCBM_BUILD        = build date or build identifier
 ```
 
-Current v6.5 baseline:
+Current formal v1.0.0 baseline, descended from internal v6.5:
 
 ```bash
 PCBM_VERSION="1.0.0"
-PCBM_MENU_VERSION="6.5"
+PCBM_MENU_VERSION="1.0.0"
+PCBM_MENU_LEGACY_VERSION="6.5"
 PCBM_BUILD="2026.04.29"
 ```
 
@@ -96,7 +100,8 @@ Recommended release naming:
 
 ```text
 Project CBM v1.0.0 image
-Project CBM Menu v6.5
+Project CBM Menu v1.0.0
+Legacy internal lineage: v6.5
 ```
 
 Future example:
@@ -328,7 +333,8 @@ Example contents:
 PCBM_PROJECT_NAME="Project CBM"
 PCBM_INTERNAL_NAME="pcbm"
 PCBM_VERSION="1.0.0"
-PCBM_MENU_VERSION="6.5"
+PCBM_MENU_VERSION="1.0.0"
+PCBM_MENU_LEGACY_VERSION="6.5"
 PCBM_BUILD="2026.04.29"
 PCBM_AUTHOR="Craig Daters"
 PCBM_REPO="https://github.com/cdaters/project-cbm"
@@ -451,7 +457,7 @@ sudo chown -R pi:pi /home/pi/pcbm
 
 # Phase 7 - Install the Project CBM Scripts and Configs
 
-From the clean v6.5 bundle:
+From the clean v1.0.0 menu bundle:
 
 ```bash
 sudo cp scripts/pcbm-* /usr/local/bin/
@@ -501,7 +507,7 @@ Share name:     Project CBM
 mDNS name:      pcbm.local
 ```
 
-v6.5 uses SMB-only operation:
+This v1.0.0 menu release uses SMB-only operation:
 
 ```text
 disable netbios = yes
@@ -518,7 +524,7 @@ sudo systemctl enable smbd
 sudo systemctl restart smbd
 ```
 
-Do not require `nmbd` for v6.5. NetBIOS browsing is intentionally disabled to avoid duplicate or stale discovery behavior.
+Do not require `nmbd` for this v1.0.0 menu release. NetBIOS browsing is intentionally disabled to avoid duplicate or stale discovery behavior.
 
 ## 2. Enable Avahi daemon for `.local` hostname resolution
 
@@ -527,7 +533,7 @@ sudo systemctl enable avahi-daemon
 sudo systemctl restart avahi-daemon
 ```
 
-Do not install a custom `/etc/avahi/services/samba.service` file by default in v6.5. The reliable connection path is direct SMB over the mDNS hostname:
+Do not install a custom `/etc/avahi/services/samba.service` file by default for this v1.0.0 menu release. The reliable connection path is direct SMB over the mDNS hostname:
 
 ```text
 smb://pcbm.local/Project%20CBM
@@ -804,7 +810,7 @@ sudo pcbm-release-prep --yes --no-zero-fill
 ```bash
 diskutil list
 diskutil unmountDisk /dev/diskX
-sudo dd if=/dev/rdiskX of=Project-CBM-v1.0.0-menu-v6.5-source.img bs=4m status=progress
+sudo dd if=/dev/rdiskX of=Project-CBM-v1.0.0-menu-v1.0.0-source.img bs=4m status=progress
 sync
 ```
 
@@ -820,7 +826,7 @@ sudo apt install -y wget parted gzip pigz xz-utils udev e2fsprogs
 wget https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh
 chmod +x pishrink.sh
 sudo mv pishrink.sh /usr/local/bin
-sudo pishrink.sh -a -z Project-CBM-v1.0.0-menu-v6.5-source.img Project-CBM-v1.0.0.img
+sudo pishrink.sh -a -z Project-CBM-v1.0.0-menu-v1.0.0-source.img Project-CBM-v1.0.0.img
 ```
 
 Do not use `-s`, because that disables first-boot filesystem expansion.
@@ -870,7 +876,7 @@ Project-CBM-v1.0.0-release/
 The private menu repo produces this companion artifact:
 
 ```text
-Project-CBM-v6.5-Bundle.zip
+Project-CBM-v1.0.0-Bundle.zip
 ```
 
 ---
@@ -908,7 +914,7 @@ project-cbm-menu/
 ├── configs/
 ├── covers/
 ├── docs/
-│   ├── Project CBM v6.5 Build Notes and Documentation.md
+│   ├── Project CBM Menu v1.0.0 Build Notes and Documentation.md
 │   ├── AUDIT-NOTES.md
 │   └── VERSIONING.md
 ├── packaging/
@@ -994,14 +1000,14 @@ Or directly:
 # README-FIRST.txt Suggested Content
 
 ```text
-Project CBM v6.5 Menu Bundle
+Project CBM Menu v1.0.0 Bundle
 =============================
 
-This bundle contains the Project CBM v6.5 menu system, helper scripts, and configuration examples used to produce the Project CBM v1.0.0 public Raspberry Pi image.
+This bundle contains the Project CBM Menu v1.0.0 system, helper scripts, and configuration examples used to produce the Project CBM v1.0.0 public Raspberry Pi image.
 
 Start with:
 
-1. Project CBM v6.5 Build Notes and Documentation.md
+1. Project CBM Menu v1.0.0 Build Notes and Documentation.md
 2. configs/version.conf
 3. configs/cmdline.txt.pcbm.appliance.example
 4. scripts/pcbm-release-prep
@@ -1009,9 +1015,10 @@ Start with:
 
 Important version note:
 - Project CBM image/build version: 1.0.0
-- Project CBM menu system version: 6.5
+- Project CBM menu system version: 1.0.0
+- Legacy internal menu lineage: v6.5
 
-v6.5 adds machine-family splash routing, improved USB importer behavior, SMB-only Samba cleanup, menu/image version separation, and a more complete release-prep path.
+Menu v1.0.0, formerly tracked internally as v6.5, adds machine-family splash routing, improved USB importer behavior, SMB-only Samba cleanup, menu/image version separation, and a more complete release-prep path.
 
 Important:
 - Project CBM does not include or distribute copyrighted Commodore ROMs, commercial software, disk images, demos, games, or other protected content.
@@ -1028,7 +1035,7 @@ Project CBM v6.5 Revision Notes
 ===============================
 
 Changes from v6.4:
-- Added menu-version separation: public Project CBM image v1.0.0 can ship with Project CBM Menu v6.5.
+- Added menu-version separation: public Project CBM image v1.0.0 ships with Project CBM Menu v1.0.0, formerly tracked internally as v6.5.
 - Added machine-family splash system and family cover naming.
 - Added `pcbm_emu_to_cover_tag()` for emulator-to-cover-family mapping.
 - Added splash session guard to prevent startup double-splashing.
@@ -1071,7 +1078,7 @@ This audit was performed against the uploaded `proposed-pcbm-v6.5-bundle.zip`, u
 5. `pcbm-start` used `/etc/pcbm/.firstboot_done` as a marker even though the script runs as the `pi` user during autologin. The corrected marker path is `/home/pi/.config/pcbm/.firstboot_done`.
 6. `pcbm-cover` had a duplicated shebang line in the proposed source. The clean bundle removes it.
 7. The proposed bundle carried live-machine files such as `.profile`, `.asoundrc`, `.hushlogin`, `.firstboot_done`, and nested `.config` paths. The clean bundle turns these into explicit examples instead.
-8. The proposed pre-Codex release workflow still contained stale v6.4 image names in a few places. The new documentation uses v6.5 menu-bundle names and Project CBM v1.0.0 image-version language.
+8. The proposed pre-Codex release workflow still contained stale v6.4 image names in a few places. The new documentation uses v1.0.0 menu-bundle names, while preserving v6.5 as the historical internal lineage.
 
 ## Items intentionally preserved
 
@@ -1081,7 +1088,7 @@ This audit was performed against the uploaded `proposed-pcbm-v6.5-bundle.zip`, u
 - TCPser service/menu integration.
 - Experimental `pcbm-screenshot`, with documentation warning that it is not yet a polished public v1.0.0 feature.
 
-## Scripts in clean v6.5 bundle
+## Scripts in clean v1.0.0 menu bundle
 
 - `scripts/pcbm-audio`
 - `scripts/pcbm-bbs`
@@ -1102,7 +1109,7 @@ This audit was performed against the uploaded `proposed-pcbm-v6.5-bundle.zip`, u
 - `scripts/pcbm-start`
 - `scripts/pcbm-system`
 
-## Config examples in clean v6.5 bundle
+## Config examples in clean v1.0.0 menu bundle
 
 - `configs/99-pcbm`
 - `configs/audio.conf.example`
@@ -1439,7 +1446,8 @@ WantedBy=multi-user.target
 PCBM_PROJECT_NAME="Project CBM"
 PCBM_INTERNAL_NAME="pcbm"
 PCBM_VERSION="1.0.0"
-PCBM_MENU_VERSION="6.5"
+PCBM_MENU_VERSION="1.0.0"
+PCBM_MENU_LEGACY_VERSION="6.5"
 PCBM_BUILD="2026.04.29"
 PCBM_AUTHOR="Craig Daters"
 PCBM_REPO="https://github.com/cdaters/project-cbm"
@@ -2440,7 +2448,7 @@ while true; do
   smbd=$(pcbm_service_active smbd)
   audio_mode=$(awk -F= '/^MODE=/ {print $2}' /home/pi/.config/pcbm/audio.conf 2>/dev/null)
   [[ -z "$audio_mode" ]] && audio_mode="auto"
-  prompt="${PCBM_PROJECT_NAME:-Project CBM} image v${PCBM_VERSION:-dev} | menu v${PCBM_MENU_VERSION:-6.5} (${PCBM_BUILD:-local})\nNetwork sharing (Samba): $smbd\nBBS service (TCPser): $tcpser\nAudio mode: $audio_mode\n\nPlease select a control panel option."
+  prompt="${PCBM_PROJECT_NAME:-Project CBM} image v${PCBM_VERSION:-dev} | menu v-e (${PCBM_BUILD:-local})\nNetwork sharing (Samba): $smbd\nBBS service (TCPser): $tcpser\nAudio mode: $audio_mode\n\nPlease select a control panel option."
   pcbm_show_menu "Project CBM Control Panel" "$prompt" "${control_items[@]}"
 
   case "$PCBM_STATUS" in
@@ -4462,7 +4470,7 @@ show_about() {
 Raspberry Pi / Commodore machine distribution
 
 Image version: ${PCBM_VERSION:-dev}
-Menu system: ${PCBM_MENU_VERSION:-6.5}
+Menu system: -e
 Build: ${PCBM_BUILD:-local}
 Author: ${PCBM_AUTHOR:-Craig Daters}
 Repository: ${PCBM_REPO:-not set}
