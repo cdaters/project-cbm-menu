@@ -19,3 +19,6 @@ desktop.ini
 # Runtime logs/temp
 *.log
 *.tmp
+
+# Local backup files
+*.bak.*
