@@ -1,0 +1,166 @@
+#!/bin/bash
+#
+# ================================================================
+#  Project CBM (pcbm)
+#  Raspberry Pi Commodore System
+#
+#  Script: pcbm-network
+#  Version: Loaded from /etc/pcbm/version.conf
+#
+#  Author: Craig Daters
+#  Repository: https://github.com/cdaters/project-cbm
+#
+# ---------------------------------------------------------------
+#  Description:
+#  This script is part of Project CBM, a lightweight, appliance-
+#  style Commodore environment for Raspberry Pi OS using the
+#  VICE emulator suite.
+#
+# ---------------------------------------------------------------
+#  License:
+#  MIT License. See LICENSE in the project repository.
+#
+# ---------------------------------------------------------------
+#  Credits & Acknowledgements:
+#  - Combian64 by Carmelo Maiolino from which this build was inspired
+#  - VICE Team, for the Versatile Commodore Emulator
+#  - Raspberry Pi Foundation and Raspberry Pi OS developers
+#  - Original Commodore engineers and developers
+#  - The wider retro-computing and open source communities
+#
+#  Project CBM does not include or distribute copyrighted ROMs,
+#  commercial software, disk images, or game collections.
+#
+# ---------------------------------------------------------------
+#  Notice:
+#  You may use, modify, and share this script under the project
+#  license, but please preserve attribution where practical.
+#
+#  No warranty is provided. Use at your own risk.
+# ================================================================
+#
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "$SCRIPT_DIR/pcbm-dialog-lib.sh"
+pcbm_trap_cleanup
+
+TITLE="Project CBM Network"
+
+start_samba() {
+  if sudo -n systemctl start smbd >/dev/null 2>&1; then
+    pcbm_show_msg "Samba" "Samba file sharing is now running.\n\nShare name: Project CBM\nHost name: $(pcbm_hostname)\nConnect from macOS with:\nsmb://pcbm.local/Project%20CBM"
+  else
+    pcbm_show_msg "Permission Required" "Project CBM could not start Samba.\n\nAdd a passwordless sudo rule for /usr/bin/systemctl start smbd, or start the service manually."
+  fi
+}
+
+stop_samba() {
+  if sudo -n systemctl stop smbd >/dev/null 2>&1; then
+    pcbm_show_msg "Samba" "Samba file sharing has been stopped."
+  else
+    pcbm_show_msg "Permission Required" "Project CBM could not stop Samba.\n\nAdd a passwordless sudo rule for /usr/bin/systemctl stop smbd, or stop the service manually."
+  fi
+}
+
+restart_network_stack() {
+  if systemctl list-unit-files dhcpcd.service >/dev/null 2>&1; then
+    if sudo -n systemctl restart dhcpcd >/dev/null 2>&1; then
+      pcbm_show_msg "Network" "dhcpcd has been restarted."
+      return
+    fi
+  fi
+
+  if systemctl list-unit-files NetworkManager.service >/dev/null 2>&1; then
+    if sudo -n systemctl restart NetworkManager >/dev/null 2>&1; then
+      pcbm_show_msg "Network" "NetworkManager has been restarted."
+      return
+    fi
+  fi
+
+  pcbm_show_msg "Network" "Project CBM could not determine which network stack to restart automatically.\n\nUse raspi-config or restart the Pi if needed."
+}
+
+while true; do
+  HOST=$(pcbm_hostname)
+  IP=$(pcbm_ip_address)
+  GW=$(pcbm_gateway)
+  DNS="$(pcbm_dns_server)"
+
+  if [[ -n "$IP" ]]; then
+    NET_STATUS="connected ($IP)"
+  else
+    NET_STATUS="disconnected"
+  fi
+
+  SAMBA_STATUS=$(pcbm_service_active smbd)
+
+  PROMPT="Host name: $HOST
+IP address: ${IP:-none}
+Gateway: ${GW:-unknown}
+DNS Server: ${DNS:-unknown}
+Network: $NET_STATUS
+Samba: $SAMBA_STATUS
+
+Please select a network option."
+
+  pcbm_show_menu "$TITLE" "$PROMPT" \
+    TEST     "Test network connectivity (gateway / internet / DNS)" \
+    SAMBAON  "Start Samba file sharing so Project CBM appears on your network" \
+    SAMBAOFF "Stop Samba file sharing" \
+    RESTART  "Restart the active network stack" \
+    CONFIG   "Advanced configuration (raspi-config)" \
+    RETURN   "<- Return to the control panel"
+
+  [[ $PCBM_STATUS -ne 0 ]] && break
+
+  case "$PCBM_CHOICE" in
+    TEST)
+      pcbm_infobox "Network Test" "Running connectivity tests..."
+      GW=$(pcbm_gateway)
+
+      if [[ -n "$GW" ]] && ping -c 1 -W 1 "$GW" >/dev/null 2>&1; then
+        GW_RESULT="OK"
+      else
+        GW_RESULT="FAILED"
+      fi
+
+      if ping -c 1 -W 2 8.8.8.8 >/dev/null 2>&1; then
+        NET_RESULT="OK"
+      else
+        NET_RESULT="FAILED"
+      fi
+
+      if ping -c 1 -W 2 google.com >/dev/null 2>&1; then
+        DNS_RESULT="OK"
+      else
+        DNS_RESULT="FAILED"
+      fi
+
+      RESULT_TEXT="Gateway (${GW:-unknown}): $GW_RESULT
+Internet (8.8.8.8): $NET_RESULT
+DNS (google.com): $DNS_RESULT"
+
+      pcbm_show_msg "Network Test Results" "$RESULT_TEXT"
+      ;;
+    SAMBAON)
+      pcbm_infobox "Samba" "Starting Samba services..."
+      start_samba
+      ;;
+    SAMBAOFF)
+      pcbm_infobox "Samba" "Stopping Samba services..."
+      stop_samba
+      ;;
+    RESTART)
+      pcbm_infobox "Network" "Restarting network services..."
+      restart_network_stack
+      ;;
+    CONFIG)
+      pcbm_cleanup_terminal
+      sudo -n raspi-config || pcbm_show_msg "Permission Required" "Launching raspi-config requires passwordless sudo for /usr/bin/raspi-config."
+      ;;
+    RETURN)
+      break
+      ;;
+  esac
+done
+
+pcbm_cleanup_terminal

@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+# ================================================================
+#  Project CBM (pcbm)
+#  Raspberry Pi Commodore System
+#
+#  Script: pcbm-roms
+#  Version: Loaded from /etc/pcbm/version.conf
+#
+#  Author: Craig Daters
+#  Repository: https://github.com/cdaters/project-cbm
+#
+# ---------------------------------------------------------------
+#  Description:
+#  This script is part of Project CBM, a lightweight, appliance-
+#  style Commodore environment for Raspberry Pi OS using the
+#  VICE emulator suite.
+#
+# ---------------------------------------------------------------
+#  License:
+#  MIT License. See LICENSE in the project repository.
+#
+# ---------------------------------------------------------------
+#  Credits & Acknowledgements:
+#  - Combian64 by Carmelo Maiolino from which this build was inspired
+#  - VICE Team, for the Versatile Commodore Emulator
+#  - Raspberry Pi Foundation and Raspberry Pi OS developers
+#  - Original Commodore engineers and developers
+#  - The wider retro-computing and open source communities
+#
+#  Project CBM does not include or distribute copyrighted ROMs,
+#  commercial software, disk images, or game collections.
+#
+# ---------------------------------------------------------------
+#  Notice:
+#  You may use, modify, and share this script under the project
+#  license, but please preserve attribution where practical.
+#
+#  No warranty is provided. Use at your own risk.
+# ================================================================
+#
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "$SCRIPT_DIR/pcbm-dialog-lib.sh"
+pcbm_trap_cleanup
+
+ROMDIR="$PCBM_CONTENT_BASE/roms"
+mkdir -p "$ROMDIR"
+
+run_rom_import() {
+  local dev
+  local -a rom_files menu_items selected
+
+  dev=$(pcbm_mount_usb_first_partition) || {
+    pcbm_show_msg "USB Error" "No USB device mounted."
+    return
+  }
+
+  while IFS= read -r -d '' file; do
+    rom_files+=("$file")
+  done < <(pcbm_filtered_find "$PCBM_USB_MOUNT" -type f \( -iname '*.bin' -o -iname '*.rom' \) | sort -z)
+
+  menu_items=("ALL" "Select every ROM file found" "off")
+  for i in "${!rom_files[@]}"; do
+    menu_items+=("$i" "USB ROM: $(basename "${rom_files[$i]}")" "off")
+  done
+
+  pcbm_show_checklist "Import ROM Files" "Select ROM files to import." "${menu_items[@]}"
+  (( PCBM_STATUS != 0 )) && { pcbm_unmount_usb; return; }
+
+  read -r -a selected <<< "$(echo "$PCBM_CHOICE" | tr -d '"')"
+
+  if printf '%s
+' "${selected[@]}" | grep -qx "ALL"; then
+    selected=()
+    for i in "${!rom_files[@]}"; do
+      selected+=("$i")
+    done
+  fi
+
+  count=0
+  for idx in "${selected[@]}"; do
+    pcbm_copy_clean "${rom_files[$idx]}" "$ROMDIR" && ((count++))
+  done
+
+  pcbm_unmount_usb
+  pcbm_show_msg "ROM Import Complete" "Project CBM copied $count ROM file(s) into:
+$ROMDIR"
+}
+
+run_rom_import

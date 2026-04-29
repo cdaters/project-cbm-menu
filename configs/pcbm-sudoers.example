@@ -1,0 +1,7 @@
+# Example sudoers fragment for Project CBM
+# Save as: /etc/sudoers.d/pcbm
+# Edit with: sudo visudo -f /etc/sudoers.d/pcbm
+# Verify command paths on your Pi with:
+# command -v mount umount mkdir rm systemctl raspi-config tee poweroff reboot
+
+pi ALL=(root) NOPASSWD:   /usr/sbin/poweroff,   /usr/sbin/reboot,   /usr/bin/raspi-config,   /usr/local/bin/pcbm-release-prep,   /usr/bin/systemctl start tcpser,   /usr/bin/systemctl stop tcpser,   /usr/bin/systemctl restart tcpser,   /usr/bin/systemctl status tcpser,   /usr/bin/systemctl is-active tcpser,   /usr/bin/systemctl start smbd,   /usr/bin/systemctl stop smbd,   /usr/bin/systemctl restart smbd,   /usr/bin/systemctl is-active smbd,   /usr/bin/systemctl restart avahi-daemon,   /usr/bin/systemctl is-active avahi-daemon,   /usr/bin/systemctl restart dhcpcd,   /usr/bin/systemctl is-active dhcpcd,   /usr/bin/systemctl restart NetworkManager,   /usr/bin/systemctl is-active NetworkManager,   /usr/bin/mount,   /usr/bin/umount,   /usr/bin/tee,   /usr/bin/mkdir,   /usr/bin/rm

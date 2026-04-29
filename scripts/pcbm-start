@@ -1,0 +1,93 @@
+#!/bin/bash
+#
+# ================================================================
+#  Project CBM (pcbm)
+#  Raspberry Pi Commodore System
+#
+#  Script: pcbm-start
+#  Version: Loaded from /etc/pcbm/version.conf
+#
+#  Author: Craig Daters
+#  Repository: https://github.com/cdaters/project-cbm
+#
+# ---------------------------------------------------------------
+#  Description:
+#  This script is part of Project CBM, a lightweight, appliance-
+#  style Commodore environment for Raspberry Pi OS using the
+#  VICE emulator suite.
+#
+# ---------------------------------------------------------------
+#  License:
+#  MIT License. See LICENSE in the project repository.
+#
+# ---------------------------------------------------------------
+#  Credits & Acknowledgements:
+#  - Combian64 by Carmelo Maiolino from which this build was inspired
+#  - VICE Team, for the Versatile Commodore Emulator
+#  - Raspberry Pi Foundation and Raspberry Pi OS developers
+#  - Original Commodore engineers and developers
+#  - The wider retro-computing and open source communities
+#
+#  Project CBM does not include or distribute copyrighted ROMs,
+#  commercial software, disk images, or game collections.
+#
+# ---------------------------------------------------------------
+#  Notice:
+#  You may use, modify, and share this script under the project
+#  license, but please preserve attribution where practical.
+#
+#  No warranty is provided. Use at your own risk.
+# ================================================================
+#
+
+set -u
+
+PCBM_VERSION_CONF="/etc/pcbm/version.conf"
+PCBM_BOOT_MODE_CONF="/etc/pcbm/boot-mode.conf"
+PCBM_DEFAULT_MACHINE_CONF="/etc/pcbm/default-machine.conf"
+
+FIRSTBOOT_MARKER="/home/pi/.config/pcbm/.firstboot_done"
+
+if [[ ! -f "$FIRSTBOOT_MARKER" && -x "/usr/local/bin/pcbm-firstboot-check" ]]; then
+  mkdir -p "$(dirname "$FIRSTBOOT_MARKER")" 2>/dev/null || true
+  /usr/local/bin/pcbm-firstboot-check || true
+  touch "$FIRSTBOOT_MARKER" 2>/dev/null || true
+fi
+
+if [[ -f "$PCBM_VERSION_CONF" ]]; then
+  # shellcheck source=/etc/pcbm/version.conf
+  source "$PCBM_VERSION_CONF"
+fi
+
+read_conf_value() {
+  local file="$1"
+  local fallback="$2"
+
+  if [[ -f "$file" ]]; then
+    tr -d '\r\n' < "$file"
+  else
+    printf '%s\n' "$fallback"
+  fi
+}
+
+BOOT_MODE="$(read_conf_value "$PCBM_BOOT_MODE_CONF" "menu")"
+DEFAULT_MACHINE="$(read_conf_value "$PCBM_DEFAULT_MACHINE_CONF" "x64sc")"
+
+case "$BOOT_MODE" in
+  machine|MACHINE|Machine)
+    if [[ "$(tty 2>/dev/null)" = "/dev/tty1" ]] && command -v /usr/local/bin/pcbm-cover >/dev/null 2>&1; then
+      /usr/local/bin/pcbm-cover
+      reset
+      clear
+    fi
+
+    /usr/local/bin/pcbm-boot "$DEFAULT_MACHINE"
+
+    # When the emulator exits, always return to the Project CBM menu.
+    exec /usr/local/bin/pcbm-menu
+    ;;
+
+  menu|MENU|Menu|*)
+    exec /usr/local/bin/pcbm-menu
+    ;;
+esac

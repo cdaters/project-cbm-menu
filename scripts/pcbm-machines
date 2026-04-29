@@ -1,0 +1,132 @@
+#!/bin/bash
+#
+# ================================================================
+#  Project CBM (pcbm)
+#  Raspberry Pi Commodore System
+#
+#  Script: pcbm-machines
+#  Version: Loaded from /etc/pcbm/version.conf
+#
+#  Author: Craig Daters
+#  Repository: https://github.com/cdaters/project-cbm
+#
+# ---------------------------------------------------------------
+#  Description:
+#  This script is part of Project CBM, a lightweight, appliance-
+#  style Commodore environment for Raspberry Pi OS using the
+#  VICE emulator suite.
+#
+# ---------------------------------------------------------------
+#  License:
+#  MIT License. See LICENSE in the project repository.
+#
+# ---------------------------------------------------------------
+#  Credits & Acknowledgements:
+#  - Combian64 by Carmelo Maiolino from which this build was inspired
+#  - VICE Team, for the Versatile Commodore Emulator
+#  - Raspberry Pi Foundation and Raspberry Pi OS developers
+#  - Original Commodore engineers and developers
+#  - The wider retro-computing and open source communities
+#
+#  Project CBM does not include or distribute copyrighted ROMs,
+#  commercial software, disk images, or game collections.
+#
+# ---------------------------------------------------------------
+#  Notice:
+#  You may use, modify, and share this script under the project
+#  license, but please preserve attribution where practical.
+#
+#  No warranty is provided. Use at your own risk.
+# ================================================================
+#
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "$SCRIPT_DIR/pcbm-dialog-lib.sh"
+pcbm_trap_cleanup
+
+machine_items=(
+  "C64"     "Start the Commodore 64 (Faster, for older or weaker systems)"
+  "C64SC"   "Start the Commodore 64 (Recommended for games and demos)"
+  "SCPU64"  "Start the Commodore 64 with CMD SuperCPU"
+  "C64DTV"  "Start the Commodore 64 DTV"
+  "C128"    "Start the Commodore 128 (40-column VIC display)"
+  "C12880"  "Start the Commodore 128 in 80-column VDC mode"
+  "CBM2"    "Start the CBM-II"
+  "CBM5"    "Start the CBM-5x0"
+  "VIC20"   "Start the VIC-20"
+  "PLUS4"   "Start the Plus/4"
+  "PET"     "Start the PET"
+  "DEFAULT" "Set the default machine launched by Project CBM"
+  "RETURN"  "<- Return to the main menu"
+)
+
+default_items=(
+  "C64"    "Commodore 64 (Fast emulator)"
+  "C64SC"  "Commodore 64 (Recommended for games and demos)"
+  "SCPU64" "Commodore 64 with CMD SuperCPU"
+  "C64DTV" "Commodore 64 DTV"
+  "C128"   "Commodore 128 (40-column VIC display)"
+  "C12880" "Commodore 128 (80-column VDC mode)"
+  "CBM2"   "CBM-II"
+  "CBM5"   "CBM-5x0"
+  "VIC20"  "VIC-20"
+  "PLUS4"  "Plus/4"
+  "PET"    "PET"
+  "RETURN" "<- Return without changing the default"
+)
+
+while true; do
+  prompt="Current default machine: $(pcbm_default_machine_label)\n\nPlease select a machine to launch, or choose DEFAULT to save one for startup."
+  pcbm_show_menu "Project CBM Machines" "$prompt" "${machine_items[@]}"
+
+  case "$PCBM_STATUS" in
+    0)
+      case "$PCBM_CHOICE" in
+        C64|C64SC|SCPU64|C64DTV|C128|C12880|CBM2|CBM5|VIC20|PET|PLUS4)
+          emu=$(pcbm_machine_tag_to_emu "$PCBM_CHOICE")
+          pcbm_launch_machine "$emu"
+
+          if [ "$(tty)" = "/dev/tty1" ]; then
+            /usr/local/bin/pcbm-cover
+            reset
+            clear
+          fi
+          ;;
+        DEFAULT)
+          while true; do
+            prompt="Current default machine: $(pcbm_default_machine_label)\n\nPlease select the machine Project CBM should start by default."
+            pcbm_show_menu "Set Default Machine" "$prompt" "${default_items[@]}"
+            case "$PCBM_STATUS" in
+              0)
+                case "$PCBM_CHOICE" in
+                  RETURN) break ;;
+                  C64|C64SC|SCPU64|C64DTV|C128|C12880|CBM2|CBM5|VIC20|PET|PLUS4)
+                    emu=$(pcbm_machine_tag_to_emu "$PCBM_CHOICE")
+                    if pcbm_save_default_machine "$emu"; then
+                      pcbm_show_msg "Default Machine Saved" "Project CBM will now default to:\n$(pcbm_default_machine_label)"
+                    fi
+                    break
+                    ;;
+                esac
+                ;;
+              1|255)
+                break
+                ;;
+              *)
+                break
+                ;;
+            esac
+          done
+          ;;
+        RETURN)
+          exit 0
+          ;;
+      esac
+      ;;
+    1|255)
+      exit 0
+      ;;
+    *)
+      exit 0
+      ;;
+  esac
+done

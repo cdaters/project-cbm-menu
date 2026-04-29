@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# Project CBM dynamic MOTD add-on.
+# Debian/Raspberry Pi OS will continue to show its normal login text.
+# This script only appends Project CBM build information below it.
+
+if [ -f /etc/pcbm/version.conf ]; then
+    # shellcheck disable=SC1091
+    . /etc/pcbm/version.conf
+else
+    PCBM_PROJECT_NAME="Project CBM"
+    PCBM_VERSION="dev"
+    PCBM_MENU_VERSION="dev"
+    PCBM_BUILD="local"
+    PCBM_TAGLINE="Raspberry Pi Commodore System"
+fi
+
+cat <<EOF
+
+========================================
+ $PCBM_PROJECT_NAME
+ Raspberry Pi Commodore System
+
+ Image Version: $PCBM_VERSION
+ Menu Version:  ${PCBM_MENU_VERSION:-unknown}
+ Build:         $PCBM_BUILD
+
+ ${PCBM_TAGLINE:-Powered by Raspberry Pi OS and VICE.}
+ Powered by Raspberry Pi OS and VICE.
+
+ No ROMs, games, disk images, demos, or
+ commercial software are included with
+ this build.
+========================================
+EOF

@@ -1,0 +1,27 @@
+name: Build Project CBM Menu Bundle
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    tags:
+      - 'menu-v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install packaging tools
+        run: sudo apt-get update && sudo apt-get install -y zip rsync
+
+      - name: Build bundle
+        run: ./packaging/build-menu-bundle.sh 6.5
+
+      - name: Upload bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Project-CBM-v6.5-Bundle
+          path: dist/Project-CBM-v6.5-Bundle.zip

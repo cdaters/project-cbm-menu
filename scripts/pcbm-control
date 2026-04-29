@@ -1,0 +1,81 @@
+#!/bin/bash
+#
+# ================================================================
+#  Project CBM (pcbm)
+#  Raspberry Pi Commodore System
+#
+#  Script: pcbm-control
+#  Version: Loaded from /etc/pcbm/version.conf
+#
+#  Author: Craig Daters
+#  Repository: https://github.com/cdaters/project-cbm
+#
+# ---------------------------------------------------------------
+#  Description:
+#  This script is part of Project CBM, a lightweight, appliance-
+#  style Commodore environment for Raspberry Pi OS using the
+#  VICE emulator suite.
+#
+# ---------------------------------------------------------------
+#  License:
+#  MIT License. See LICENSE in the project repository.
+#
+# ---------------------------------------------------------------
+#  Credits & Acknowledgements:
+#  - Combian64 by Carmelo Maiolino from which this build was inspired
+#  - VICE Team, for the Versatile Commodore Emulator
+#  - Raspberry Pi Foundation and Raspberry Pi OS developers
+#  - Original Commodore engineers and developers
+#  - The wider retro-computing and open source communities
+#
+#  Project CBM does not include or distribute copyrighted ROMs,
+#  commercial software, disk images, or game collections.
+#
+# ---------------------------------------------------------------
+#  Notice:
+#  You may use, modify, and share this script under the project
+#  license, but please preserve attribution where practical.
+#
+#  No warranty is provided. Use at your own risk.
+# ================================================================
+#
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "$SCRIPT_DIR/pcbm-dialog-lib.sh"
+pcbm_trap_cleanup
+
+control_items=(
+  "NETWORK" "Network settings and file sharing options"
+  "AUDIO"   "Audio output selection, HDMI auto-detect, and speaker tests"
+  "BBS"     "BBS and serial or modem communication settings"
+  "ROMS"    "JiffyDOS and machine ROM import and viewing"
+  "SYSTEM"  "System settings and Project CBM information"
+  "RETURN"  "<- Return to the main menu"
+)
+
+while true; do
+  tcpser=$(pcbm_service_active tcpser)
+  smbd=$(pcbm_service_active smbd)
+  audio_mode=$(awk -F= '/^MODE=/ {print $2}' /home/pi/.config/pcbm/audio.conf 2>/dev/null)
+  [[ -z "$audio_mode" ]] && audio_mode="auto"
+  prompt="${PCBM_PROJECT_NAME:-Project CBM} image v${PCBM_VERSION:-dev} | menu v${PCBM_MENU_VERSION:-6.5} (${PCBM_BUILD:-local})\nNetwork sharing (Samba): $smbd\nBBS service (TCPser): $tcpser\nAudio mode: $audio_mode\n\nPlease select a control panel option."
+  pcbm_show_menu "Project CBM Control Panel" "$prompt" "${control_items[@]}"
+
+  case "$PCBM_STATUS" in
+    0)
+      case "$PCBM_CHOICE" in
+        NETWORK) "$SCRIPT_DIR/pcbm-network" ;;
+        AUDIO)   "$SCRIPT_DIR/pcbm-audio" ;;
+        BBS)     "$SCRIPT_DIR/pcbm-bbs" ;;
+        ROMS)    "$SCRIPT_DIR/pcbm-roms" ;;
+        SYSTEM)  "$SCRIPT_DIR/pcbm-system" ;;
+        RETURN)  exit 0 ;;
+      esac
+      ;;
+    1|255)
+      exit 0
+      ;;
+    *)
+      exit 0
+      ;;
+  esac
+done

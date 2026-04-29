@@ -1,0 +1,119 @@
+#!/bin/bash
+#
+# ================================================================
+#  Project CBM (pcbm)
+#  Raspberry Pi Commodore System
+#
+#  Script: pcbm-cover
+#  Version: Loaded from /etc/pcbm/version.conf
+#
+#  Author: Craig Daters
+#  Repository: https://github.com/cdaters/project-cbm
+#
+# ---------------------------------------------------------------
+#  Description:
+#  This script is part of Project CBM, a lightweight, appliance-
+#  style Commodore environment for Raspberry Pi OS using the
+#  VICE emulator suite.
+#
+# ---------------------------------------------------------------
+#  License:
+#  MIT License. See LICENSE in the project repository.
+#
+# ---------------------------------------------------------------
+#  Credits & Acknowledgements:
+#  - Combian64 by Carmelo Maiolino from which this build was inspired
+#  - VICE Team, for the Versatile Commodore Emulator
+#  - Raspberry Pi Foundation and Raspberry Pi OS developers
+#  - Original Commodore engineers and developers
+#  - The wider retro-computing and open source communities
+#
+#  Project CBM does not include or distribute copyrighted ROMs,
+#  commercial software, disk images, or game collections.
+#
+# ---------------------------------------------------------------
+#  Notice:
+#  You may use, modify, and share this script under the project
+#  license, but please preserve attribution where practical.
+#
+#  No warranty is provided. Use at your own risk.
+# ================================================================
+#
+
+COVER_DIR="/opt/pcbm/covers"
+DISPLAY_TIME=3
+
+machine="${1:-}"
+
+[ ! -d "$COVER_DIR" ] && exit 0
+
+# Only run on tty1
+if [[ "$(tty)" != "/dev/tty1" ]]; then
+    exit 0
+fi
+
+pick_random_cover() {
+    mapfile -t COVERS < <(
+        find "$COVER_DIR" -maxdepth 1 -type f \
+        \( -iname "pcbmcover[0-9]*.jpg" -o -iname "pcbmcover[0-9]*.png" \)
+    )
+
+    [ ${#COVERS[@]} -eq 0 ] && return 1
+
+    printf '%s\n' "${COVERS[RANDOM % ${#COVERS[@]}]}"
+}
+
+pick_machine_cover() {
+    local candidate
+
+    candidate="$COVER_DIR/pcbmcover-${machine}.jpg"
+    [[ -f "$candidate" ]] && {
+        printf '%s\n' "$candidate"
+        return 0
+    }
+
+    candidate="$COVER_DIR/pcbmcover-${machine}.png"
+    [[ -f "$candidate" ]] && {
+        printf '%s\n' "$candidate"
+        return 0
+    }
+
+    pick_random_cover
+}
+
+if [[ -n "$machine" ]]; then
+    COVER="$(pick_machine_cover)"
+else
+    COVER="$(pick_random_cover)"
+fi
+
+[ -z "$COVER" ] && exit 0
+
+tput civis 2>/dev/null
+
+cleanup() {
+    tput cnorm 2>/dev/null
+    clear
+}
+trap cleanup EXIT
+
+clear
+
+read FB_WIDTH FB_HEIGHT < <(
+    fbset -s | awk '/geometry/ {print $2, $3}'
+)
+
+TARGET_HEIGHT=$((FB_HEIGHT * 50 / 100))
+
+TMP_IMG="/tmp/pcbm_splash_$$.png"
+
+convert "$COVER" \
+  -resize x${TARGET_HEIGHT} \
+  -gravity center \
+  -background black \
+  -extent ${FB_WIDTH}x${FB_HEIGHT} \
+  "$TMP_IMG"
+
+fbi -a --autozoom --once -noverbose -t "$DISPLAY_TIME" "$TMP_IMG"
+
+rm -f "$TMP_IMG"

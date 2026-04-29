@@ -1,0 +1,123 @@
+#!/bin/bash
+#
+# ================================================================
+#  Project CBM (pcbm)
+#  Raspberry Pi Commodore System
+#
+#  Script: pcbm-bootmode
+#  Version: Loaded from /etc/pcbm/version.conf
+#
+#  Author: Craig Daters
+#  Repository: https://github.com/cdaters/project-cbm
+#
+# ---------------------------------------------------------------
+#  Description:
+#  This script is part of Project CBM, a lightweight, appliance-
+#  style Commodore environment for Raspberry Pi OS using the
+#  VICE emulator suite.
+#
+# ---------------------------------------------------------------
+#  License:
+#  MIT License. See LICENSE in the project repository.
+#
+# ---------------------------------------------------------------
+#  Credits & Acknowledgements:
+#  - Combian64 by Carmelo Maiolino from which this build was inspired
+#  - VICE Team, for the Versatile Commodore Emulator
+#  - Raspberry Pi Foundation and Raspberry Pi OS developers
+#  - Original Commodore engineers and developers
+#  - The wider retro-computing and open source communities
+#
+#  Project CBM does not include or distribute copyrighted ROMs,
+#  commercial software, disk images, or game collections.
+#
+# ---------------------------------------------------------------
+#  Notice:
+#  You may use, modify, and share this script under the project
+#  license, but please preserve attribution where practical.
+#
+#  No warranty is provided. Use at your own risk.
+# ================================================================
+#
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "$SCRIPT_DIR/pcbm-dialog-lib.sh"
+pcbm_trap_cleanup
+
+PCBM_BOOT_MODE_CONF="$PCBM_CONFIG_DIR/boot-mode.conf"
+
+pcbm_boot_mode_raw() {
+  local mode
+  mode=$(tr -d '\r\n' < "$PCBM_BOOT_MODE_CONF" 2>/dev/null || printf 'menu')
+  [[ -z "$mode" ]] && mode="menu"
+  printf '%s\n' "$mode"
+}
+
+pcbm_boot_mode_label() {
+  case "$(pcbm_boot_mode_raw)" in
+    machine|MACHINE|Machine)
+      echo "Default machine at boot"
+      ;;
+    menu|MENU|Menu|*)
+      echo "Project CBM menu"
+      ;;
+  esac
+}
+
+pcbm_save_boot_mode() {
+  local mode="$1"
+
+  if ! sudo -n mkdir -p "$PCBM_CONFIG_DIR" 2>/dev/null; then
+    pcbm_show_msg "Permission Required" "Project CBM could not create $PCBM_CONFIG_DIR without sudo.\n\nAdd a passwordless sudo rule for /usr/bin/mkdir, or create the folder manually."
+    return 1
+  fi
+
+  if ! printf '%s\n' "$mode" | sudo -n tee "$PCBM_BOOT_MODE_CONF" >/dev/null 2>&1; then
+    pcbm_show_msg "Permission Required" "Project CBM could not save the boot mode.\n\nAdd a passwordless sudo rule for /usr/bin/tee, or save this file manually:\n$PCBM_BOOT_MODE_CONF"
+    return 1
+  fi
+
+  return 0
+}
+
+boot_items=(
+  "MENU"    "Boot to the Project CBM menu (recommended default)"
+  "MACHINE" "Boot directly into the saved default machine, then return to menu on exit"
+  "STATUS"  "Show current boot mode and default machine"
+  "RETURN"  "<- Return to the system menu"
+)
+
+while true; do
+  prompt="Current boot mode: $(pcbm_boot_mode_label)\nDefault machine: $(pcbm_default_machine_label)\n\nDEFAULT MACHINE is the machine launched by RUN.\nBOOT MODE controls what happens when Project CBM starts on tty1."
+  pcbm_show_menu "Project CBM Boot Mode" "$prompt" "${boot_items[@]}"
+
+  case "$PCBM_STATUS" in
+    0)
+      case "$PCBM_CHOICE" in
+        MENU)
+          if pcbm_save_boot_mode "menu"; then
+            pcbm_show_msg "Boot Mode Saved" "Project CBM will boot to the main menu."
+          fi
+          ;;
+        MACHINE)
+          if pcbm_yesno "Enable Machine Autostart" "Project CBM will boot directly into:\n$(pcbm_default_machine_label)\n\nWhen VICE exits, Project CBM will return to the main menu.\n\nEnable this boot mode?"; then
+            if pcbm_save_boot_mode "machine"; then
+              pcbm_show_msg "Boot Mode Saved" "Project CBM will boot directly into the saved default machine.\n\nExiting VICE returns to the Project CBM menu."
+            fi
+          fi
+          ;;
+        STATUS)
+          pcbm_show_msg "Boot Mode Status" "Boot mode: $(pcbm_boot_mode_label)\nRaw config: $(pcbm_boot_mode_raw)\nDefault machine: $(pcbm_default_machine_label)\nConfig file:\n$PCBM_BOOT_MODE_CONF"
+          ;;
+        RETURN)
+          exit 0
+          ;;
+      esac
+      ;;
+    1|255)
+      exit 0
+      ;;
+    *)
+      exit 0
+      ;;
+  esac
+done

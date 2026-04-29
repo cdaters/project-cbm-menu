@@ -1,0 +1,110 @@
+#!/bin/bash
+#
+# ================================================================
+#  Project CBM (pcbm)
+#  Raspberry Pi Commodore System
+#
+#  Script: pcbm-release-prep
+#  Version: Loaded from /etc/pcbm/version.conf
+#
+#  Author: Craig Daters
+#  Repository: https://github.com/cdaters/project-cbm
+#
+# ---------------------------------------------------------------
+#  Description:
+#  Cleans runtime cruft, logs, caches, shell history, first-boot
+#  markers, and zero-fills free space before imaging a Project CBM
+#  SD card for release.
+#
+# ---------------------------------------------------------------
+#  License: MIT License. See LICENSE in the project repository.
+#  No warranty is provided. Use at your own risk.
+# ================================================================
+
+set -u
+
+ASSUME_YES=0
+DO_POWEROFF=0
+ZERO_FILL=1
+
+usage() {
+  cat <<'EOF'
+Usage: sudo pcbm-release-prep [--yes] [--poweroff] [--no-zero-fill]
+
+Options:
+  --yes           Do not ask for confirmation.
+  --poweroff      Power off after cleanup and sync complete.
+  --no-zero-fill  Skip free-space zero fill. Faster, but larger image compression.
+EOF
+}
+
+for arg in "$@"; do
+  case "$arg" in
+    --yes|-y) ASSUME_YES=1 ;;
+    --poweroff) DO_POWEROFF=1 ;;
+    --no-zero-fill) ZERO_FILL=0 ;;
+    --help|-h) usage; exit 0 ;;
+    *) echo "Unknown option: $arg" >&2; usage; exit 1 ;;
+  esac
+done
+
+if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
+  echo "Project CBM release prep must be run with sudo/root." >&2
+  exit 1
+fi
+
+if (( ASSUME_YES == 0 )); then
+  echo "Project CBM release prep will clean logs/caches/history and zero-fill free space."
+  read -r -p "Continue? [y/N] " answer
+  case "$answer" in
+    y|Y|yes|YES) ;;
+    *) echo "Canceled."; exit 0 ;;
+  esac
+fi
+
+echo "Project CBM release prep starting..."
+
+# Stop chatty services where practical.
+systemctl stop tcpser 2>/dev/null || true
+
+# Package/cache cleanup.
+apt-get clean 2>/dev/null || true
+rm -rf /var/cache/apt/archives/*.deb /var/cache/apt/*.bin 2>/dev/null || true
+
+# Journals and logs.
+journalctl --rotate 2>/dev/null || true
+journalctl --vacuum-time=1s 2>/dev/null || true
+find /var/log -type f -exec truncate -s 0 {} \; 2>/dev/null || true
+
+# Runtime/temp files.
+rm -rf /tmp/* /tmp/.[!.]* /tmp/..?* 2>/dev/null || true
+rm -rf /var/tmp/* /var/tmp/.[!.]* /var/tmp/..?* 2>/dev/null || true
+rm -rf /run/user/* 2>/dev/null || true
+
+# User caches/history/runtime markers.
+for home in /root /home/pi; do
+  [[ -d "$home" ]] || continue
+  rm -rf "$home/.cache"/* "$home/.thumbnails"/* 2>/dev/null || true
+  rm -f "$home/.bash_history" "$home/.lesshst" "$home/.wget-hsts" 2>/dev/null || true
+done
+rm -f /home/pi/.config/pcbm/.firstboot_done 2>/dev/null || true
+
+# VICE/log leftovers.
+rm -f /tmp/pcbm-*.log /tmp/pcbm-*.tmp /tmp/pcbm_splash_*.png /tmp/pcbm-import-debug.log /tmp/pcbm-import.log /tmp/pcbm-vice.log 2>/dev/null || true
+rm -f /home/pi/.local/state/vice/vice.log 2>/dev/null || true
+
+sync
+
+if (( ZERO_FILL == 1 )); then
+  echo "Zero-filling free space. This may end with 'No space left on device'; that is expected."
+  dd if=/dev/zero of=/ZERO.fill bs=16M status=progress 2>/dev/null || true
+  rm -f /ZERO.fill
+  sync
+fi
+
+echo "Project CBM release prep complete. Safe to image + PiShrink."
+
+if (( DO_POWEROFF == 1 )); then
+  echo "Powering off..."
+  systemctl poweroff
+fi

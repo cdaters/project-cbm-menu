@@ -1,0 +1,67 @@
+#!/bin/bash
+set -u
+
+DIR="/home/pi/screenshots"
+TS="$(date +%Y%m%d-%H%M%S)"
+OUT="$DIR/pcbm-$TS.png"
+
+mkdir -p "$DIR"
+
+MODE="${1:-menu}"
+
+capture_fb() {
+  sudo fbgrab -c 1 "$OUT" >/dev/null 2>&1
+}
+
+capture_kms() {
+  sudo ffmpeg \
+    -hide_banner \
+    -loglevel error \
+    -f kmsgrab \
+    -i - \
+    -frames:v 1 \
+    -vf 'hwdownload,format=bgr0' \
+    -y "$OUT" >/dev/null 2>&1
+}
+
+case "$MODE" in
+  menu|tty|console|fb)
+    capture_fb
+    RESULT=$?
+    ;;
+
+  emulator|vice|kms)
+    capture_kms
+    RESULT=$?
+    ;;
+
+  auto)
+    capture_kms
+    RESULT=$?
+
+    if [ "$RESULT" -ne 0 ]; then
+      capture_fb
+      RESULT=$?
+    fi
+    ;;
+
+  *)
+    echo "Usage:"
+    echo "  pcbm-screenshot              Capture Project CBM menu / TTY1"
+    echo "  pcbm-screenshot menu         Capture Project CBM menu / TTY1"
+    echo "  pcbm-screenshot emulator     Try SDL/KMS emulator capture"
+    echo "  pcbm-screenshot auto         Try emulator capture, then fallback to menu capture"
+    echo
+    echo "Saved screenshots go to: $DIR"
+    exit 1
+    ;;
+esac
+
+if [ "$RESULT" -eq 0 ] && [ -f "$OUT" ]; then
+  echo "Screenshot saved to: $OUT"
+  exit 0
+else
+  echo "Screenshot failed."
+  rm -f "$OUT" 2>/dev/null
+  exit 1
+fi

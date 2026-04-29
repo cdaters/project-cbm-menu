@@ -1,0 +1,147 @@
+#!/bin/bash
+#
+# ================================================================
+#  Project CBM (pcbm)
+#  Raspberry Pi Commodore System
+#
+#  Script: pcbm-system
+#  Version: Loaded from /etc/pcbm/version.conf
+#
+#  Author: Craig Daters
+#  Repository: https://github.com/cdaters/project-cbm
+#
+# ---------------------------------------------------------------
+#  Description:
+#  This script is part of Project CBM, a lightweight, appliance-
+#  style Commodore environment for Raspberry Pi OS using the
+#  VICE emulator suite.
+#
+# ---------------------------------------------------------------
+#  License:
+#  MIT License. See LICENSE in the project repository.
+#
+# ---------------------------------------------------------------
+#  Credits & Acknowledgements:
+#  - Combian64 by Carmelo Maiolino from which this build was inspired
+#  - VICE Team, for the Versatile Commodore Emulator
+#  - Raspberry Pi Foundation and Raspberry Pi OS developers
+#  - Original Commodore engineers and developers
+#  - The wider retro-computing and open source communities
+#
+#  Project CBM does not include or distribute copyrighted ROMs,
+#  commercial software, disk images, or game collections.
+#
+# ---------------------------------------------------------------
+#  Notice:
+#  You may use, modify, and share this script under the project
+#  license, but please preserve attribution where practical.
+#
+#  No warranty is provided. Use at your own risk.
+# ================================================================
+#
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "$SCRIPT_DIR/pcbm-dialog-lib.sh"
+pcbm_trap_cleanup
+
+system_items=(
+  "CONFIG"   "Launch raspi-config for Raspberry Pi system options"
+  "BOOTMODE" "Choose whether Project CBM starts at the menu or default machine"
+  "SHOW"     "Show Project CBM information and credits"
+  "POWER"    "Shut down Project CBM safely"
+  "REBOOT"   "Restart Project CBM"
+  "RELEASE"  "Run release prep before imaging"
+  "RETURN"   "<- Return to the control panel"
+)
+
+show_about() {
+  local ip_addr gateway active_rom boot_mode
+  ip_addr=$(pcbm_ip_address)
+  [[ -z "$ip_addr" ]] && ip_addr="Not connected"
+  gateway=$(pcbm_gateway)
+  [[ -z "$gateway" ]] && gateway="Unknown"
+  active_rom=$(pcbm_active_jiffydos)
+  [[ -z "$active_rom" ]] && active_rom="None"
+  boot_mode=$(tr -d '\r\n' < "$PCBM_CONFIG_DIR/boot-mode.conf" 2>/dev/null || printf 'menu')
+
+  pcbm_show_textbox "About Project CBM" "${PCBM_PROJECT_NAME:-Project CBM}
+Raspberry Pi / Commodore machine distribution
+
+Image version: ${PCBM_VERSION:-dev}
+Menu system: ${PCBM_MENU_VERSION:-6.5}
+Build: ${PCBM_BUILD:-local}
+Author: ${PCBM_AUTHOR:-Craig Daters}
+Repository: ${PCBM_REPO:-not set}
+
+Host name: $(pcbm_hostname)
+IP address: $ip_addr
+Gateway: $gateway
+Default machine: $(pcbm_default_machine_label)
+Boot mode: $boot_mode
+Active custom ROM: $(basename "$active_rom" 2>/dev/null || printf '%s' "$active_rom")
+
+${PCBM_TAGLINE:-Power on. Boot fast. No nonsense. Just Commodore.}
+
+Core ideas:
+- Launch classic Commodore machines quickly
+- Keep common setup tasks inside dialog-based menus
+- Make USB import, file browsing, and service control approachable for normal humans
+- Auto-handle HDMI audio selection before VICE launch
+- Keep menu-first boot as the default while allowing optional direct-machine startup
+
+Credits:
+- Project concept, design direction, and retro-computing curation by Craig Daters
+- VICE Team, for the Versatile Commodore Emulator
+- Raspberry Pi Foundation and Raspberry Pi OS developers
+- Original Commodore engineers and developers
+- The wider retro-computing and open source communities
+
+Project CBM does not include or distribute copyrighted ROMs, commercial software, disk images, demos, or game collections."
+}
+
+while true; do
+  boot_mode=$(tr -d '\r\n' < "$PCBM_CONFIG_DIR/boot-mode.conf" 2>/dev/null || printf 'menu')
+  prompt="System settings and Project CBM information.\n\nDefault machine: $(pcbm_default_machine_label)\nBoot mode: $boot_mode"
+  pcbm_show_menu "Project CBM System" "$prompt" "${system_items[@]}"
+
+  case "$PCBM_STATUS" in
+    0)
+      case "$PCBM_CHOICE" in
+        CONFIG)
+          pcbm_cleanup_terminal
+          sudo -n raspi-config || pcbm_show_msg "Permission Required" "Launching raspi-config requires passwordless sudo for /usr/bin/raspi-config."
+          ;;
+        BOOTMODE)
+          "$SCRIPT_DIR/pcbm-bootmode"
+          ;;
+        SHOW)
+          show_about
+          ;;
+        POWER)
+          if pcbm_yesno "Shutdown Project CBM" "Shut down Project CBM now?"; then
+            sudo -n /usr/sbin/poweroff || pcbm_show_msg "Permission Required" "Shutdown requires passwordless sudo for /usr/sbin/poweroff."
+          fi
+          ;;
+        REBOOT)
+          if pcbm_yesno "Reboot Project CBM" "Restart Project CBM now?"; then
+            sudo -n /usr/sbin/reboot || pcbm_show_msg "Permission Required" "Reboot requires passwordless sudo for /usr/sbin/reboot."
+          fi
+          ;;
+        RELEASE)
+          if pcbm_yesno "Release Prep" "Run Project CBM release prep now?\n\nThis clears logs/caches/runtime files and zero-fills free space. Use this only when preparing an SD-card image."; then
+            pcbm_cleanup_terminal
+            sudo -n /usr/local/bin/pcbm-release-prep --yes || pcbm_show_msg "Permission Required" "Release prep requires passwordless sudo for /usr/local/bin/pcbm-release-prep or must be run manually with sudo."
+          fi
+          ;;
+        RETURN)
+          exit 0
+          ;;
+      esac
+      ;;
+    1|255)
+      exit 0
+      ;;
+    *)
+      exit 0
+      ;;
+  esac
+done

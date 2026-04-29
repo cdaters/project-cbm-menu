@@ -1,0 +1,7 @@
+# Append to /home/pi/.profile
+# Project CBM starts only on the local auto-login console.
+# SSH sessions remain normal.
+if [ "$(tty)" = "/dev/tty1" ]; then
+    clear
+    /usr/local/bin/pcbm-start
+fi

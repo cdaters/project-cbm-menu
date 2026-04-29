@@ -1,0 +1,18 @@
+[Unit]
+Description=Project CBM TCPser modem bridge
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi
+# Edit ExecStart for your final serial/pty strategy.
+# Example placeholder for a listen-only modem bridge:
+ExecStart=/usr/local/bin/tcpser -s 2400 -l 7 -p 0 -v 6400
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,8 @@
+# Project CBM boot polish additions for /boot/firmware/config.txt
+# Keep the stock Raspberry Pi OS file and add only the lines you need.
+
+disable_splash=1
+
+# Optional: hides low-voltage and similar warning icons from the display.
+# Leave commented while troubleshooting hardware/power problems.
+# avoid_warnings=1

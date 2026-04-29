@@ -1,15 +1,21 @@
-.DS_Store
-*.log
-*.tmp
-*.bak
-*.swp
+# Build outputs
+dist/
 *.zip
 *.img
+*.img.gz
 *.img.xz
-*.gz
-*.7z
+*.sha256
 
-# Runtime/local junk
-*.pid
-*.lock
-.cache/
+# OS/editor junk
+.DS_Store
+._*
+__MACOSX/
+.Trashes/
+.Spotlight-V100/
+.fseventsd/
+Thumbs.db
+desktop.ini
+
+# Runtime logs/temp
+*.log
+*.tmp
