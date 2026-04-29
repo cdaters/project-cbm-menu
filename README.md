@@ -1,8 +1,8 @@
 # Project CBM Menu
 
-Private source repository for the Project CBM menu system, helper scripts, configuration examples, cover assets, and build notes.
+Private source repository for the Project CBM menu system, helper scripts, configuration examples, splash cover assets, build notes, release workflow documentation, and bundle packaging tools.
 
-Public release repo:
+Public Project CBM release repo:
 
 ```text
 https://github.com/cdaters/project-cbm
@@ -14,11 +14,37 @@ Private menu/build repo:
 https://github.com/cdaters/project-cbm-menu
 ```
 
+## Repository purpose
+
+This repo is the private builder-side source repo for the Project CBM menu system.
+
+It contains:
+
+- Project CBM menu scripts
+- System/control panel scripts
+- Import, content, ROM, network, audio, BBS/TCPser, and boot-mode helpers
+- Samba, TCPser, VICE, boot, and sudo config examples
+- Splash screen cover assets
+- Build notes and documentation
+- Public image release workflow documentation
+- Bundle packaging scripts
+
+The public `project-cbm` repo remains the user-facing home for SD card image releases, public documentation, checksums, release notes, screenshots, and the public roadmap.
+
 ## Version model
 
 ```text
 Project CBM public image/build version: 1.0.0
-Project CBM menu system version:       6.5
+Project CBM menu system version:       1.0.0
+Legacy internal menu lineage:          v6.5
+```
+
+`v6.5` is preserved as the historical internal build-notes lineage used during development of the Project CBM v1.0.0 public image.
+
+The first formal repository release of this menu system is:
+
+```text
+Project CBM Menu v1.0.0
 ```
 
 ## Build a menu bundle
@@ -33,7 +59,17 @@ or:
 ./packaging/build-menu-bundle.sh
 ```
 
-The output lands in `dist/`.
+The output lands in:
+
+```text
+dist/
+```
+
+Expected v1.0.0 output:
+
+```text
+dist/Project-CBM-v1.0.0-Bundle.zip
+```
 
 ## Install onto a source Pi
 
@@ -43,11 +79,12 @@ From an extracted bundle or repo checkout on the Pi:
 sudo ./packaging/install-menu-bundle.sh
 ```
 
-Review `docs/Project CBM v6.5 Build Notes and Documentation.md` before using this on a release image.
+Review the main build notes before using this on a release image:
 
-## Legal/distribution note
+```text
+docs/Project CBM Menu v1.0.0 Build Notes and Documentation.md
+```
 
-Project CBM does not include or distribute copyrighted Commodore ROMs, commercial software, disk images, demos, or game collections. Users are responsible for supplying their own legally obtained content.
 ## Documentation Map
 
 - [Project CBM Menu v1.0.0 Build Notes and Documentation](docs/Project%20CBM%20Menu%20v1.0.0%20Build%20Notes%20and%20Documentation.md)
@@ -56,4 +93,6 @@ Project CBM does not include or distribute copyrighted Commodore ROMs, commercia
 - [Versioning Notes](docs/VERSIONING.md)
 - [Menu Repo Setup](docs/MENU-REPO-SETUP.md)
 
-The `project-cbm-menu` repository is the private source and build-notes repo for the menu system. The public `project-cbm` repository remains the user-facing release home for SD card images, public documentation, checksums, and release notes.
+## Legal/distribution note
+
+Project CBM does not include or distribute copyrighted Commodore ROMs, commercial software, disk images, demos, or game collections. Users are responsible for supplying their own legally obtained content.
