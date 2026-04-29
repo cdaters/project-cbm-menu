@@ -96,3 +96,38 @@ docs/Project CBM Menu v1.0.0 Build Notes and Documentation.md
 ## Legal/distribution note
 
 Project CBM does not include or distribute copyrighted Commodore ROMs, commercial software, disk images, demos, or game collections. Users are responsible for supplying their own legally obtained content.
+
+## Public end-user documentation
+
+The `public-docs/` folder contains the end-user documentation that is mirrored into the public `project-cbm` repository and packaged as the offline public docs ZIP.
+
+Build the public documentation package:
+
+```bash
+make public-docs
+```
+
+Build both the private menu bundle and public docs package:
+
+```bash
+make release-kit
+```
+
+Expected outputs:
+
+```text
+dist/Project-CBM-v1.0.0-Bundle.zip
+dist/pcbm-v1.0.0-docs.zip
+```
+
+To preview syncing the public docs into the public repo:
+
+```bash
+./packaging/sync-public-docs.sh ../project-cbm --dry-run
+```
+
+To apply the sync:
+
+```bash
+./packaging/sync-public-docs.sh ../project-cbm --apply
+```
