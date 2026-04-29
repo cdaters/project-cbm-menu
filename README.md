@@ -1,8 +1,8 @@
-![Static Badge](https://img.shields.io/badge/platform-raspberry%20pi-%23C51A4A)
-![GitHub Release](https://img.shields.io/github/v/release/cdaters/project-cbm-menu)
-![GitHub License](https://img.shields.io/github/license/cdaters/project-cbm-menu?color=orange)
-![GitHub last commit](https://img.shields.io/github/last-commit/cdaters/project-cbm-menu)
-![GitHub Issues](https://img.shields.io/github/issues/cdaters/project-cbm-menu)
+![Platform](https://img.shields.io/badge/platform-Raspberry%20Pi-C51A4A)
+![Project](https://img.shields.io/badge/project-Project%20CBM-6f42c1)
+![Menu](https://img.shields.io/badge/menu-v1.0.0-blue)
+![License](https://img.shields.io/badge/license-MIT-orange)
+![Repo](https://img.shields.io/badge/repo-private-lightgrey)
 
 # Project CBM Menu
 
