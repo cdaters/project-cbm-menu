@@ -103,7 +103,6 @@ docs/Project CBM Menu v1.0.0 Build Notes and Documentation.md
 - [Public Image Release Workflow](docs/PUBLIC-IMAGE-RELEASE-WORKFLOW.md)
 - [Audit Notes](docs/AUDIT-NOTES.md)
 - [Versioning Notes](docs/VERSIONING.md)
-- [Menu Repo Setup](docs/MENU-REPO-SETUP.md)
 
 ## Legal/distribution note
 
