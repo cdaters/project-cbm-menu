@@ -37,6 +37,12 @@ It contains:
 
 The public `project-cbm` repo remains the user-facing home for SD card image releases, public documentation, checksums, release notes, screenshots, and the public roadmap.
 
+## Relationship to Project CBM
+
+This repository contains the source and packaging workflow for the Project CBM menu system. The user-facing Project CBM image, releases, screenshots, checksums, end-user documentation, and acknowledgements live in the main `project-cbm` repository.
+
+Project CBM exists in appreciation of the path [Carmelo Maiolino's Combian64](https://cmaiolino.wordpress.com/combian-64-v2/) helped establish, but it is not a fork of Combian64 and is not affiliated with or endorsed by Combian64 or Carmelo Maiolino.
+
 ## Version model
 
 ```text
