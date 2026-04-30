@@ -29,6 +29,7 @@ Target systems:
 
 - Raspberry Pi 3
 - Raspberry Pi 4
+- Raspberry Pi 400
 - Raspberry Pi 5
 - Raspberry Pi 500
 
