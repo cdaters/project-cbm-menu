@@ -11,7 +11,7 @@ For the first public image:
 
 ```text
 Project CBM image: v1.0.0
-Project CBM menu:  v6.5
+Project CBM menu:  v1.0.0
 ```
 
 This lets the menu system evolve without forcing a public image release every time a script or build-note detail changes.
