@@ -1,6 +1,13 @@
+![Platform](https://img.shields.io/badge/platform-Raspberry%20Pi-C51A4A)
+[![Project CBM Release](https://img.shields.io/github/v/release/cdaters/project-cbm?label=project-cbm%20release)](https://github.com/cdaters/project-cbm/releases/latest)
+![Menu](https://img.shields.io/badge/menu-v1.0.0-blue)
+[![License](https://img.shields.io/github/license/cdaters/project-cbm-menu)](LICENSE)
+![GitHub last commit](https://img.shields.io/github/last-commit/cdaters/project-cbm-menu)
+![GitHub Issues](https://img.shields.io/github/issues/cdaters/project-cbm-menu)
+
 # Project CBM Menu
 
-Private source repository for the Project CBM menu system, helper scripts, configuration examples, splash cover assets, build notes, release workflow documentation, and bundle packaging tools.
+Source repository for the Project CBM menu system, helper scripts, configuration examples, splash cover assets, build notes, release workflow documentation, and bundle packaging tools.
 
 Public Project CBM release repo:
 
@@ -8,7 +15,7 @@ Public Project CBM release repo:
 https://github.com/cdaters/project-cbm
 ```
 
-Private menu/build repo:
+Menu/build source repo:
 
 ```text
 https://github.com/cdaters/project-cbm-menu
@@ -16,7 +23,7 @@ https://github.com/cdaters/project-cbm-menu
 
 ## Repository purpose
 
-This repo is the private builder-side source repo for the Project CBM menu system.
+This repo is the source repository for the Project CBM menu system.
 
 It contains:
 
@@ -30,6 +37,12 @@ It contains:
 - Bundle packaging scripts
 
 The public `project-cbm` repo remains the user-facing home for SD card image releases, public documentation, checksums, release notes, screenshots, and the public roadmap.
+
+## Relationship to Project CBM
+
+This repository contains the source and packaging workflow for the Project CBM menu system. The user-facing Project CBM image, releases, screenshots, checksums, end-user documentation, and acknowledgements live in the main `project-cbm` repository.
+
+Project CBM exists in appreciation of the path [Carmelo Maiolino's Combian64](https://cmaiolino.wordpress.com/combian-64-v2/) helped establish, but it is not a fork of Combian64 and is not affiliated with or endorsed by Combian64 or Carmelo Maiolino.
 
 ## Version model
 
@@ -91,8 +104,42 @@ docs/Project CBM Menu v1.0.0 Build Notes and Documentation.md
 - [Public Image Release Workflow](docs/PUBLIC-IMAGE-RELEASE-WORKFLOW.md)
 - [Audit Notes](docs/AUDIT-NOTES.md)
 - [Versioning Notes](docs/VERSIONING.md)
-- [Menu Repo Setup](docs/MENU-REPO-SETUP.md)
 
 ## Legal/distribution note
 
 Project CBM does not include or distribute copyrighted Commodore ROMs, commercial software, disk images, demos, or game collections. Users are responsible for supplying their own legally obtained content.
+
+## Public end-user documentation
+
+The `public-docs/` folder contains the end-user documentation that is mirrored into the public `project-cbm` repository and packaged as the offline public docs ZIP.
+
+Build the public documentation package:
+
+```bash
+make public-docs
+```
+
+Build both the menu bundle and public docs package:
+
+```bash
+make release-kit
+```
+
+Expected outputs:
+
+```text
+dist/Project-CBM-v1.0.0-Bundle.zip
+dist/pcbm-v1.0.0-docs.zip
+```
+
+To preview syncing the public docs into the public repo:
+
+```bash
+./packaging/sync-public-docs.sh ../project-cbm --dry-run
+```
+
+To apply the sync:
+
+```bash
+./packaging/sync-public-docs.sh ../project-cbm --apply
+```
