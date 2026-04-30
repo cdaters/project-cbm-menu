@@ -12,8 +12,8 @@ This release descends from the internal v6.5 build-notes lineage used during dev
 
 ```text
 Project CBM public image/build version: 1.0.0
-Project CBM menu system version:       1.0.0
-Legacy internal menu lineage:          v6.5
+Project CBM menu system version:        1.0.0
+Legacy internal menu lineage:           v6.5
 ```
 
 v6.5 rolls forward the v6.4 foundation and formally adds:
