@@ -1,6 +1,6 @@
-# Project CBM Roadmap
+# Project CBM Menu Roadmap
 
-This file tracks planned improvements, ideas, and wishlist items for future Project CBM releases.
+This file tracks planned improvements, ideas, and wishlist items for the Project CBM menu system and related public image releases.
 
 Items listed here are not guaranteed features, but they represent areas being entertained and/or explored for future versions.
 
@@ -24,7 +24,7 @@ Items listed here are not guaranteed features, but they represent areas being en
 - Better VICE configuration backup/restore tools
 - Optional auto-launch behavior for a selected machine
 - Import/export Project CBM settings
-- Menu controls for Raspberry Pi 500+ LED behavior, including safe presets for default LEDs, quiet/dark mode, activity-only behavior (if possible), and restoring stock LED settings.
+- Menu controls for Raspberry Pi LED behavior, including safe presets for default LEDs, quiet/dark mode, activity-only behavior where supported, and restoring stock LED settings.
 
 ## Maybe / Research Needed
 
@@ -33,9 +33,9 @@ Items listed here are not guaranteed features, but they represent areas being en
 - Optional RetroAchievements-style metadata or scraper support
 - More controller presets
 - Pi 3-specific performance tuning
-- Pi 5/500-specific performance tuning
-- Other emulator projects (not VICE/Commodore)
-- Research model-specific Raspberry Pi LED handling for Pi 500+ system before exposing LED controls in the Project CBM menu.
+- Pi 5 / Pi 500-specific performance tuning
+- Other emulator projects, not VICE/Commodore
+- Research model-specific Raspberry Pi LED handling for Pi 3, Pi 4/400, Pi 5, and Pi 500-class systems before exposing LED controls in the Project CBM menu.
 
 ## Not Currently Planned
 
