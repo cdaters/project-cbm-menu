@@ -1,12 +1,12 @@
 ![Platform](https://img.shields.io/badge/platform-Raspberry%20Pi-C51A4A)
-![Project](https://img.shields.io/badge/project-Project%20CBM-6f42c1)
-![Menu](https://img.shields.io/badge/menu-v1.0.0-blue)
-![License](https://img.shields.io/badge/license-MIT-orange)
-![Repo](https://img.shields.io/badge/repo-private-lightgrey)
+![GitHub Release(latest by date)](https://img.shields.io/github/v/release/cdaters/project-cbm)
+[![License](https://img.shields.io/github/license/cdaters/project-cbm-menu)](LICENSE)
+![GitHub last commit](https://img.shields.io/github/last-commit/cdaters/project-cbm)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/cdaters/project-cbm)
 
 # Project CBM Menu
 
-Private source repository for the Project CBM menu system, helper scripts, configuration examples, splash cover assets, build notes, release workflow documentation, and bundle packaging tools.
+Source repository for the Project CBM menu system, helper scripts, configuration examples, splash cover assets, build notes, release workflow documentation, and bundle packaging tools.
 
 Public Project CBM release repo:
 
@@ -14,7 +14,7 @@ Public Project CBM release repo:
 https://github.com/cdaters/project-cbm
 ```
 
-Private menu/build repo:
+Menu/build source repo:
 
 ```text
 https://github.com/cdaters/project-cbm-menu
@@ -22,7 +22,7 @@ https://github.com/cdaters/project-cbm-menu
 
 ## Repository purpose
 
-This repo is the private builder-side source repo for the Project CBM menu system.
+This repo is the source repository for the Project CBM menu system.
 
 It contains:
 
@@ -113,7 +113,7 @@ Build the public documentation package:
 make public-docs
 ```
 
-Build both the private menu bundle and public docs package:
+Build both the menu bundle and public docs package:
 
 ```bash
 make release-kit

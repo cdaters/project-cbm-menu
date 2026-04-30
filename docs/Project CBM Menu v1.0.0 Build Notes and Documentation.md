@@ -6,7 +6,7 @@ Project CBM Menu v1.0.0 is the first formal repository release of the menu syste
 
 It follows the v6.4 documentation style: build philosophy first, then repeatable phases, then folder/config/script inventories, then appendices with source listings.
 
-The image currently published as Project CBM v1.0.0 can remain v1.0.0 while this private menu system repository tracks the formal menu source as v1.0.0.
+The image currently published as Project CBM v1.0.0 can remain v1.0.0 while this menu system repository tracks the formal menu source as v1.0.0.
 
 This release descends from the internal v6.5 build-notes lineage used during development of the Project CBM v1.0.0 public image.
 
@@ -70,7 +70,7 @@ The design priorities are:
 9. Auto-handle common Pi hardware weirdness, especially dual-HDMI audio.
 10. Clearly identify the project, author, version, license, credits, and warranty/distribution limits.
 11. Treat TCPser as optional but properly integrated.
-12. Keep experimental features visible in the private repo but conservative in the public release.
+12. Keep experimental features visible in the menu repo but conservative in the public release.
 13. Provide a repeatable release workflow suitable for public image distribution.
 
 ---
@@ -111,7 +111,7 @@ Project CBM v1.1.0 image
 Project CBM Menu v6.6 or v7.0
 ```
 
-This lets you revise the menu/build machinery privately without implying that every internal menu iteration is a new public SD-card image release.
+This lets you revise the menu/build machinery without implying that every internal menu iteration is a new public SD-card image release.
 
 ---
 
@@ -205,7 +205,7 @@ The cleanest build order is:
 13. Build and integrate TCPser.
 14. Validate menu boot, direct-machine boot, networking, audio, imports, splash, and TCPser.
 15. Prepare the image for release.
-16. Commit the clean menu system to the private `project-cbm-menu` repository.
+16. Commit the clean menu system to the `project-cbm-menu` repository.
 
 ---
 
@@ -873,7 +873,7 @@ Project-CBM-v1.0.0-release/
     └── v1.0.0.md
 ```
 
-The private menu repo produces this companion artifact:
+The menu repo produces this companion artifact:
 
 ```text
 Project-CBM-v1.0.0-Bundle.zip
@@ -881,9 +881,9 @@ Project-CBM-v1.0.0-Bundle.zip
 
 ---
 
-# Phase 16 - Private Menu Repository Model
+# Phase 16 - Menu Repository Model
 
-Recommended private repository:
+Recommended repository:
 
 ```text
 https://github.com/cdaters/project-cbm-menu
@@ -892,14 +892,14 @@ https://github.com/cdaters/project-cbm-menu
 Recommended purpose:
 
 ```text
-Private build notes, menu source, configuration examples, cover assets, and packaging tools for Project CBM's menu system.
+Build notes, menu source, configuration examples, cover assets, and packaging tools for Project CBM's menu system.
 ```
 
-Keep this private repo separate from the public image/end-user repo:
+Keep this menu repo separate from the public image/end-user repo:
 
 ```text
 project-cbm       -> public image releases, public docs, checksums, user-facing roadmap
-project-cbm-menu  -> private menu scripts, build diary, source bundles, internal release tooling
+project-cbm-menu  -> menu scripts, build diary, source bundles, release tooling
 ```
 
 Recommended repo layout:
@@ -1023,7 +1023,7 @@ Menu v1.0.0, formerly tracked internally as v6.5, adds machine-family splash rou
 Important:
 - Project CBM does not include or distribute copyrighted Commodore ROMs, commercial software, disk images, demos, games, or other protected content.
 - Users are responsible for supplying their own legally obtained content.
-- Keep PCBM_REPO pointed at the public image/docs repo and PCBM_MENU_REPO pointed at the private menu repo.
+- Keep PCBM_REPO pointed at the public image/docs repo and PCBM_MENU_REPO pointed at the menu repo.
 ```
 
 ---

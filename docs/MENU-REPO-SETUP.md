@@ -1,6 +1,6 @@
 # Project CBM Menu Repo Setup Notes
 
-This ZIP is laid out so you can drop it into your private GitHub repository:
+This ZIP is laid out so you can drop it into your GitHub repository:
 
 ```text
 https://github.com/cdaters/project-cbm-menu
@@ -36,7 +36,7 @@ dist/Project-CBM-v6.5-Bundle.zip
 
 ## Opinionated version guidance
 
-Yes: keep the public Project CBM image version and the private menu-system version separate.
+Yes: keep the public Project CBM image version and the menu-system version separate.
 
 Use:
 
@@ -45,4 +45,4 @@ Project CBM v1.0.0 image
 Project CBM Menu v6.5
 ```
 
-That gives you room to keep refining the private build diary and scripts without making every internal menu change look like a public image release.
+That gives you room to keep refining the build diary and scripts without making every internal menu change look like a public image release.

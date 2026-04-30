@@ -1,6 +1,6 @@
 # Project CBM Public Image Release Workflow
 
-This document explains how the private `project-cbm-menu` repository feeds the public `project-cbm` image release process.
+This document explains how the `project-cbm-menu` repository feeds the public `project-cbm` image release process.
 
 ## Repository Roles
 
@@ -11,7 +11,7 @@ project-cbm
   release notes, screenshots, and the public roadmap.
 
 project-cbm-menu
-  Private repository.
+  Menu source repository.
   Contains menu source scripts, configuration examples, splash assets,
   build notes, audit notes, release-prep tooling, and menu bundle packaging.
 ```
@@ -167,7 +167,7 @@ docs/
 release-notes/
 ```
 
-The private `project-cbm-menu` release should attach:
+The `project-cbm-menu` release should attach:
 
 ```text
 Project-CBM-v1.0.0-Bundle.zip
@@ -177,4 +177,4 @@ Project-CBM-v1.0.0-Bundle.zip
 
 The public repo serves users.
 
-The private repo serves the builder.
+The menu repository serves as the source and packaging workspace for the Project CBM menu system.
