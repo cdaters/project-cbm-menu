@@ -48,8 +48,8 @@ Project CBM exists in appreciation of the path [Carmelo Maiolino's Combian64](ht
 
 ```text
 Project CBM public image/build version: 1.0.0
-Project CBM menu system version:       1.0.0
-Legacy internal menu lineage:          v6.5
+Project CBM menu system version:        1.0.0
+Legacy internal menu lineage:           v6.5
 ```
 
 `v6.5` is preserved as the historical internal build-notes lineage used during development of the Project CBM v1.0.0 public image.
