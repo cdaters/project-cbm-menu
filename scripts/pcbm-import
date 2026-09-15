@@ -1,0 +1,242 @@
+#!/bin/bash
+#
+# ================================================================
+#  Project CBM (pcbm)
+#  Raspberry Pi Commodore System
+#
+#  Script: pcbm-import
+#  Version: Loaded from /etc/pcbm/version.conf
+#
+#  Author: Craig Daters
+#  Repository: https://github.com/cdaters/project-cbm
+#
+# ---------------------------------------------------------------
+#  Description:
+#  This script is part of Project CBM, a lightweight, appliance-
+#  style Commodore environment for Raspberry Pi OS using the
+#  VICE emulator suite.
+#
+# ---------------------------------------------------------------
+#  License:
+#  MIT License. See LICENSE in the project repository.
+#
+# ---------------------------------------------------------------
+#  Credits & Acknowledgements:
+#  - Combian64 by Carmelo Maiolino from which this build was inspired
+#  - VICE Team, for the Versatile Commodore Emulator
+#  - Raspberry Pi Foundation and Raspberry Pi OS developers
+#  - Original Commodore engineers and developers
+#  - The wider retro-computing and open source communities
+#
+#  Project CBM does not include or distribute copyrighted ROMs,
+#  commercial software, disk images, or game collections.
+#
+# ---------------------------------------------------------------
+#  Notice:
+#  You may use, modify, and share this script under the project
+#  license, but please preserve attribution where practical.
+#
+#  No warranty is provided. Use at your own risk.
+# ================================================================
+#
+# Project CBM v6.4.3c Importer
+# Stable hybrid USB browser/importer:
+# - SPACE selects files/folders
+# - ENTER/OK processes selection
+# - Single selected folder opens an explicit Browse / Import / Cancel menu
+# - ALL imports everything in the current folder
+# - Parent Directory climbs up one level
+# - Uses a temp file for selected paths instead of stdout plumbing
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "$SCRIPT_DIR/pcbm-dialog-lib.sh"
+pcbm_trap_cleanup
+
+mkdir -p "$PCBM_CONTENT_BASE"/{games,demos,music,programs}
+
+dest_items=(
+  "games"    "Games"
+  "demos"    "Demos"
+  "music"    "Music"
+  "programs" "Programs"
+  "RETURN"   "<- Return without importing"
+)
+
+folder_action_items=(
+  "BROWSE" "Browse into this folder"
+  "IMPORT" "Import this folder recursively"
+  "CANCEL" "<- Go back"
+)
+
+browse_and_select() {
+  local output_file="$1"
+  local current="$PCBM_USB_MOUNT"
+  local -a items menu_items selected selected_items
+  local item base idx action
+
+  : > "$output_file"
+
+  while true; do
+    items=()
+    menu_items=("ALL" "[Import Everything in This Folder]" "off")
+
+    if [[ "$current" != "$PCBM_USB_MOUNT" ]]; then
+      menu_items+=(".." "[Parent Directory]" "off")
+    fi
+
+    while IFS= read -r -d '' item; do
+      items+=("$item")
+    done < <(pcbm_filtered_find "$current" -mindepth 1 -maxdepth 1 | sort -z)
+
+    for i in "${!items[@]}"; do
+      base=$(basename "${items[$i]}")
+      if [[ -d "${items[$i]}" ]]; then
+        menu_items+=("$i" "[Folder] $base" "off")
+      else
+        menu_items+=("$i" "[File] $base" "off")
+      fi
+    done
+
+    pcbm_show_checklist "Import from USB"       "Current folder:\n$current\n\nSPACE = select item(s)\nENTER/OK = process selection\n\nSelect one folder to choose Browse or Import."       "${menu_items[@]}"
+
+    (( PCBM_STATUS != 0 )) && return 1
+
+    read -r -a selected <<< "$(echo "$PCBM_CHOICE" | tr -d '"')"
+
+    if (( ${#selected[@]} == 0 )); then
+      pcbm_show_msg "Nothing Selected" "Use SPACE to select one or more files/folders, then press ENTER or choose OK."
+      continue
+    fi
+
+    if printf '%s\n' "${selected[@]}" | grep -qx "ALL"; then
+      for item in "${items[@]}"; do
+        printf '%s\n' "$item" >> "$output_file"
+      done
+      return 0
+    fi
+
+    if printf '%s\n' "${selected[@]}" | grep -qx ".."; then
+      [[ "$current" != "$PCBM_USB_MOUNT" ]] && current=$(dirname "$current")
+      continue
+    fi
+
+    # If exactly one folder is selected, explicitly ask Browse vs Import.
+    if (( ${#selected[@]} == 1 )); then
+      idx="${selected[0]}"
+      if [[ "$idx" =~ ^[0-9]+$ && -n "${items[$idx]}" && -d "${items[$idx]}" ]]; then
+        pcbm_show_menu "Folder Selected"           "Folder:\n$(basename "${items[$idx]}")\n\nWhat would you like to do?"           "${folder_action_items[@]}"
+
+        case "$PCBM_CHOICE" in
+          BROWSE)
+            current="${items[$idx]}"
+            continue
+            ;;
+          IMPORT)
+            printf '%s\n' "${items[$idx]}" >> "$output_file"
+            return 0
+            ;;
+          CANCEL|*)
+            continue
+            ;;
+        esac
+      fi
+    fi
+
+    selected_items=()
+    for idx in "${selected[@]}"; do
+      [[ "$idx" =~ ^[0-9]+$ ]] || continue
+      [[ -n "${items[$idx]}" ]] && selected_items+=("${items[$idx]}")
+    done
+
+    if (( ${#selected_items[@]} == 0 )); then
+      pcbm_show_msg "Nothing Importable Selected" "Project CBM did not find any valid selected files or folders."
+      continue
+    fi
+
+    for item in "${selected_items[@]}"; do
+      printf '%s\n' "$item" >> "$output_file"
+    done
+
+    return 0
+  done
+}
+
+run_import() {
+  local dev dest_dir item count=0 selected_file
+  local -a selected_paths
+
+  pcbm_infobox "USB Import" "Scanning for a USB drive..."
+  sleep 1
+
+  dev=$(pcbm_mount_usb_first_partition)
+  case $? in
+    1)
+      pcbm_show_msg "USB Drive Not Found" "Project CBM could not find a removable USB partition to mount."
+      return 0
+      ;;
+    2)
+      pcbm_show_msg "Mount Failed" "Project CBM found a USB drive but could not mount it.\n\nPlease verify passwordless sudo for mount, umount, and mkdir."
+      return 0
+      ;;
+  esac
+
+  selected_file=$(mktemp)
+
+  if ! browse_and_select "$selected_file"; then
+    rm -f "$selected_file"
+    pcbm_unmount_usb
+    return 0
+  fi
+
+  mapfile -t selected_paths < "$selected_file"
+  rm -f "$selected_file"
+
+  if (( ${#selected_paths[@]} == 0 )); then
+    pcbm_unmount_usb
+    return 0
+  fi
+
+  pcbm_show_menu "Select Destination"     "Choose where the selected USB content should be copied."     "${dest_items[@]}"
+
+  if (( PCBM_STATUS != 0 )) || [[ "$PCBM_CHOICE" == "RETURN" ]]; then
+    pcbm_unmount_usb
+    return 0
+  fi
+
+  dest_dir="$PCBM_CONTENT_BASE/$PCBM_CHOICE"
+  mkdir -p "$dest_dir"
+
+  pcbm_infobox "Importing Files" "Copying selected item(s) to:\n$dest_dir"
+  sleep 1
+  : >/tmp/pcbm-import.log
+
+  for item in "${selected_paths[@]}"; do
+    echo "COPYING: [$item]" >> /tmp/pcbm-import-debug.log
+    if [[ -e "$item" ]]; then
+      pcbm_copy_clean "$item" "$dest_dir" >>/tmp/pcbm-import.log 2>&1 && ((count++))
+    fi
+  done
+
+  pcbm_unmount_usb
+  pcbm_show_msg "Import Complete" "Imported $count item(s) into:\n$dest_dir"
+}
+
+while true; do
+  prompt="Import content from a USB drive into Project CBM folders.\n\nYou can browse into folders or import entire folders recursively."
+  pcbm_show_menu "Project CBM Import" "$prompt"     "IMPORT" "Import files or folders from a USB drive"     "RETURN" "<- Return to the main menu"
+
+  case "$PCBM_STATUS" in
+    0)
+      case "$PCBM_CHOICE" in
+        IMPORT) run_import ;;
+        RETURN) exit 0 ;;
+      esac
+      ;;
+    1|255)
+      exit 0
+      ;;
+    *)
+      exit 0
+      ;;
+  esac
+done

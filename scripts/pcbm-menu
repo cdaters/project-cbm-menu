@@ -1,0 +1,119 @@
+#!/bin/bash
+#
+# ================================================================
+#  Project CBM (pcbm)
+#  Raspberry Pi Commodore System
+#
+#  Script: pcbm-menu
+#  Version: Loaded from /etc/pcbm/version.conf
+#
+#  Author: Craig Daters
+#  Repository: https://github.com/cdaters/project-cbm
+#
+# ---------------------------------------------------------------
+#  Description:
+#  This script is part of Project CBM, a lightweight, appliance-
+#  style Commodore environment for Raspberry Pi OS using the
+#  VICE emulator suite.
+#
+# ---------------------------------------------------------------
+#  License:
+#  MIT License. See LICENSE in the project repository.
+#
+# ---------------------------------------------------------------
+#  Credits & Acknowledgements:
+#  - Combian64 by Carmelo Maiolino from which this build was inspired
+#  - VICE Team, for the Versatile Commodore Emulator
+#  - Raspberry Pi Foundation and Raspberry Pi OS developers
+#  - Original Commodore engineers and developers
+#  - The wider retro-computing and open source communities
+#
+#  Project CBM does not include or distribute copyrighted ROMs,
+#  commercial software, disk images, or game collections.
+#
+# ---------------------------------------------------------------
+#  Notice:
+#  You may use, modify, and share this script under the project
+#  license, but please preserve attribution where practical.
+#
+#  No warranty is provided. Use at your own risk.
+# ================================================================
+#
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+source "$SCRIPT_DIR/pcbm-dialog-lib.sh"
+pcbm_trap_cleanup
+
+if [ "$(tty)" = "/dev/tty1" ] && [ -z "$PCBM_SPLASH_SHOWN" ]; then
+  export PCBM_SPLASH_SHOWN=1
+  /usr/local/bin/pcbm-cover
+  reset
+  clear
+fi
+
+while true; do
+  current_emu=$(pcbm_default_machine)
+  current_label=$(pcbm_default_machine_label)
+
+  main_items=(
+    "RUN"      "Run the current default machine now"
+    "MACHINES" "Select a Commodore machine to boot or make the default"
+    "CONTENT"  "Launch games, demos, music, programs, or ROM files"
+    "IMPORT"   "Import demos, games, music, or programs from USB"
+    "CONTROL"  "Open network, BBS, ROM, and system settings"
+    "FILES"    "Start the Midnight Commander file browser"
+    "QUIT"     "Exit Project CBM and return to the shell"
+    "POWER"    "Shut down Project CBM safely"
+    "REBOOT"   "Restart Project CBM"
+  )
+
+  prompt="Default machine: $current_label\n\nPlease select a Project CBM option."
+  pcbm_show_menu "Project CBM Main Menu" "$prompt" "${main_items[@]}"
+
+  case "$PCBM_STATUS" in
+    0)
+      case "$PCBM_CHOICE" in
+        RUN)
+          if [[ -z "$current_emu" ]]; then
+            pcbm_show_msg "Default Machine Not Set" "No default machine is currently configured.\n\nChoose MACHINES first, then set a default machine."
+          else
+            pcbm_launch_machine "$current_emu"
+
+            if [ "$(tty)" = "/dev/tty1" ]; then
+              /usr/local/bin/pcbm-cover
+              reset
+              clear
+            fi
+          fi
+          ;;
+        MACHINES) "$SCRIPT_DIR/pcbm-machines" ;;
+        CONTENT)  "$SCRIPT_DIR/pcbm-content" ;;
+        IMPORT)   "$SCRIPT_DIR/pcbm-import" ;;
+        CONTROL)  "$SCRIPT_DIR/pcbm-control" ;;
+        FILES)
+          pcbm_cleanup_terminal
+          mc
+          ;;
+        QUIT)
+          pcbm_cleanup_terminal
+          exit 0
+          ;;
+        POWER)
+          if pcbm_yesno "Shutdown Project CBM" "Shut down Project CBM now?"; then
+            sudo -n /usr/sbin/poweroff || pcbm_show_msg "Permission Required" "Shutdown requires passwordless sudo for /usr/sbin/poweroff."
+          fi
+          ;;
+        REBOOT)
+          if pcbm_yesno "Reboot Project CBM" "Restart Project CBM now?"; then
+            sudo -n /usr/sbin/reboot || pcbm_show_msg "Permission Required" "Reboot requires passwordless sudo for /usr/sbin/reboot."
+          fi
+          ;;
+      esac
+      ;;
+    1|255)
+      continue
+      ;;
+    *)
+      continue
+      ;;
+  esac
+done

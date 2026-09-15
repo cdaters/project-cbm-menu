@@ -1,0 +1,122 @@
+#!/bin/bash
+#
+# ================================================================
+#  Project CBM (pcbm)
+#  Raspberry Pi Commodore System
+#
+#  Script: pcbm-boot
+#  Version: Loaded from /etc/pcbm/version.conf
+#
+#  Author: Craig Daters
+#  Repository: https://github.com/cdaters/project-cbm
+#
+# ---------------------------------------------------------------
+#  Description:
+#  This script is part of Project CBM, a lightweight, appliance-
+#  style Commodore environment for Raspberry Pi OS using the
+#  VICE emulator suite.
+#
+# ---------------------------------------------------------------
+#  License:
+#  MIT License. See LICENSE in the project repository.
+#
+# ---------------------------------------------------------------
+#  Credits & Acknowledgements:
+#  - Combian64 by Carmelo Maiolino from which this build was inspired
+#  - VICE Team, for the Versatile Commodore Emulator
+#  - Raspberry Pi Foundation and Raspberry Pi OS developers
+#  - Original Commodore engineers and developers
+#  - The wider retro-computing and open source communities
+#
+#  Project CBM does not include or distribute copyrighted ROMs,
+#  commercial software, disk images, or game collections.
+#
+# ---------------------------------------------------------------
+#  Notice:
+#  You may use, modify, and share this script under the project
+#  license, but please preserve attribution where practical.
+#
+#  No warranty is provided. Use at your own risk.
+# ================================================================
+#
+EMU_PROFILE="${1:-$(tr -d '\r\n' </etc/pcbm/default-machine.conf)}"
+VICE_LOG="/tmp/pcbm-vice.log"
+PCBM_VERSION_CONF="/etc/pcbm/version.conf"
+
+if [[ -f "$PCBM_VERSION_CONF" ]]; then
+  # shellcheck source=/etc/pcbm/version.conf
+  source "$PCBM_VERSION_CONF"
+fi
+
+export HOME="/home/pi"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_DATA_HOME="$HOME/.local/share"
+
+mkdir -p \
+  "$XDG_CONFIG_HOME/vice" \
+  "$XDG_STATE_HOME/vice" \
+  "$XDG_DATA_HOME/vice"
+
+: >"$VICE_LOG"
+touch "$XDG_STATE_HOME/vice/vice.log" 2>/dev/null
+
+clear
+reset
+stty sane
+chvt 1 >/dev/null 2>&1 || true
+
+cd /home/pi/pcbm || exit 1
+
+sleep 1
+
+EMU_BIN=""
+declare -a EMU_ARGS
+
+case "$EMU_PROFILE" in
+  x64|x64sc|xscpu64|x64dtv|x128|xcbm2|xcbm5x0|xvic|xplus4|xpet)
+    EMU_BIN="$EMU_PROFILE"
+    ;;
+  x128-80col)
+    EMU_BIN="x128"
+    EMU_ARGS=("-80col")
+    ;;
+  "")
+    echo "Project CBM: no default machine configured." >/dev/tty
+    sleep 2
+    exit 1
+    ;;
+  *)
+    echo "Project CBM: unknown machine profile '$EMU_PROFILE'." >/dev/tty
+    sleep 2
+    exit 1
+    ;;
+esac
+
+# Refresh ALSA's default output before each VICE launch.
+# This lets Project CBM follow HDMI cable changes on Pi models with dual HDMI.
+if command -v /usr/local/bin/pcbm-audio >/dev/null 2>&1; then
+  /usr/local/bin/pcbm-audio auto --quiet >>"$VICE_LOG" 2>&1 || true
+fi
+
+/usr/bin/env \
+  HOME="$HOME" \
+  XDG_CONFIG_HOME="$XDG_CONFIG_HOME" \
+  XDG_STATE_HOME="$XDG_STATE_HOME" \
+  XDG_DATA_HOME="$XDG_DATA_HOME" \
+  SDL_AUDIODRIVER=alsa \
+  /usr/local/bin/"$EMU_BIN" "${EMU_ARGS[@]}" -sounddev sdl \
+  </dev/tty >"$VICE_LOG" 2>&1
+
+STATUS=$?
+
+reset
+stty sane
+clear
+
+if (( STATUS != 0 )); then
+  echo "Project CBM: $EMU_BIN exited with status $STATUS. See $VICE_LOG" >/dev/tty
+  sleep 2
+fi
+
+exit $STATUS

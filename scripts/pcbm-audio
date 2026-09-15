@@ -1,0 +1,436 @@
+#!/bin/bash
+#
+# ================================================================
+#  Project CBM (pcbm)
+#  Raspberry Pi Commodore System
+#
+#  Script: pcbm-audio
+#  Version: Loaded from /etc/pcbm/version.conf
+#
+#  Author: Craig Daters
+#  Repository: https://github.com/cdaters/project-cbm
+#
+# ---------------------------------------------------------------
+#  Description:
+#  This script is part of Project CBM, a lightweight, appliance-
+#  style Commodore environment for Raspberry Pi OS using the
+#  VICE emulator suite.
+#
+# ---------------------------------------------------------------
+#  License:
+#  MIT License. See LICENSE in the project repository.
+#
+# ---------------------------------------------------------------
+#  Credits & Acknowledgements:
+#  - Combian64 by Carmelo Maiolino from which this build was inspired
+#  - VICE Team, for the Versatile Commodore Emulator
+#  - Raspberry Pi Foundation and Raspberry Pi OS developers
+#  - Original Commodore engineers and developers
+#  - The wider retro-computing and open source communities
+#
+#  Project CBM does not include or distribute copyrighted ROMs,
+#  commercial software, disk images, or game collections.
+#
+# ---------------------------------------------------------------
+#  Notice:
+#  You may use, modify, and share this script under the project
+#  license, but please preserve attribution where practical.
+#
+#  No warranty is provided. Use at your own risk.
+# ================================================================
+#
+# Project CBM audio helper
+# Handles HDMI/ALSA detection, ~/.asoundrc generation, manual HDMI selection,
+# and user-facing audio tests from the Project CBM dialog menu.
+
+set -u
+
+PCBM_VERSION_CONF="/etc/pcbm/version.conf"
+
+if [[ -f "$PCBM_VERSION_CONF" ]]; then
+  # shellcheck source=/etc/pcbm/version.conf
+  source "$PCBM_VERSION_CONF"
+else
+  PCBM_PROJECT_NAME="Project CBM"
+  PCBM_INTERNAL_NAME="pcbm"
+  PCBM_VERSION="dev"
+  PCBM_BUILD="local"
+  PCBM_AUTHOR="Craig Daters"
+  PCBM_REPO="https://github.com/<your-username>/project-cbm"
+  PCBM_TAGLINE="Power on. Boot fast. No nonsense. Just Commodore."
+fi
+
+PCBM_AUDIO_CONF="${PCBM_AUDIO_CONF:-/home/pi/.config/pcbm/audio.conf}"
+PCBM_ASOUNDRC="${PCBM_ASOUNDRC:-/home/pi/.asoundrc}"
+PCBM_AUDIO_LOG="${PCBM_AUDIO_LOG:-/tmp/pcbm-audio.log}"
+PCBM_DIALOG_LIB="/usr/local/bin/pcbm-dialog-lib.sh"
+
+QUIET=0
+COMMAND="${1:-menu}"
+shift || true
+
+for arg in "$@"; do
+  case "$arg" in
+    --quiet|-q) QUIET=1 ;;
+  esac
+done
+
+log() {
+  printf '%s\n' "$*" >>"$PCBM_AUDIO_LOG"
+  if (( QUIET == 0 )); then
+    printf '%s\n' "$*"
+  fi
+}
+
+ensure_audio_dirs() {
+  mkdir -p "$(dirname "$PCBM_AUDIO_CONF")"
+  mkdir -p "$(dirname "$PCBM_ASOUNDRC")"
+  : >"$PCBM_AUDIO_LOG" 2>/dev/null || true
+}
+
+load_audio_conf() {
+  MODE="auto"
+  CARD=""
+  DEVICE="0"
+
+  if [[ -f "$PCBM_AUDIO_CONF" ]]; then
+    # shellcheck disable=SC1090
+    source "$PCBM_AUDIO_CONF"
+  fi
+
+  [[ -z "${MODE:-}" ]] && MODE="auto"
+  [[ -z "${DEVICE:-}" ]] && DEVICE="0"
+}
+
+save_audio_conf() {
+  local mode="$1"
+  local card="${2:-0}"
+  local device="${3:-0}"
+
+  ensure_audio_dirs
+  cat >"$PCBM_AUDIO_CONF" <<EOF
+MODE=$mode
+CARD=$card
+DEVICE=$device
+EOF
+}
+
+card_for_vc4_index() {
+  local idx="$1"
+  local name="vc4hdmi${idx}"
+
+  awk -v target="$name" '
+    $0 ~ "\\[" target "[[:space:]]*\\]" { print $1; exit }
+  ' /proc/asound/cards 2>/dev/null
+}
+
+first_vc4_card() {
+  awk '/vc4hdmi/ { print $1; exit }' /proc/asound/cards 2>/dev/null
+}
+
+first_aplay_card_device() {
+  aplay -l 2>/dev/null | awk '
+    /^card [0-9]+:/ {
+      card=$2; gsub(":", "", card)
+      for (i=1; i<=NF; i++) {
+        if ($i == "device") {
+          dev=$(i+1); gsub(":", "", dev); print card " " dev; exit
+        }
+      }
+    }
+  '
+}
+
+connected_hdmi_indexes() {
+  local status base name number idx
+  for status in /sys/class/drm/card*-HDMI-A-*/status; do
+    [[ -e "$status" ]] || continue
+    [[ "$(cat "$status" 2>/dev/null)" == "connected" ]] || continue
+    base="${status%/status}"
+    name="$(basename "$base")"
+    if [[ "$name" =~ HDMI-A-([0-9]+)$ ]]; then
+      number="${BASH_REMATCH[1]}"
+      idx=$((number - 1))
+      (( idx >= 0 )) && printf '%s\n' "$idx"
+    fi
+  done | awk '!seen[$0]++'
+}
+
+resolve_auto_device() {
+  local idx card fallback carddev
+
+  # Prefer the HDMI connector Linux reports as physically connected.
+  while IFS= read -r idx; do
+    [[ -n "$idx" ]] || continue
+    card="$(card_for_vc4_index "$idx")"
+    if [[ -n "$card" ]]; then
+      printf '%s 0\n' "$card"
+      return 0
+    fi
+  done < <(connected_hdmi_indexes)
+
+  # Fallback: first vc4 HDMI card exposed by ALSA.
+  fallback="$(first_vc4_card)"
+  if [[ -n "$fallback" ]]; then
+    printf '%s 0\n' "$fallback"
+    return 0
+  fi
+
+  # Last fallback: first playback device shown by aplay.
+  carddev="$(first_aplay_card_device)"
+  if [[ -n "$carddev" ]]; then
+    printf '%s\n' "$carddev"
+    return 0
+  fi
+
+  return 1
+}
+
+resolve_configured_device() {
+  load_audio_conf
+
+  case "$MODE" in
+    auto|AUTO|Auto)
+      resolve_auto_device
+      ;;
+    manual|MANUAL|Manual|card|CARD|Card)
+      [[ -n "${CARD:-}" ]] || return 1
+      printf '%s %s\n' "$CARD" "${DEVICE:-0}"
+      ;;
+    hdmi0|HDMI0)
+      local c0
+      c0="$(card_for_vc4_index 0)"
+      [[ -z "$c0" ]] && c0="0"
+      printf '%s 0\n' "$c0"
+      ;;
+    hdmi1|HDMI1)
+      local c1
+      c1="$(card_for_vc4_index 1)"
+      [[ -z "$c1" ]] && c1="1"
+      printf '%s 0\n' "$c1"
+      ;;
+    *)
+      resolve_auto_device
+      ;;
+  esac
+}
+
+write_asoundrc() {
+  local card="$1"
+  local device="${2:-0}"
+
+  ensure_audio_dirs
+  cat >"$PCBM_ASOUNDRC" <<EOF
+pcm.!default {
+    type plug
+    slave.pcm "hw:${card},${device}"
+}
+
+ctl.!default {
+    type hw
+    card ${card}
+}
+EOF
+
+  log "Project CBM audio default set to hw:${card},${device} using ALSA plug conversion."
+}
+
+configure_audio() {
+  local resolved card device
+  ensure_audio_dirs
+  resolved="$(resolve_configured_device || true)"
+
+  if [[ -z "$resolved" ]]; then
+    log "Project CBM audio: no playback device could be resolved."
+    return 1
+  fi
+
+  read -r card device <<<"$resolved"
+  [[ -z "$device" ]] && device="0"
+  write_asoundrc "$card" "$device"
+}
+
+show_plain_status() {
+  ensure_audio_dirs
+  load_audio_conf
+  echo "${PCBM_PROJECT_NAME:-Project CBM} Audio Status"
+  echo "========================"
+  echo "Version: ${PCBM_VERSION:-dev} (${PCBM_BUILD:-local})"
+  echo
+  echo "Config file: $PCBM_AUDIO_CONF"
+  echo "Mode: ${MODE:-auto}"
+  echo "Manual card/device: ${CARD:-unset}/${DEVICE:-0}"
+  echo
+  echo "Connected DRM HDMI connectors:"
+  local found=0 status name state idx card
+  for status in /sys/class/drm/card*-HDMI-A-*/status; do
+    [[ -e "$status" ]] || continue
+    found=1
+    name="$(basename "${status%/status}")"
+    state="$(cat "$status" 2>/dev/null)"
+    idx="unknown"
+    card="unknown"
+    if [[ "$name" =~ HDMI-A-([0-9]+)$ ]]; then
+      idx=$((${BASH_REMATCH[1]} - 1))
+      card="$(card_for_vc4_index "$idx")"
+      [[ -z "$card" ]] && card="unknown"
+    fi
+    echo "  $name: $state, HDMI index $idx, ALSA card $card"
+  done
+  (( found == 0 )) && echo "  none reported under /sys/class/drm"
+  echo
+  echo "ALSA playback devices:"
+  aplay -l 2>/dev/null || echo "  aplay failed or alsa-utils is missing"
+  echo
+  echo "Current $PCBM_ASOUNDRC:"
+  if [[ -f "$PCBM_ASOUNDRC" ]]; then
+    sed 's/^/  /' "$PCBM_ASOUNDRC"
+  else
+    echo "  not created yet"
+  fi
+}
+
+test_default() {
+  configure_audio >/dev/null 2>&1 || true
+  speaker-test -D default -c 2 -twav
+}
+
+test_card() {
+  local idx="$1"
+  local card
+  card="$(card_for_vc4_index "$idx")"
+  [[ -z "$card" ]] && card="$idx"
+  speaker-test -D "plughw:${card},0" -c 2 -twav
+}
+
+menu_mode() {
+  if [[ -f "$PCBM_DIALOG_LIB" ]]; then
+    # shellcheck disable=SC1090
+    source "$PCBM_DIALOG_LIB"
+  else
+    show_plain_status
+    exit 0
+  fi
+
+  pcbm_trap_cleanup
+
+  while true; do
+    local status_text resolved
+    resolved="$(resolve_configured_device 2>/dev/null || true)"
+    [[ -z "$resolved" ]] && resolved="unresolved"
+    status_text="Configured output: $resolved\n\nAUTO detects the currently connected HDMI output and writes ~/.asoundrc using ALSA's plug layer. Manual HDMI choices are available for stubborn displays."
+
+    pcbm_show_menu "Project CBM Audio" "$status_text" \
+      AUTO    "Auto-detect connected HDMI audio and set ALSA default" \
+      HDMI0   "Force HDMI 0 / vc4hdmi0" \
+      HDMI1   "Force HDMI 1 / vc4hdmi1" \
+      TEST    "Run left/right speaker test using current default" \
+      STATUS  "Show detailed ALSA and HDMI audio status" \
+      RETURN  "<- Return to the control panel"
+
+    case "$PCBM_STATUS" in
+      0)
+        case "$PCBM_CHOICE" in
+          AUTO)
+            save_audio_conf auto 0 0
+            if configure_audio >/dev/null 2>&1; then
+              pcbm_show_msg "Audio" "Project CBM audio is now set to AUTO.\n\nALSA default has been regenerated using the detected HDMI output and the plug conversion layer."
+            else
+              pcbm_show_msg "Audio" "Project CBM could not auto-detect a playback device.\n\nUse STATUS for details, or force HDMI 0 / HDMI 1."
+            fi
+            ;;
+          HDMI0)
+            local c0
+            c0="$(card_for_vc4_index 0)"
+            [[ -z "$c0" ]] && c0="0"
+            save_audio_conf manual "$c0" 0
+            configure_audio >/dev/null 2>&1 || true
+            pcbm_show_msg "Audio" "Project CBM audio is now forced to HDMI 0 / hw:${c0},0."
+            ;;
+          HDMI1)
+            local c1
+            c1="$(card_for_vc4_index 1)"
+            [[ -z "$c1" ]] && c1="1"
+            save_audio_conf manual "$c1" 0
+            configure_audio >/dev/null 2>&1 || true
+            pcbm_show_msg "Audio" "Project CBM audio is now forced to HDMI 1 / hw:${c1},0."
+            ;;
+          TEST)
+            pcbm_cleanup_terminal
+            test_default
+            read -r -p "Press ENTER to return to Project CBM Audio..." _
+            ;;
+          STATUS)
+            pcbm_show_textbox "Project CBM Audio Status" "$(show_plain_status)"
+            ;;
+          RETURN)
+            exit 0
+            ;;
+        esac
+        ;;
+      1|255)
+        exit 0
+        ;;
+      *)
+        exit 0
+        ;;
+    esac
+  done
+}
+
+case "$COMMAND" in
+  auto|configure|ensure)
+    configure_audio
+    ;;
+  status)
+    show_plain_status
+    ;;
+  test)
+    test_default
+    ;;
+  test-hdmi0|test-0)
+    test_card 0
+    ;;
+  test-hdmi1|test-1)
+    test_card 1
+    ;;
+  set-auto)
+    save_audio_conf auto 0 0
+    configure_audio
+    ;;
+  set-hdmi0)
+    c="$(card_for_vc4_index 0)"
+    [[ -z "$c" ]] && c="0"
+    save_audio_conf manual "$c" 0
+    configure_audio
+    ;;
+  set-hdmi1)
+    c="$(card_for_vc4_index 1)"
+    [[ -z "$c" ]] && c="1"
+    save_audio_conf manual "$c" 0
+    configure_audio
+    ;;
+  menu|"")
+    menu_mode
+    ;;
+  *)
+    cat <<EOF
+Usage: pcbm-audio [command]
+
+Commands:
+  auto|configure|ensure   Configure ~/.asoundrc from current Project CBM audio mode
+  status                  Show ALSA/HDMI status
+  test                    Run speaker-test through ALSA default
+  test-hdmi0              Test HDMI 0 directly
+  test-hdmi1              Test HDMI 1 directly
+  set-auto                Use automatic connected-HDMI detection
+  set-hdmi0               Force HDMI 0
+  set-hdmi1               Force HDMI 1
+  menu                    Open the Project CBM audio dialog menu
+
+Options:
+  --quiet, -q             Suppress normal output, useful before launching VICE
+EOF
+    exit 1
+    ;;
+esac

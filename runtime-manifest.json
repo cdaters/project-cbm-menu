@@ -1,0 +1,158 @@
+{
+  "kind": "byte-exact extracted runtime scripts; not normalized; not configuration snapshot",
+  "scripts": [
+    {
+      "path": "scripts/pcbm-audio",
+      "image_path": "/usr/local/bin/pcbm-audio",
+      "sha256": "a9f33d014ad73275efe9a739bde5b06757e06e7e2d793e44a62a3ad27758011c",
+      "bytes": 11452,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-bbs",
+      "image_path": "/usr/local/bin/pcbm-bbs",
+      "sha256": "71312001e39ba982c1ea653b78c98bf429ec37ec438bc8c1c7d552aa5d6ae356",
+      "bytes": 3053,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-boot",
+      "image_path": "/usr/local/bin/pcbm-boot",
+      "sha256": "bcf5c04e30d028bcd8e2a263f712f312f11b51da470d08bd4f8f47e2e8f940c1",
+      "bytes": 3284,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-bootmode",
+      "image_path": "/usr/local/bin/pcbm-bootmode",
+      "sha256": "a5e2c001b737b3107c3b6fde73bb265ce40adf0835fd259cbd6c8a75f73c1538",
+      "bytes": 4320,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-content",
+      "image_path": "/usr/local/bin/pcbm-content",
+      "sha256": "2c81ec259c607a9f5f21e6cb214324f12dfdaa6d9d4cdfaea1e0985962225ca2",
+      "bytes": 4313,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-control",
+      "image_path": "/usr/local/bin/pcbm-control",
+      "sha256": "05473ede9bad48d474fb68d1e54deb6ebd9af2a6e00cda6570a9a3a7935a6c40",
+      "bytes": 2910,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-cover",
+      "image_path": "/usr/local/bin/pcbm-cover",
+      "sha256": "74f0c54b5202c5e58453368104a932c4fa69375bd540fa59ebf282c2161a6049",
+      "bytes": 2909,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-dialog-lib.sh",
+      "image_path": "/usr/local/bin/pcbm-dialog-lib.sh",
+      "sha256": "6a895a05b5ec1ff816578117ec111c6b49a5a6734b273e0e8db6271604b2834b",
+      "bytes": 18139,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-firstboot-check",
+      "image_path": "/usr/local/bin/pcbm-firstboot-check",
+      "sha256": "a49f1736a03e5ce9714a2a79a7f8e515f2653027d4ffaedef438f4bf3962b11d",
+      "bytes": 1680,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-import",
+      "image_path": "/usr/local/bin/pcbm-import",
+      "sha256": "2d756fd283637e7a164c20b4e1d96f712906ccc39aa1c402881334d10a830ccb",
+      "bytes": 7213,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-machines",
+      "image_path": "/usr/local/bin/pcbm-machines",
+      "sha256": "7b402ac2667bd4b74f271e7333b572ddf7d65af9d37a3278013e69f4af57592c",
+      "bytes": 4447,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-menu",
+      "image_path": "/usr/local/bin/pcbm-menu",
+      "sha256": "9026f8e1712726f0c2191208781ee4afe4b99a2b3438e02f7d3776b55a956e06",
+      "bytes": 4004,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-network",
+      "image_path": "/usr/local/bin/pcbm-network",
+      "sha256": "a360db848da2f326a1179622118f7dfd3e0ca949c9771fd474ac32379dbc1493",
+      "bytes": 5161,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-release-prep",
+      "image_path": "/usr/local/bin/pcbm-release-prep",
+      "sha256": "6ebe59d45d178042f5ccb480b43c631fe0f477e2295a349c839c67ced92de585",
+      "bytes": 1787,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-roms",
+      "image_path": "/usr/local/bin/pcbm-roms",
+      "sha256": "51be458508618432301f71ff2302657544b0deb097451189066d6f2ecfa780d2",
+      "bytes": 2799,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-start",
+      "image_path": "/usr/local/bin/pcbm-start",
+      "sha256": "9f55ea413afe6047e9a8ab79e4d4ce52856e03d74439ae1b46792c703e394943",
+      "bytes": 2746,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    },
+    {
+      "path": "scripts/pcbm-system",
+      "image_path": "/usr/local/bin/pcbm-system",
+      "sha256": "2ba4483c9ae41164a3679f2c898129a7aadced95ec824e192520e41d5e84322b",
+      "bytes": 5045,
+      "image_mode": "0o100755",
+      "uid": 0,
+      "gid": 0
+    }
+  ]
+}
