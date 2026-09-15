@@ -4,7 +4,10 @@ Updated 2026-09-15: owner accepted cold-start comprehension; final architecture
 reconciliation complete. The owner-authorized privacy repair replaces only four
 unpublished Menu commits, preserving exact trees/messages/dates. Replacement refs
 and all architecture work are externally bundled and restored offline. Publication
-is pending validation; no runtime edits or image. See the
+is complete for both main branches and Menu recovery/maintenance refs. Product
+maintenance/1.0 is intentionally local/bundled after GH007 on historical metadata;
+public product v1.0.0 is its authoritative maintenance baseline. No runtime edits
+or image. See the
 [product privacy record](../project-cbm/docs/privacy-reconciliation-2026-09-15.md).
 
 - Independently versioned component of [Project CBM](../project-cbm/CURRENT-STATE.md).
