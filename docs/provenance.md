@@ -38,3 +38,13 @@ consumption requires independent Menu version + explicit tag + peeled commit +
 artifact SHA-256, per the [release contract](../../project-cbm/docs/build-and-release.md).
 Do not run docs-sync or treat public-docs/ as authoritative. Historical manual
 image-build instructions are not the 1.1 builder design.
+
+## Recoverability from retained component inputs
+
+Follow the self-contained [product recovery specification](../../project-cbm/docs/recovery.md).
+Retain complete Menu refs/source, exact released artifact, source/packaging/config
+schema identity, ordered patches, asset licenses and tests. If GitHub vanishes, the
+verified full bundle and ref inventory restore history without the original Mac.
+A source bundle is distinct from an installed image and cannot supply missing OS/
+VICE/TCPser inputs or hardware qualification. Public metadata must exclude secrets;
+current absolute paths are deployment locators, not component requirements.

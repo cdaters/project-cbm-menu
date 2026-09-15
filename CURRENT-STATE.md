@@ -34,3 +34,19 @@ and refs externally bundled; no push, runtime edits, image build or new release.
 - Original history: /Volumes/TheBench/Projects/Project CBM, untouched. Bulk new
   work/archive: /Volumes/TheBench/ProjectCBM-Work. No large artifacts in Git.
   TheBench is APFS; Linux build environment and second encrypted backup are open.
+
+## First-class black-box recovery design
+
+The [product recovery contract](../project-cbm/docs/recovery.md) is now a required
+1.1 architectural input. It defines offline self-description from the same frozen
+lock, independent component identities, portable source/storage roots, retained
+source/package/environment closure, qualification binding and independent backups.
+Proposed pcbm-info and generated identity are product integration work; Menu consumes
+that authority rather than maintaining another version source. No implementation.
+
+An actual offline restore of accepted preservation bundles verified all 5 product
+refs, 8 Menu refs and all 17 recovered script hashes. The new design checkpoint is
+retained separately at ProjectCBM-Work/archive/black-box-design-2026-09-15; original
+preservation/historical evidence is untouched. Independent off-site copy, schema/
+metadata generator, Linux host/bootstrap and all image/hardware recovery tests remain
+open. Read AGENTS/current state/recovery first in the next newly authorized session.

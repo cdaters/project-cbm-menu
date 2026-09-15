@@ -1,6 +1,7 @@
 # Working on Project CBM Menu
 
-Read CURRENT-STATE.md, docs/provenance.md and docs/VERSIONING.md first. Update
+Read CURRENT-STATE.md, docs/provenance.md, docs/VERSIONING.md and the companion
+product docs/recovery.md first. Update
 CURRENT-STATE.md after meaningful work; no prior Codex session is required.
 
 This repo owns independently versioned Menu scripts/assets, interfaces/contracts,
@@ -38,3 +39,16 @@ not repaired by this phase. Update current state with checks and remaining gaps.
 
 Preservation is complete. A new owner instruction must authorize the next 1.1 POC;
 this phase did not authorize pi-gen, runtime changes, image build or publication.
+
+## Black-box recovery contract
+
+Product docs/recovery.md defines first-class 1.1 recovery: source/input/build/product/
+qualification evidence, generated offline identity and independent restore tests.
+Menu must supply exact source/tag/peeled commit/artifact hashes, packaging recipe,
+patches/assets/licenses/schema compatibility and focused test evidence. It must
+not create a competing product identity or infer its version from the product.
+Future Menu version displays consume product-generated metadata when integrated.
+All of that runtime work remains deferred. Current local source/TheBench paths are
+deployment choices; accept configured roots and portable locators in future tooling.
+Preserve unknown dirty work after interruption, including work newer than CURRENT-STATE.
+Neither old sessions nor Spitfire/FireComm/reference projects may become dependencies.
