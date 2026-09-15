@@ -12,7 +12,7 @@ experimental pcbm-screenshot. Current main at b7e4d85 retains that runtime uncha
 No original Git commit exactly matches all shipped scripts.
 
 The annotated recovered/image-v1.0.0-runtime tag names a new forensic root commit,
-`1cd5e0d378a4066f239c92a30aafdd97cb415dcf`. It deliberately has no parent; there is
+`a4148db54001790eaddb4e31104917c16149b181`. It deliberately has no parent; there is
 no invented historical commit ancestry. scripts/ contains byte-exact extracts from
 the verified published image, checked against the historical raw image and original
 audit extraction. A hash/mode manifest, recovery note and original-source MIT
@@ -48,3 +48,10 @@ verified full bundle and ref inventory restore history without the original Mac.
 A source bundle is distinct from an installed image and cannot supply missing OS/
 VICE/TCPser inputs or hardware qualification. Public metadata must exclude secrets;
 current absolute paths are deployment locators, not component requirements.
+
+## Authorized unpublished identity repair
+
+The [2026-09-15 privacy reconciliation](../../project-cbm/docs/privacy-reconciliation-2026-09-15.md)
+records old/new commit and forensic-tag IDs, exact-content verification, retained
+private originals and current bundle/restore status. Existing published tags remain
+unchanged; older checkpoint records intentionally retain pre-rewrite identities.

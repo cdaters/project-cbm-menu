@@ -1,8 +1,11 @@
 # Project CBM Menu current state
 
 Updated 2026-09-15: owner accepted cold-start comprehension; final architecture
-reconciliation complete. Earlier commits/refs are externally bundled; this phase's
-new documentation commits are not yet archived. No push, runtime edits or image.
+reconciliation complete. The owner-authorized privacy repair replaces only four
+unpublished Menu commits, preserving exact trees/messages/dates. Replacement refs
+and all architecture work are externally bundled and restored offline. Publication
+is pending validation; no runtime edits or image. See the
+[product privacy record](../project-cbm/docs/privacy-reconciliation-2026-09-15.md).
 
 - Independently versioned component of [Project CBM](../project-cbm/CURRENT-STATE.md).
   Formal VERSION/PUBLIC_VERSION remain 1.0.0; no version bump is part of this work.
@@ -15,7 +18,7 @@ new documentation commits are not yet archived. No push, runtime edits or image.
   2026-04-21 base, vendor 6.12.75 kernels, source-built VICE 3.10 SDL2/ALSA.
 - Shipped runtime has 17 scripts: 12 formal-tag matches, five differences, no
   experimental pcbm-screenshot. No pre-existing commit exactly represents it.
-- Annotated recovered/image-v1.0.0-runtime -> `1cd5e0d378a4066f239c92a30aafdd97cb415dcf`.
+- Annotated recovered/image-v1.0.0-runtime -> `a4148db54001790eaddb4e31104917c16149b181`.
   This new root commit holds byte-exact extracted scripts, not normalized v6.5,
   reconstructed source or a configuration snapshot. Its RECOVERY.md records scope.
 - maintenance/1.0 starts at that recovery, not formal v1.0.0. It is not an installable
@@ -65,9 +68,13 @@ Separate USERDATA/immutable roots and elaborate hooks/updaters are deferred.
 Current product guidance corrects historical content, TCPser, Samba credentials and
 hardware claims. The `public-docs/` mirror and historical source/build documents
 remain unchanged; [product current notes](../project-cbm/docs/v1.0-current-notes.md)
-take precedence. Stop here; implementation needs a new owner instruction.
+take precedence. Milestone 1 is now authorized in the product repository, with a
+mandatory owner checkpoint before Linux host provisioning. Resume product branch
+creation/contracts/host study after synchronization; no Menu feature branch is needed
+until actual Menu work is required. The privacy-repair task stops after publication
+and final recovery validation.
 
-Phase input HEAD: `c3746a12e6146f880c49979df8da2a3567200924`; product input
+Historical architecture phase input HEAD (pre-rewrite IDs): `c3746a12e6146f880c49979df8da2a3567200924`; product input
 `7f9c4a363cf19154a9637ed8b251049bf23723e0`. Only AGENTS, CURRENT-STATE and README
 change in this repository. Validation is in the [product phase record](../project-cbm/docs/architecture-phase-validation.md).
 All runtime/config/packaging/CI/assets and existing tags remain unchanged.
