@@ -1,0 +1,40 @@
+# Working on Project CBM Menu
+
+Read CURRENT-STATE.md, docs/provenance.md and docs/VERSIONING.md first. Update
+CURRENT-STATE.md after meaningful work; no prior Codex session is required.
+
+This repo owns independently versioned Menu scripts/assets, interfaces/contracts,
+packaging and focused tests. Companion ../project-cbm owns product/OS integration,
+image builder, VICE/TCPser/Menu mapping, qualification, hardware policy, artifacts
+and product documentation. Do not let public-docs/ become a competing authority.
+
+Future products require a Menu version/tag, peeled commit and artifact SHA-256;
+never arbitrary main. Existing v1.0.0 is immutable and differs from the image's
+exact 17-script runtime. The recovered/image-v1.0.0-runtime tag is forensic evidence,
+not a release. maintenance/1.0 begins at that root recovery; no 1.0.1 exists.
+1.0.x is original Trixie important/security maintenance; 1.1.x is active modernization.
+No Bookworm line exists. Do not reset, force-push, retag or replace release assets.
+
+Keep the Pi 3 performance floor and target Pi 3 through Pi 500+ where qualified.
+No hardware passes may be inferred from OS compatibility or syntax checks. Preserve
+Bash/dialog/SDL2/ALSA architecture; do not silently optimize for Pi 5 only.
+Do not casually broaden sudo, network/listener, service, boot or first-boot behavior.
+
+Canonical source/docs stay under ~/Code. Large inputs/images/build trees/caches
+belong on mounted /Volumes/TheBench/ProjectCBM-Work, never internal-SSD fallback.
+Original /Volumes/TheBench/Projects/Project CBM is evidence: no edits, renames,
+cleanup, normalization, deduplication or execution in place. Preservation inventory
+and bundles are under ProjectCBM-Work/archive/preservation-2026-09-15.
+APFS is not a ready Linux rootfs; no builder is provisioned. Historical evidence
+and public artifacts are separate trust domains. Record sensitive-file presence,
+never private keys, credentials, password hashes or shell history in Git/output.
+
+Run git diff --check, per-file bash -n for scripts/pcbm-* and packaging/*.sh,
+validate JSON/links and inspect staged sizes/secret patterns. Use ShellCheck when
+available and focused tests for behavior changes. See product docs/testing.md and
+docs/security.md. Never execute installer, docs-sync (even --dry-run), release-prep
+or runtime scripts as a static check. Existing packaging/CI defects are recorded,
+not repaired by this phase. Update current state with checks and remaining gaps.
+
+Preservation is complete. A new owner instruction must authorize the next 1.1 POC;
+this phase did not authorize pi-gen, runtime changes, image build or publication.

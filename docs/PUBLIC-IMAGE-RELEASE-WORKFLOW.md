@@ -1,5 +1,10 @@
 # Project CBM Public Image Release Workflow
 
+> Historical source-release documentation. See [reconciliation](provenance.md):
+> formal Menu v1.0.0 differs from the image runtime. Product owns image builds
+> and release mapping. Do not execute legacy installer/docs-sync/release-prep
+> during recovery; no 1.1 builder or release is authorized by this document.
+
 This document explains how the `project-cbm-menu` repository feeds the public `project-cbm` image release process.
 
 ## Repository Roles

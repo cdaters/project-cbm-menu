@@ -1,5 +1,10 @@
 # Project CBM Menu v1.0.0 Static Audit Notes
 
+> Historical source-release documentation. See [reconciliation](provenance.md):
+> formal Menu v1.0.0 differs from the image runtime. Product owns image builds
+> and release mapping. Do not execute legacy installer/docs-sync/release-prep
+> during recovery; no 1.1 builder or release is authorized by this document.
+
 This audit was performed against the pre-public Project CBM menu bundle that became the Project CBM Menu v1.0.0 source release.
 
 During development, this internal working bundle was referred to as `v6.5`. For the public repository and release documentation, this work is now tracked as:
