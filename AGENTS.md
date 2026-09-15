@@ -37,13 +37,19 @@ docs/security.md. Never execute installer, docs-sync (even --dry-run), release-p
 or runtime scripts as a static check. Existing packaging/CI defects are recorded,
 not repaired by this phase. Update current state with checks and remaining gaps.
 
-Preservation is complete. A new owner instruction must authorize the next 1.1 POC;
-this phase did not authorize pi-gen, runtime changes, image build or publication.
+Preservation, owner-accepted cold-start comprehension and final architecture
+reconciliation are complete. Product ADR-0001 accepts Lite + pinned arm64 pi-gen
+with bounded appliance practices. A NEW instruction must authorize the 1.1 POC;
+stop this architecture phase before Linux provisioning, pi-gen, packaging, runtime
+changes, first boot, image build, push or publication.
 
 ## Black-box recovery contract
 
-Product docs/recovery.md defines first-class 1.1 recovery: source/input/build/product/
-qualification evidence, generated offline identity and independent restore tests.
+Product docs/recovery.md defines full black-box PROJECT recovery in repositories
+and retained build/release infrastructure: source/input/build/product/qualification
+evidence and independent restore tests. The image carries only minimal installed
+identity; no complete lock, recipes, recovery archive or package closure. No mandated
+8 GB card minimum: qualify actual system footprint and free user-data capacity.
 Menu must supply exact source/tag/peeled commit/artifact hashes, packaging recipe,
 patches/assets/licenses/schema compatibility and focused test evidence. It must
 not create a competing product identity or infer its version from the product.

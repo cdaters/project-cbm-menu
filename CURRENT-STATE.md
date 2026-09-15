@@ -1,7 +1,8 @@
 # Project CBM Menu current state
 
-Updated 2026-09-15: preservation/reconciliation/continuity complete, local commits
-and refs externally bundled; no push, runtime edits, image build or new release.
+Updated 2026-09-15: owner accepted cold-start comprehension; final architecture
+reconciliation complete. Earlier commits/refs are externally bundled; this phase's
+new documentation commits are not yet archived. No push, runtime edits or image.
 
 - Independently versioned component of [Project CBM](../project-cbm/CURRENT-STATE.md).
   Formal VERSION/PUBLIC_VERSION remain 1.0.0; no version bump is part of this work.
@@ -35,12 +36,14 @@ and refs externally bundled; no push, runtime edits, image build or new release.
   work/archive: /Volumes/TheBench/ProjectCBM-Work. No large artifacts in Git.
   TheBench is APFS; Linux build environment and second encrypted backup are open.
 
-## First-class black-box recovery design
+## Final foundation and recovery scope
 
 The [product recovery contract](../project-cbm/docs/recovery.md) is now a required
-1.1 architectural input. It defines offline self-description from the same frozen
-lock, independent component identities, portable source/storage roots, retained
-source/package/environment closure, qualification binding and independent backups.
+1.1 architectural input. Full recovery belongs to repositories and retained build/
+release infrastructure. Only minimal installed identity is projected from the frozen
+lock into the appliance; complete recipes, locks, inventories and recovery archives
+remain external. Retain portable roots, source/package/environment closure, external
+qualification binding and independent backups.
 Proposed pcbm-info and generated identity are product integration work; Menu consumes
 that authority rather than maintaining another version source. No implementation.
 
@@ -50,3 +53,21 @@ retained separately at ProjectCBM-Work/archive/black-box-design-2026-09-15; orig
 preservation/historical evidence is untouched. Independent off-site copy, schema/
 metadata generator, Linux host/bootstrap and all image/hardware recovery tests remain
 open. Read AGENTS/current state/recovery first in the next newly authorized session.
+
+
+[Product ADR-0001](../project-cbm/docs/adr/0001-base-distribution-and-image-architecture.md)
+accepts Raspberry Pi OS Lite + pinned arm64 pi-gen, writable ext4, logical user-data
+separation and external Debian package builds. Menu owns its future independent
+package/interface; no package is built here. Content default stays `/home/pi/pcbm`.
+There is no mandated 8 GB minimum; measure footprint and remaining user capacity.
+Separate USERDATA/immutable roots and elaborate hooks/updaters are deferred.
+
+Current product guidance corrects historical content, TCPser, Samba credentials and
+hardware claims. The `public-docs/` mirror and historical source/build documents
+remain unchanged; [product current notes](../project-cbm/docs/v1.0-current-notes.md)
+take precedence. Stop here; implementation needs a new owner instruction.
+
+Phase input HEAD: `c3746a12e6146f880c49979df8da2a3567200924`; product input
+`7f9c4a363cf19154a9637ed8b251049bf23723e0`. Only AGENTS, CURRENT-STATE and README
+change in this repository. Validation is in the [product phase record](../project-cbm/docs/architecture-phase-validation.md).
+All runtime/config/packaging/CI/assets and existing tags remain unchanged.

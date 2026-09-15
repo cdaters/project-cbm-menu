@@ -2,7 +2,8 @@
 
 > 2026-09-15 continuity: read [CURRENT-STATE](CURRENT-STATE.md) for the reconciled
 > 1.0 history, maintenance policy and the next 1.1 reproducible-build milestone.
-> Preservation is complete; roadmap ideas are not implementation authorization.
+> [Product ADR-0001](../project-cbm/docs/adr/0001-base-distribution-and-image-architecture.md)
+> accepts the foundation; implementation still needs a new owner instruction.
 [![Project CBM Release](https://img.shields.io/github/v/release/cdaters/project-cbm?label=project-cbm%20release)](https://github.com/cdaters/project-cbm/releases/latest)
 [![Menu Release](https://img.shields.io/github/v/release/cdaters/project-cbm-menu?label=menu%20release)](https://github.com/cdaters/project-cbm-menu/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-orange)](LICENSE)
@@ -111,11 +112,18 @@ docs/Project CBM Menu v1.0.0 Build Notes and Documentation.md
 
 ## Legal/distribution note
 
-Project CBM does not include or distribute copyrighted Commodore ROMs, commercial software, disk images, demos, or game collections. Users are responsible for supplying their own legally obtained content.
+Public distribution requires reviewed software/content rights and required notices.
+The audited product v1.0.0 image contains ROM/media files with incomplete provenance;
+private historical bundles may contain additional unreviewed material. Menu's source
+license does not grant rights to every image asset. See [current product corrections](../project-cbm/docs/v1.0-current-notes.md).
 
 ## Public end-user documentation
 
-The `public-docs/` folder contains the end-user documentation that is mirrored into the public `project-cbm` repository and packaged as the offline public docs ZIP.
+The `public-docs/` folder is a historical packaging mirror, not the current
+authority. Product documentation and its [corrections](../project-cbm/docs/v1.0-current-notes.md)
+take precedence. Do not run docs-sync, even `--dry-run`; its known write/deletion
+defects remain unfixed. Future packaging should consume an explicit pinned product
+documentation input. Commands below describe historical packaging, not this phase.
 
 Build the public documentation package:
 
