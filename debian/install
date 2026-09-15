@@ -1,0 +1,16 @@
+scripts/pcbm-audio usr/bin
+scripts/pcbm-bbs usr/bin
+scripts/pcbm-boot usr/bin
+scripts/pcbm-bootmode usr/bin
+scripts/pcbm-content usr/bin
+scripts/pcbm-control usr/bin
+scripts/pcbm-cover usr/bin
+scripts/pcbm-dialog-lib.sh usr/bin
+scripts/pcbm-firstboot-check usr/bin
+scripts/pcbm-import usr/bin
+scripts/pcbm-machines usr/bin
+scripts/pcbm-menu usr/bin
+scripts/pcbm-network usr/bin
+scripts/pcbm-roms usr/bin
+scripts/pcbm-start usr/bin
+scripts/pcbm-system usr/bin

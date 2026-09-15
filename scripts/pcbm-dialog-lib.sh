@@ -616,11 +616,11 @@ pcbm_launch_machine() {
 
   pcbm_cleanup_terminal
 
-  if command -v /usr/local/bin/pcbm-cover >/dev/null 2>&1; then
-    /usr/local/bin/pcbm-cover "$machine_tag"
+  if command -v /usr/bin/pcbm-cover >/dev/null 2>&1; then
+    /usr/bin/pcbm-cover "$machine_tag"
   fi
 
-  /usr/local/bin/pcbm-boot "$emu"
+  /usr/bin/pcbm-boot "$emu"
 }
 
 pcbm_launch_content() {
@@ -663,8 +663,8 @@ pcbm_launch_content() {
   pcbm_cleanup_terminal
   # Refresh ALSA's default output before launching content.
   # This keeps content launches aligned with the same HDMI auto-detection path as machine launches.
-  if command -v /usr/local/bin/pcbm-audio >/dev/null 2>&1; then
-    /usr/local/bin/pcbm-audio auto --quiet >>"$PCBM_VICE_LOG" 2>&1 || true
+  if command -v /usr/bin/pcbm-audio >/dev/null 2>&1; then
+    /usr/bin/pcbm-audio auto --quiet >>"$PCBM_VICE_LOG" 2>&1 || true
   fi
 
   /usr/bin/env \

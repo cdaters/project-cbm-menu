@@ -40,7 +40,7 @@
 # ================================================================
 #
 
-COVER_DIR="/opt/pcbm/covers"
+COVER_DIR="/usr/share/project-cbm-menu/covers"
 DISPLAY_TIME=3
 
 machine="${1:-}"

@@ -1,0 +1,6 @@
+project-cbm-menu (1.1.0~poc1-1+pcbm1) trixie; urgency=medium
+
+  * Private POC Debian packaging and /usr/bin path relocation.
+  * Exclude development release helper, experimental screenshot and unreviewed art.
+
+ -- Project CBM contributors <1015402+cdaters@users.noreply.github.com>  Tue, 15 Sep 2026 23:00:00 +0000

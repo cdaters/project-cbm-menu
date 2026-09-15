@@ -1,5 +1,18 @@
 # Project CBM Menu current state
 
+## Active private POC packaging — 2026-09-15
+
+Owner approved package implementation after the product Lima/VZ capability gate.
+Work is on feature/1.1-debian-package. VERSION is 1.1.0_poc1 for a private candidate;
+PUBLIC_VERSION remains the published 1.0.0. New Debian packaging installs reviewed
+scripts under /usr/bin with necessary absolute-path relocation. It excludes release
+prep, experimental screenshot and art pending rights review. No product release,
+service/sudo changes or physical qualification. See [package contract](docs/DEBIAN-PACKAGE.md).
+Next: build/inspect the candidate, record its local tag/peeled commit and hashes in
+the product lock; preserve all existing formal/recovery tags. Historical checkpoints
+below describe their original dates and unchanged immutable release baselines.
+
+
 Updated 2026-09-15: owner accepted cold-start comprehension; final architecture
 reconciliation complete. The owner-authorized privacy repair replaces only four
 unpublished Menu commits, preserving exact trees/messages/dates. Replacement refs

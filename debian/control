@@ -1,0 +1,15 @@
+Source: project-cbm-menu
+Section: misc
+Priority: optional
+Maintainer: Project CBM contributors <1015402+cdaters@users.noreply.github.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.2
+Rules-Requires-Root: no
+Homepage: https://github.com/cdaters/project-cbm-menu
+
+Package: project-cbm-menu
+Architecture: all
+Depends: ${misc:Depends}, bash, dialog, coreutils, util-linux, procps, findutils, grep, sed, gawk, sudo, alsa-utils, mc
+Description: Project CBM console front panel (private engineering candidate)
+ Bash/dialog menu and shared emulator launcher for the Project CBM appliance.
+ Product integration owns system configuration, accounts, services and content.

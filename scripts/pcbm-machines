@@ -86,7 +86,7 @@ while true; do
           pcbm_launch_machine "$emu"
 
           if [ "$(tty)" = "/dev/tty1" ]; then
-            /usr/local/bin/pcbm-cover
+            /usr/bin/pcbm-cover
             reset
             clear
           fi

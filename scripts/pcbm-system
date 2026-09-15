@@ -129,7 +129,7 @@ while true; do
         RELEASE)
           if pcbm_yesno "Release Prep" "Run Project CBM release prep now?\n\nThis clears logs/caches/runtime files and zero-fills free space. Use this only when preparing an SD-card image."; then
             pcbm_cleanup_terminal
-            sudo -n /usr/local/bin/pcbm-release-prep --yes || pcbm_show_msg "Permission Required" "Release prep requires passwordless sudo for /usr/local/bin/pcbm-release-prep or must be run manually with sudo."
+            sudo -n /usr/bin/pcbm-release-prep --yes || pcbm_show_msg "Permission Required" "Release prep requires passwordless sudo for /usr/bin/pcbm-release-prep or must be run manually with sudo."
           fi
           ;;
         RETURN)

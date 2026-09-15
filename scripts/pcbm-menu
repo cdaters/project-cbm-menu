@@ -45,7 +45,7 @@ pcbm_trap_cleanup
 
 if [ "$(tty)" = "/dev/tty1" ] && [ -z "$PCBM_SPLASH_SHOWN" ]; then
   export PCBM_SPLASH_SHOWN=1
-  /usr/local/bin/pcbm-cover
+  /usr/bin/pcbm-cover
   reset
   clear
 fi
@@ -79,7 +79,7 @@ while true; do
             pcbm_launch_machine "$current_emu"
 
             if [ "$(tty)" = "/dev/tty1" ]; then
-              /usr/local/bin/pcbm-cover
+              /usr/bin/pcbm-cover
               reset
               clear
             fi

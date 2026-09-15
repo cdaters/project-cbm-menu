@@ -95,8 +95,8 @@ esac
 
 # Refresh ALSA's default output before each VICE launch.
 # This lets Project CBM follow HDMI cable changes on Pi models with dual HDMI.
-if command -v /usr/local/bin/pcbm-audio >/dev/null 2>&1; then
-  /usr/local/bin/pcbm-audio auto --quiet >>"$VICE_LOG" 2>&1 || true
+if command -v /usr/bin/pcbm-audio >/dev/null 2>&1; then
+  /usr/bin/pcbm-audio auto --quiet >>"$VICE_LOG" 2>&1 || true
 fi
 
 /usr/bin/env \
@@ -105,7 +105,7 @@ fi
   XDG_STATE_HOME="$XDG_STATE_HOME" \
   XDG_DATA_HOME="$XDG_DATA_HOME" \
   SDL_AUDIODRIVER=alsa \
-  /usr/local/bin/"$EMU_BIN" "${EMU_ARGS[@]}" -sounddev sdl \
+  /usr/bin/"$EMU_BIN" "${EMU_ARGS[@]}" -sounddev sdl \
   </dev/tty >"$VICE_LOG" 2>&1
 
 STATUS=$?
