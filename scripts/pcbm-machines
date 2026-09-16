@@ -13,6 +13,7 @@ if ! /usr/bin/pcbm-profiles initialize >/dev/null 2>&1; then
   notice "Preferences unavailable" "Using a validated fallback where possible. Saved preferences have not been overwritten."
 fi
 mode=launch
+case ${1:-} in --default) mode=default ;; "") ;; *) exit 2 ;; esac
 while true; do
   if ! model=$(/usr/bin/pcbm-profiles menu 2>/dev/null); then
     notice "Machines unavailable" "The machine registry could not be read. Check the Project CBM runtime installation."
@@ -50,7 +51,7 @@ while true; do
     choice=RETURN
   fi
   case "$choice" in
-    RETURN) [[ $mode == launch ]] && exit 0; mode=launch; continue ;;
+    RETURN) [[ $mode == launch || ${1:-} == --default ]] && exit 0; mode=launch; continue ;;
     DEFAULT) mode=default; continue ;;
   esac
   if [[ $mode == default ]]; then

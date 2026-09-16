@@ -29,3 +29,8 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
 ```
 
 No real-console rendering, Linux package integration or new physical result is claimed.
+
+
+Current navigation: CONTROL opens pcbm-config, with System Information directly in its
+first list. Machine and Startup offers direct default selection. See
+[configuration](CONFIGURATION.md); earlier consumer checkpoints remain historical.

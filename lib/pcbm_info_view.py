@@ -88,6 +88,18 @@ def rows(data):
         network = '; '.join(clean(object_value(x).get('interface')) + ': ' + clean(object_value(x).get('operstate')) for x in links[:8]) or 'No links observed'
     else:
         network = UNKNOWN
+    service_rows=[]
+    for key,label in [('samba','File Sharing'),('ssh','SSH'),('tcpser','BBS/Modem'),('avahi','mDNS')]:
+        state=object_value(services.get(key))
+        if not state:status=UNKNOWN
+        elif state.get('LoadState')=='not-found':status='not installed'
+        elif state.get('LoadState')=='masked' or state.get('UnitFileState')=='masked':status='unavailable in this profile'
+        elif state.get('ActiveState')=='active':status='running'
+        elif state.get('ActiveState')=='failed':status='failed'
+        elif state.get('ActiveState')=='inactive':status='enabled but stopped' if state.get('UnitFileState')=='enabled' else 'off'
+        else:status=UNKNOWN
+        service_rows.append(label+': '+status)
+    result.append(('Services','; '.join(service_rows)))
     boot = object_value(c.get('boot_mode'))
     modes = {'menu': 'Menu', 'machine': 'Default machine', 'emulator': 'Default machine'}
     effective = modes.get(str(boot.get('effective')).lower())

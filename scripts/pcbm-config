@@ -1,0 +1,177 @@
+#!/bin/bash
+# Project CBM configuration: unprivileged UI, explicit requests, no detection logic.
+# Copyright Project CBM contributors; MIT.
+set +x
+set -uo pipefail
+source /usr/share/project-cbm-menu/pcbm-ui.sh
+pcbm_ui_terminal_size
+PCBM_CONFIG_NOTICE=
+bridge=/usr/libexec/project-cbm-menu/pcbm_config_bridge.py
+notify() { pcbm_ui_message "$1" "$2" || true; }
+choose() {
+  local title=$1; shift
+  if pcbm_ui_menu "$title" "${PCBM_CONFIG_NOTICE:-Choose a setting. Escape returns.}" "$@" BACK "Back"; then
+    PCBM_CONFIG_NOTICE=
+    [[ $PCBM_UI_CHOICE != BACK ]]
+  else
+    case $? in 1|2) return 1 ;; *) printf '%s\n' 'Configuration requires a usable dialog terminal (at least 40x12).' >&2; exit 3 ;; esac
+  fi
+}
+ready() {
+  if /usr/bin/pcbm-config-operation --ready "$1"; then return 0; fi
+  notify "Pending runtime activation" "This operation needs first-boot account/service initialization in a future candidate. You can continue using Project CBM offline."
+  return 1
+}
+apply_setting() {
+  local op=$1 reply text; shift
+  # printf is a Bash builtin. Secret values never appear in child argv or files here.
+  reply=$(printf '%s\n' "$@" | /usr/bin/python3 "$bridge" request "$op" | /usr/bin/pcbm-config-operation 2>/dev/null)
+  if text=$(printf '%s' "$reply" | /usr/bin/python3 "$bridge" result 2>/dev/null); then
+    PCBM_CONFIG_NOTICE=$text
+  else
+    notify "Setting not active" "${text:-Configuration is pending runtime activation. No broad sudo rule is needed.}"
+  fi
+  unset reply text
+}
+edit_value() {
+  local op=$1 help=$2
+  ready "$op" || return 0
+  if pcbm_ui_input "Project CBM" "$help"; then apply_setting "$op" "$PCBM_UI_CHOICE"; fi
+}
+show_about() {
+  local dir
+  umask 077
+  dir=$(mktemp -d "${TMPDIR:-/tmp}/pcbm-about.XXXXXXXX") || return 3
+  if /usr/bin/pcbm-info --json | /usr/bin/python3 "$bridge" about "$COLUMNS" >"$dir/view"; then
+    pcbm_ui_textbox "About Project CBM" "$dir/view" || true
+  else notify "About Project CBM" "Project CBM is a Commodore appliance for Raspberry Pi. Installed build information is unavailable. See https://github.com/cdaters/project-cbm"; fi
+  rm -f "$dir/view"; rmdir "$dir"
+}
+region() {
+  while choose "Language, Keyboard and Region" LOCALE "System language/locale" KEYBOARD "Console keyboard layout" TIMEZONE "Timezone"; do
+    case $PCBM_UI_CHOICE in
+      LOCALE) edit_value locale "UTF-8 locale, for example en_US.UTF-8. Applies to new sessions; menu translations are not yet provided." ;;
+      KEYBOARD) edit_value keyboard "Keyboard layout, for example us or gb. Saved for next boot; advanced variants remain owner-managed." ;;
+      TIMEZONE) edit_value timezone "Timezone, for example America/Phoenix or Europe/London." ;;
+    esac
+  done
+}
+network() {
+  while choose "Network" STATUS "Network/Ethernet status" HOSTNAME "Pi hostname" COUNTRY "Wi-Fi country and radio" WIFI "Join Wi-Fi (WPA personal)" ONLINE "Enable normal networking" OFFLINE "Stay offline (disable connections)"; do
+    case $PCBM_UI_CHOICE in
+      STATUS) /usr/bin/pcbm-system-info ;;
+      HOSTNAME) edit_value hostname "Short hostname: lowercase letters, digits and hyphens; for example project-cbm." ;;
+      COUNTRY)
+        if pcbm_ui_confirm "Wi-Fi country" "Set the country where this Pi is used. The Raspberry Pi country operation also enables the Wi-Fi radio. Continue?"; then edit_value wifi-country "Two-letter country code, for example US or GB."; fi ;;
+      WIFI)
+        ready wifi-enroll || continue
+        notify "Wi-Fi" "Set your Wi-Fi country first. This joins one WPA personal network; enterprise, open networks and unusual settings use authenticated owner administration. Existing owner-managed connections are retained."
+        if pcbm_ui_input "Wi-Fi network" "Network name (SSID), exactly as configured, up to 32 UTF-8 bytes."; then
+          ssid=$PCBM_UI_CHOICE
+          if pcbm_ui_secret "Wi-Fi password" "WPA personal password (8–63 ASCII characters). It will not be logged."; then
+            secret=$PCBM_UI_CHOICE; PCBM_UI_CHOICE=
+            if pcbm_ui_confirm "Join Wi-Fi?" "Save this connection and attempt to join it? This enables network access."; then apply_setting wifi-enroll "$ssid" "$secret"; fi
+            unset secret
+          fi
+          unset ssid; PCBM_UI_CHOICE=
+        fi ;;
+      ONLINE) if pcbm_ui_confirm "Enable networking?" "Allow NetworkManager to activate configured Ethernet/Wi-Fi connections? Optional services remain separately controlled."; then apply_setting network true; fi ;;
+      OFFLINE) if pcbm_ui_confirm "Stay offline?" "Disconnect networking, including Ethernet and remote sessions? Project CBM remains usable offline."; then apply_setting network false; fi ;;
+    esac
+  done
+}
+services() {
+  while choose "Services" STATUS "Service status" SHARING "File Sharing (Samba)" SSH "Remote Shell (SSH)" MODEM "BBS / Modem" DISCOVERY "Local name discovery (mDNS)"; do
+    case $PCBM_UI_CHOICE in
+      STATUS) /usr/bin/pcbm-system-info; continue ;;
+      SHARING) service=sharing; label="File Sharing" ;;
+      SSH) service=ssh; label="Remote Shell" ;;
+      MODEM) service=modem; label="BBS / Modem" ;;
+      DISCOVERY) service=discovery; label="Local name discovery" ;;
+    esac
+    options=(ENABLE "Enable" DISABLE "Disable")
+    [[ $service != sharing ]] || options+=(PASSWORD "Set separate Samba password")
+    [[ $service != modem ]] || options+=(SETTINGS "Modem port and speed (activation pending)")
+    while choose "$label" "${options[@]}"; do
+      case $PCBM_UI_CHOICE in
+        ENABLE|DISABLE)
+          enabled=false; [[ $PCBM_UI_CHOICE != ENABLE ]] || enabled=true
+          if pcbm_ui_confirm "$label" "Apply this service change? Enabling may expose a network listener. It requires first-boot/credential readiness and does not bypass engineering masks."; then apply_setting service "$service" "$enabled"; fi ;;
+        PASSWORD)
+          ready sharing-password || continue
+          if pcbm_ui_secret "Samba password" "Separate file-sharing password (12–128 characters). This does not change Unix or owner passwords."; then
+            secret=$PCBM_UI_CHOICE;PCBM_UI_CHOICE=
+            if pcbm_ui_secret "Confirm Samba password" "Enter the same password again."; then
+              if [[ $secret == "$PCBM_UI_CHOICE" ]]; then apply_setting sharing-password "$secret"; else notify "Not saved" "Passwords did not match."; fi
+            fi
+            unset secret;PCBM_UI_CHOICE=
+          fi ;;
+        SETTINGS)
+          ready modem || continue
+          if pcbm_ui_input "Modem" "Local IP232 port (1024–65535), for example 25232. External exposure remains an activation decision."; then
+            port=$PCBM_UI_CHOICE
+            if pcbm_ui_input "Modem" "Baud: 300, 1200, 2400, 9600, 19200 or 38400."; then apply_setting modem "$port" "$PCBM_UI_CHOICE"; fi
+          fi ;;
+      esac
+    done
+  done
+}
+machine() {
+  while choose "Machine and Startup" DEFAULT "Choose default Commodore machine" BOOT "Boot preference (activation pending)"; do
+    case $PCBM_UI_CHOICE in
+      DEFAULT) /usr/bin/pcbm-machines --default ;;
+      BOOT)
+        if choose "Boot preference" MENU "Menu (recommended)" EMULATOR "Default emulator"; then
+          value=menu;[[ $PCBM_UI_CHOICE != EMULATOR ]] || value=emulator
+          if /usr/bin/pcbm-preferences set boot_preference "$value" >/dev/null 2>&1; then
+            PCBM_CONFIG_NOTICE="Preference saved. Current engineering sessions still start at Menu; activation is pending."
+          else notify "Not saved" "Check user preferences/recovery instructions. No administrator password is needed."; fi
+        fi ;;
+    esac
+  done
+}
+picture() {
+  while choose "Picture, Sound and Controllers" AUDIO "Audio output and test" VIDEO "Display / VICE picture settings" INPUT "VICE keyboard and controller settings"; do
+    case $PCBM_UI_CHOICE in
+      AUDIO) /usr/bin/pcbm-audio ;;
+      VIDEO) notify "Display" "Project CBM initializes VICE with true-aspect fullscreen presentation. Unused side areas are intentional. Change emulator picture preferences in VICE via F10; saved preferences are retained. Advanced Raspberry Pi display options are under Advanced → raspi-config." ;;
+      INPUT) notify "Keyboard and controllers" "Host keyboard layout is under Language, Keyboard and Region. Configure emulator keys and joystick ports in VICE via F10. No controller is required to operate Project CBM." ;;
+    esac
+  done
+}
+storage() {
+  while choose "Content and Storage" SPACE "Capacity and free space" LOCATIONS "Content locations / USB import" BACKUP "Backup and restore guidance"; do
+    case $PCBM_UI_CHOICE in
+      SPACE) /usr/bin/pcbm-system-info ;;
+      LOCATIONS) notify "Content" "Use CONTENT, FILES and IMPORT on Main Menu. Content remains under /home/pi/pcbm (games, demos, programs, music and ROM resources). Safe removable-media import activation is pending; generic passwordless mounts are not provided." ;;
+      BACKUP) notify "Backup and restore" "Keep an external copy of your content, user preferences and VICE configuration. For major/base upgrades: back up, flash a fresh image, then validate a selective restore. Never restore machine identity, host keys or old system configuration wholesale. Automated restore is pending; Advanced owner administration can copy your files." ;;
+    esac
+  done
+}
+advanced() {
+  while choose "Advanced" TERMINAL "Terminal (exit returns here)" OWNER "Authenticated owner shell" RASPI "Authenticated raspi-config" DIAGNOSTICS "Engineering diagnostics" GUIDE "Administration and recovery guidance"; do
+    case $PCBM_UI_CHOICE in
+      TERMINAL) /usr/bin/pcbm-admin terminal; stty sane 2>/dev/null || true ;;
+      OWNER|RASPI)
+        action=owner;[[ $PCBM_UI_CHOICE != RASPI ]] || action=raspi-config
+        if pcbm_ui_confirm "Owner administration" "Advanced changes can alter or break the qualified configuration. Recovery may require restoring settings or reflashing. Continue with your owner account password?"; then
+          if ! /usr/bin/pcbm-admin "$action"; then notify "Owner access" "Authenticated owner access needs first-boot account initialization. No universal password or passwordless root shell is supplied."; fi
+        fi ;;
+      DIAGNOSTICS)
+        if [[ -x /usr/bin/pcbm-diagnostics ]]; then
+          /usr/bin/pcbm-diagnostics
+          read -r -p "Press Enter to return..." _
+        else notify "Diagnostics" "Engineering diagnostic capture is unavailable in this installation. System Information and pcbm-info remain available."; fi ;;
+      GUIDE) notify "Your Raspberry Pi" "Use the authenticated owner shell for sudo, apt/dpkg, systemctl, boot configuration and ordinary Linux administration. Type exit to return. Keep backups; advanced changes can affect qualification. The normal appliance account has only fixed configuration operations." ;;
+    esac
+  done
+}
+section=${1:-root}
+case "$section" in region|network|services|machine|picture|storage|advanced) "$section";exit 0 ;; root) ;; *) exit 2 ;; esac
+while choose "Project CBM Control" MACHINE "Machine and Startup" PICTURE "Picture, Sound and Controllers" REGION "Language, Keyboard and Region" NETWORK "Network" SERVICES "Services" STORAGE "Content and Storage" INFO "System Information" ABOUT "About Project CBM" ADVANCED "Advanced"; do
+  case $PCBM_UI_CHOICE in
+    MACHINE) machine ;; PICTURE) picture ;; REGION) region ;; NETWORK) network ;;
+    SERVICES) services ;; STORAGE) storage ;; INFO) /usr/bin/pcbm-system-info ;;
+    ABOUT) show_about ;; ADVANCED) advanced ;;
+  esac
+done

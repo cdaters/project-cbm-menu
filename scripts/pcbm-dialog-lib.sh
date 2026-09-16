@@ -28,8 +28,7 @@
 #  - Original Commodore engineers and developers
 #  - The wider retro-computing and open source communities
 #
-#  Project CBM does not include or distribute copyrighted ROMs,
-#  commercial software, disk images, or game collections.
+#  Third-party content retains its own license and redistribution requirements.
 #
 # ---------------------------------------------------------------
 #  Notice:
@@ -39,22 +38,9 @@
 #  No warranty is provided. Use at your own risk.
 # ================================================================
 #
-PCBM_VERSION_CONF="/etc/pcbm/version.conf"
-
-if [[ -f "$PCBM_VERSION_CONF" ]]; then
-  # shellcheck source=/etc/pcbm/version.conf
-  source "$PCBM_VERSION_CONF"
-else
-  PCBM_PROJECT_NAME="Project CBM"
-  PCBM_INTERNAL_NAME="pcbm"
-  PCBM_VERSION="dev"
-  PCBM_BUILD="local"
-  PCBM_AUTHOR="Craig Daters"
-  PCBM_REPO="https://github.com/cdaters/project-cbm"
-  PCBM_TAGLINE="Power on. Boot fast. No nonsense. Just Commodore."
-fi
-
-PCBM_BACKTITLE="*** ${PCBM_PROJECT_NAME} v${PCBM_VERSION} - Raspberry Pi / Commodore machine distribution ***"
+# Product/build information belongs to pcbm-info; chrome stays stable between builds.
+PCBM_PROJECT_NAME="Project CBM"
+PCBM_BACKTITLE="*** Project CBM - Raspberry Pi / Commodore appliance ***"
 PCBM_HLINE="ENTER=Select   TAB=Buttons   ARROWS=Move   ESC=Back"
 PCBM_MIN_WIDTH=72
 PCBM_MAX_WIDTH=100
@@ -355,60 +341,6 @@ pcbm_emu_to_cover_tag() {
 
 pcbm_save_default_machine() {
   /usr/bin/pcbm-preferences set default_machine "$1" >/dev/null
-}
-
-pcbm_service_active() {
-  local service="$1"
-  if systemctl list-unit-files "$service.service" >/dev/null 2>&1 || systemctl status "$service" >/dev/null 2>&1; then
-    systemctl is-active "$service" 2>/dev/null || echo "inactive"
-  else
-    echo "not installed"
-  fi
-}
-
-pcbm_hostname() {
-  hostname 2>/dev/null || echo "unknown"
-}
-
-pcbm_ip_address() {
-  hostname -I 2>/dev/null | awk '{print $1}'
-}
-
-pcbm_gateway() {
-  ip route 2>/dev/null | awk '/default/ {print $3; exit}'
-}
-
-pcbm_dns_server() {
-  awk '/^nameserver/ {print $2}' /etc/resolv.conf | paste -sd ','
-}
-
-pcbm_mount_usb_first_partition() {
-  local dev
-
-  if [[ ! -d "$PCBM_USB_MOUNT" ]]; then
-    sudo -n mkdir -p "$PCBM_USB_MOUNT" || {
-      echo ""
-      return 2
-    }
-  fi
-
-  dev=$(lsblk -rpno NAME,RM,TYPE | awk '$2==1 && $3=="part" {print $1; exit}')
-  if [[ -z "$dev" ]]; then
-    echo ""
-    return 1
-  fi
-
-  if ! sudo -n mount "$dev" "$PCBM_USB_MOUNT" 2>/dev/null; then
-    echo ""
-    return 2
-  fi
-
-  echo "$dev"
-  return 0
-}
-
-pcbm_unmount_usb() {
-  sudo -n umount "$PCBM_USB_MOUNT" >/dev/null 2>&1 || true
 }
 
 pcbm_filtered_find() {

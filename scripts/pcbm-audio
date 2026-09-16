@@ -28,8 +28,7 @@
 #  - Original Commodore engineers and developers
 #  - The wider retro-computing and open source communities
 #
-#  Project CBM does not include or distribute copyrighted ROMs,
-#  commercial software, disk images, or game collections.
+#  Third-party content retains its own license and redistribution requirements.
 #
 # ---------------------------------------------------------------
 #  Notice:
@@ -45,20 +44,7 @@
 
 set -u
 
-PCBM_VERSION_CONF="/etc/pcbm/version.conf"
-
-if [[ -f "$PCBM_VERSION_CONF" ]]; then
-  # shellcheck source=/etc/pcbm/version.conf
-  source "$PCBM_VERSION_CONF"
-else
-  PCBM_PROJECT_NAME="Project CBM"
-  PCBM_INTERNAL_NAME="pcbm"
-  PCBM_VERSION="dev"
-  PCBM_BUILD="local"
-  PCBM_AUTHOR="Craig Daters"
-  PCBM_REPO="https://github.com/<your-username>/project-cbm"
-  PCBM_TAGLINE="Power on. Boot fast. No nonsense. Just Commodore."
-fi
+PCBM_PROJECT_NAME="Project CBM"
 
 PCBM_AUDIO_CONF="${PCBM_AUDIO_CONF:-/home/pi/.config/pcbm/audio.conf}"
 PCBM_ASOUNDRC="${PCBM_ASOUNDRC:-/home/pi/.asoundrc}"
@@ -89,30 +75,38 @@ ensure_audio_dirs() {
 }
 
 load_audio_conf() {
-  MODE="auto"
-  CARD=""
-  DEVICE="0"
-
-  if [[ -f "$PCBM_AUDIO_CONF" ]]; then
-    # shellcheck disable=SC1090
-    source "$PCBM_AUDIO_CONF"
+  MODE=auto CARD= DEVICE=0
+  local line key value count=0 bad=0
+  if [[ -f $PCBM_AUDIO_CONF && ! -L $PCBM_AUDIO_CONF ]]; then
+    while IFS= read -r line || [[ -n $line ]]; do
+      count=$((count + 1))
+      if (( count > 16 || ${#line} > 128 )); then bad=1; break; fi
+      [[ -n $line && $line != \#* ]] || continue
+      key=${line%%=*};value=${line#*=}
+      case "$key:$value" in
+        MODE:auto|MODE:AUTO|MODE:Auto) MODE=auto ;;
+        MODE:manual|MODE:MANUAL|MODE:Manual|MODE:card|MODE:CARD|MODE:Card) MODE=manual ;;
+        MODE:hdmi0|MODE:HDMI0) MODE=hdmi0 ;;
+        MODE:hdmi1|MODE:HDMI1) MODE=hdmi1 ;;
+        CARD:*|DEVICE:*)
+          if [[ $value =~ ^[0-9]{1,3}$ ]]; then printf -v "$key" '%s' "$value"; else bad=1; fi ;;
+        *) bad=1 ;;
+      esac
+    done < "$PCBM_AUDIO_CONF"
+    if (( bad )); then MODE=auto CARD= DEVICE=0; fi
   fi
-
-  [[ -z "${MODE:-}" ]] && MODE="auto"
-  [[ -z "${DEVICE:-}" ]] && DEVICE="0"
 }
 
 save_audio_conf() {
-  local mode="$1"
-  local card="${2:-0}"
-  local device="${3:-0}"
-
-  ensure_audio_dirs
-  cat >"$PCBM_AUDIO_CONF" <<EOF
-MODE=$mode
-CARD=$card
-DEVICE=$device
-EOF
+  local mode=$1 card=${2:-0} device=${3:-0} temporary
+  (( EUID != 0 )) || return 1
+  [[ $mode == auto || $mode == manual || $mode == hdmi0 || $mode == hdmi1 ]] || return 1
+  [[ $card =~ ^[0-9]{1,3}$ && $device =~ ^[0-9]{1,3}$ ]] || return 1
+  [[ ! -L $PCBM_AUDIO_CONF ]] || return 1
+  ensure_audio_dirs || return 1
+  temporary=$(umask 077; mktemp "${PCBM_AUDIO_CONF}.XXXXXXXX") || return 1
+  if printf 'MODE=%s\nCARD=%s\nDEVICE=%s\n' "$mode" "$card" "$device" > "$temporary" && mv -f "$temporary" "$PCBM_AUDIO_CONF"; then return 0; fi
+  rm -f "$temporary"; return 1
 }
 
 card_for_vc4_index() {
@@ -255,7 +249,6 @@ show_plain_status() {
   load_audio_conf
   echo "${PCBM_PROJECT_NAME:-Project CBM} Audio Status"
   echo "========================"
-  echo "Version: ${PCBM_VERSION:-dev} (${PCBM_BUILD:-local})"
   echo
   echo "Config file: $PCBM_AUDIO_CONF"
   echo "Mode: ${MODE:-auto}"
@@ -304,76 +297,24 @@ test_card() {
 }
 
 menu_mode() {
-  if [[ -f "$PCBM_DIALOG_LIB" ]]; then
-    # shellcheck disable=SC1090
-    source "$PCBM_DIALOG_LIB"
-  else
-    show_plain_status
-    exit 0
-  fi
-
-  pcbm_trap_cleanup
-
+  source /usr/share/project-cbm-menu/pcbm-ui.sh
+  pcbm_ui_terminal_size
+  local notice="Choose the output or run a bounded speaker test." command
   while true; do
-    local status_text resolved
-    resolved="$(resolve_configured_device 2>/dev/null || true)"
-    [[ -z "$resolved" ]] && resolved="unresolved"
-    status_text="Configured output: $resolved\n\nAUTO detects the currently connected HDMI output and writes ~/.asoundrc using ALSA's plug layer. Manual HDMI choices are available for stubborn displays."
-
-    pcbm_show_menu "Project CBM Audio" "$status_text" \
-      AUTO    "Auto-detect connected HDMI audio and set ALSA default" \
-      HDMI0   "Force HDMI 0 / vc4hdmi0" \
-      HDMI1   "Force HDMI 1 / vc4hdmi1" \
-      TEST    "Run left/right speaker test using current default" \
-      STATUS  "Show detailed ALSA and HDMI audio status" \
-      RETURN  "<- Return to the control panel"
-
-    case "$PCBM_STATUS" in
-      0)
-        case "$PCBM_CHOICE" in
-          AUTO)
-            save_audio_conf auto 0 0
-            if configure_audio >/dev/null 2>&1; then
-              pcbm_show_msg "Audio" "Project CBM audio is now set to AUTO.\n\nALSA default has been regenerated using the detected HDMI output and the plug conversion layer."
-            else
-              pcbm_show_msg "Audio" "Project CBM could not auto-detect a playback device.\n\nUse STATUS for details, or force HDMI 0 / HDMI 1."
-            fi
-            ;;
-          HDMI0)
-            local c0
-            c0="$(card_for_vc4_index 0)"
-            [[ -z "$c0" ]] && c0="0"
-            save_audio_conf manual "$c0" 0
-            configure_audio >/dev/null 2>&1 || true
-            pcbm_show_msg "Audio" "Project CBM audio is now forced to HDMI 0 / hw:${c0},0."
-            ;;
-          HDMI1)
-            local c1
-            c1="$(card_for_vc4_index 1)"
-            [[ -z "$c1" ]] && c1="1"
-            save_audio_conf manual "$c1" 0
-            configure_audio >/dev/null 2>&1 || true
-            pcbm_show_msg "Audio" "Project CBM audio is now forced to HDMI 1 / hw:${c1},0."
-            ;;
-          TEST)
-            pcbm_cleanup_terminal
-            test_default
-            read -r -p "Press ENTER to return to Project CBM Audio..." _
-            ;;
-          STATUS)
-            pcbm_show_textbox "Project CBM Audio Status" "$(show_plain_status)"
-            ;;
-          RETURN)
-            exit 0
-            ;;
-        esac
-        ;;
-      1|255)
-        exit 0
-        ;;
-      *)
-        exit 0
-        ;;
+    if ! pcbm_ui_menu "Project CBM Audio" "$notice" AUTO "Automatic connected HDMI" HDMI0 "First HDMI output" HDMI1 "Second HDMI output" TEST "Speaker test" INFO "System Information" BACK "Back"; then return 0; fi
+    case $PCBM_UI_CHOICE in
+      BACK) return 0 ;;
+      INFO) /usr/bin/pcbm-system-info ;;
+      TEST) test_default; read -r -p "Press Enter to return..." _ ;;
+      AUTO|HDMI0|HDMI1)
+        command=auto
+        [[ $PCBM_UI_CHOICE != HDMI0 ]] || command=hdmi0
+        [[ $PCBM_UI_CHOICE != HDMI1 ]] || command=hdmi1
+        if save_audio_conf "$command" 0 0 && configure_audio >/dev/null 2>&1; then
+          notice="Audio preference saved and applied."
+        else
+          notice="Audio could not be confirmed. Preference may be saved; check output/device availability before retrying."
+        fi ;;
     esac
   done
 }

@@ -91,3 +91,15 @@ Escape returns Back. Callers clean temporary files, report unavailable terminals
 normalize intentional navigation to a successful return to their parent screen.
 Dialog exit overrides are pinned per invocation so a real dialog error (254) is distinct
 from Escape (255); arbitrary operation exit codes still need their own handling.
+
+
+## Configuration consumers
+
+`pcbm-config` uses the shared menu, input, password, confirmation, message and scrolling
+text widgets. Password prompts have no initial value in dialog arguments. Escape and
+Cancel return without an operation; affirmative input proceeds to a separately validated
+request. Successful saves appear in the next menu prompt, while failed/uncertain results
+explain the next action. Status/version information comes only from pcbm-info JSON.
+See [the configuration contract](CONFIGURATION.md). The audio menu shares these widgets;
+legacy main/content consumers retain their existing helper where not part of this pass.
+No framework migration or universal plugin layer is required.

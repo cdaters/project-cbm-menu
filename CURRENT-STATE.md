@@ -1,3 +1,45 @@
+# Configuration maturation complete — 2026-09-16 / STOP
+
+The owner-authorized final configuration architecture pass is source-complete.
+[Menu entry guide](docs/CONFIGURATION.md) links the product user, developer and
+activation contracts. CONTROL now invokes the coherent Bash/dialog pcbm-config;
+System Information/About consume pcbm-info JSON. Registry/preferences remain the
+machine authority. Audio settings are data-only/atomic; geometry/launcher are unchanged.
+
+Normal user operations use preferences or fixed JSON requests to the product backend.
+Advanced Terminal is an unprivileged child shell; exit returns. Owner administration
+and raspi-config require a separately initialized owner account and authenticated sudo.
+No universal password or arbitrary passwordless command. Dead QUIT, competing legacy
+startup/status/version logic and unsafe generic USB mount paths are retired; old entry
+names redirect to the current UI or explain pending safe import.
+
+Runtime/package installation, first-boot/account setup and individual network/service
+readiness remain pending. Boot intent needs its consumer, TCPser typed settings need
+its fixed launch adapter and USB import needs the constrained broker specified in the
+product contract. Nothing is installed/activated on POC3 and no POC4 is built.
+
+43 Menu tests and the included launcher checker, 108 product tests, Bash/Python/JSON/
+link/privacy/size/ref checks and sudoers syntax pass. Mac fixture cost is recorded;
+no real dialog/Linux installation, Pi performance or new hardware qualification.
+No package version/tag changes, image/package build, VM start, push or publication.
+
+Menu stays feature/1.1-debian-package; product stays feature/1.1-build-foundation.
+The new source checkpoint archive/configuration-maturation-2026-09-16 beneath configured
+external bulk storage retains exact output commits, both bundles, all refs and verified
+offline restoration. POC1–3 and prior checkpoints/tags remain unchanged. Independent
+backup is unresolved. Future consumption requires newly versioned exact Menu/product
+packages, not changed bytes under an existing package identity or arbitrary main.
+
+**Next product milestone:** owner-approved first-boot/owner-account and runtime activation
+integration with Linux staging tests. Complete backend readiness/storage/modem/boot
+consumers before an explicitly approved candidate. Do not recommend another Menu
+architecture pass absent a real blocker. Boot optimization and optional software remain
+later product work; no automatic build, service enablement or hardware test.
+
+Earlier sections below record completed historical checkpoints, not the present task.
+
+---
+
 # Information and machine consumers complete — 2026-09-16 / STOP
 
 The owner-authorized source slice adds CONTROL → INFO (System Information), consuming

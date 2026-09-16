@@ -82,14 +82,14 @@ class Consumers(unittest.TestCase):
         # An inert stand-in for the non-migrated library; migrated real helper functions
         # are copied below so the test covers the actual registry reader and launcher.
         lib=(ROOT/'scripts/pcbm-dialog-lib.sh').read_text()
-        a=lib.index('pcbm_load_default_machine()');b=lib.index('pcbm_service_active()',a)
+        a=lib.index('pcbm_load_default_machine()');b=lib.index('pcbm_filtered_find()',a)
         self.write('pcbm-dialog-lib.sh',lib[a:b]+'\npcbm_trap_cleanup() { :; }\npcbm_launch_machine() { /usr/bin/pcbm-run-vice "$1"; }\n')
         helpers=self.bin/'pcbm-dialog-lib.sh'
         extra=lib[lib.index('pcbm_launch_machine()'):lib.index('pcbm_launch_content()')]
         extra=extra.replace('/usr/bin/',str(self.bin)+'/')
         with helpers.open('a') as stream:
             stream.write(extra)
-            stream.write('\npcbm_cleanup_terminal() { :; }\npcbm_show_msg() { printf "%s\\n" "$@" >> "$DIALOG_ARGS"; }\npcbm_show_menu() { PCBM_CHOICE=$("$PCBM_DIALOG_BIN" "$@"); PCBM_STATUS=$?; }\n')
+            stream.write('\npcbm_cleanup_terminal() { :; }\npcbm_show_msg() { printf "%s\\n" "$@" >> "$DIALOG_ARGS"; }\npcbm_show_menu() { PCBM_CHOICE=$("$PCBM_DIALOG_BIN" "$@"); PCBM_STATUS=$?; [[ $PCBM_CHOICE != TEST_EXIT ]] || exit 0; }\n')
         self.write('pcbm-cover','#!/bin/bash\nexit 0\n')
         for name in ['pcbm-machines','pcbm-system-info','pcbm-run-vice','pcbm-boot','pcbm-menu']:
             self.write(name,(ROOT/'scripts'/name).read_text())
@@ -130,13 +130,13 @@ esac
 
     def test_actual_main_run_and_return_uses_saved_preference(self):
         preferences.update({'default_machine':'xvic'},self.home/'.config/project-cbm')
-        p=self.run_ui('pcbm-menu',['RUN','QUIT'])
+        p=self.run_ui('pcbm-menu',['RUN','TEST_EXIT'])
         self.assertEqual(p.returncode,0,p.stderr)
         self.assertEqual((self.root/'launch').read_text().splitlines()[0],'xvic')
         self.assertGreaterEqual((self.root/'dialog-args').read_text().count('Commodore VIC-20'),2)
 
     def test_main_failed_launch_reports_then_returns(self):
-        p=self.run_ui('pcbm-menu',['RUN','QUIT'],VICE_STATUS='9')
+        p=self.run_ui('pcbm-menu',['RUN','TEST_EXIT'],VICE_STATUS='9')
         self.assertEqual(p.returncode,0,p.stderr)
         self.assertIn('VICE Launch Failed',(self.root/'dialog-args').read_text())
 

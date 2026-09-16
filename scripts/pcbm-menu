@@ -28,8 +28,7 @@
 #  - Original Commodore engineers and developers
 #  - The wider retro-computing and open source communities
 #
-#  Project CBM does not include or distribute copyrighted ROMs,
-#  commercial software, disk images, or game collections.
+#  Third-party content retains its own license and redistribution requirements.
 #
 # ---------------------------------------------------------------
 #  Notice:
@@ -64,9 +63,8 @@ while true; do
     "MACHINES" "Launch a Commodore machine or change the RUN default"
     "CONTENT"  "Launch games, demos, music, programs, or ROM files"
     "IMPORT"   "Import demos, games, music, or programs from USB"
-    "CONTROL"  "Open network, BBS, ROM, and system settings"
+    "CONTROL"  "Settings, system information and owner administration"
     "FILES"    "Start the Midnight Commander file browser"
-    "QUIT"     "Exit Project CBM and return to the shell"
     "POWER"    "Shut down Project CBM safely"
     "REBOOT"   "Restart Project CBM"
   )
@@ -101,18 +99,14 @@ while true; do
           pcbm_cleanup_terminal
           mc
           ;;
-        QUIT)
-          pcbm_cleanup_terminal
-          exit 0
-          ;;
         POWER)
           if pcbm_yesno "Shutdown Project CBM" "Shut down Project CBM now?"; then
-            sudo -n /usr/sbin/poweroff || pcbm_show_msg "Permission Required" "Shutdown requires passwordless sudo for /usr/sbin/poweroff."
+            printf '%s\n' '{"schema_version":1,"operation":"power","values":{"action":"poweroff"}}' | /usr/bin/pcbm-config-operation >/dev/null || pcbm_show_msg "Shutdown unavailable" "The fixed power operation awaits runtime activation. Advanced owner administration remains available after account setup."
           fi
           ;;
         REBOOT)
           if pcbm_yesno "Reboot Project CBM" "Restart Project CBM now?"; then
-            sudo -n /usr/sbin/reboot || pcbm_show_msg "Permission Required" "Reboot requires passwordless sudo for /usr/sbin/reboot."
+            printf '%s\n' '{"schema_version":1,"operation":"power","values":{"action":"reboot"}}' | /usr/bin/pcbm-config-operation >/dev/null || pcbm_show_msg "Reboot unavailable" "The fixed power operation awaits runtime activation. Advanced owner administration remains available after account setup."
           fi
           ;;
       esac

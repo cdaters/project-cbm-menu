@@ -41,6 +41,8 @@ pcbm_ui_invoke() {
   local options=(--stdout --no-mouse --backtitle 'Project CBM' --title "$title" --cancel-label Back)
   case "$kind" in
     menu) options+=(--menu "$message" "$lines" "$cols" "$((lines - 8))" "$@") ;;
+    input) options+=(--max-input 128 --inputbox "$message" "$lines" "$cols") ;;
+    secret) options+=(--max-input 128 --passwordbox "$message" "$lines" "$cols") ;;
     confirm) options+=(--defaultno --yesno "$message" "$lines" "$cols") ;;
     textbox) options+=(--exit-label Back --textbox "$message" "$lines" "$cols") ;;
     message) options+=(--msgbox "$message" "$lines" "$cols") ;;
@@ -92,3 +94,6 @@ pcbm_ui_textbox() {
   [[ -f ${2:-} && -r ${2:-} ]] || { pcbm_ui_result 5; return 5; }
   pcbm_ui_invoke textbox "${1:-Project CBM}" "$2"
 }
+
+pcbm_ui_input() { pcbm_ui_invoke input "${1:-Project CBM}" "${2:-}"; }
+pcbm_ui_secret() { pcbm_ui_invoke secret "${1:-Project CBM}" "${2:-}"; }
