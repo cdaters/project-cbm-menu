@@ -53,7 +53,7 @@ terminal dimensions on resize. No complete resize/event framework is claimed her
 
 Menu inputs must be tag/description pairs with unique simple tags; returned choices
 must match the offered tags. Control bytes except newline/tab are rejected. A menu
-is bounded to 128 choices and total input text to 32 KiB; larger content libraries
+is bounded to 128 choices and total input text to 32,768 characters; larger content libraries
 need pagination in their domain browser, not a giant dialog argument list. Text is passed as data,
 without eval or printf %b. More complete Unicode width/wrapping/accessibility work and
 real on-console rendering tests remain future work. This helper has no forms/password
