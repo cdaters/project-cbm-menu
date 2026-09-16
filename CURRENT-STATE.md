@@ -8,8 +8,16 @@ PUBLIC_VERSION remains the published 1.0.0. New Debian packaging installs review
 scripts under /usr/bin with necessary absolute-path relocation. It excludes release
 prep, experimental screenshot and art pending rights review. No product release,
 service/sudo changes or physical qualification. See [package contract](docs/DEBIAN-PACKAGE.md).
-Next: build/inspect the candidate, record its local tag/peeled commit and hashes in
-the product lock; preserve all existing formal/recovery tags. Historical checkpoints
+The private Debian package built and its installed payload passed the product's
+read-only image validation. Package: project-cbm-menu 1.1.0~poc1-1+pcbm1 (all), SHA-256
+`3f7557cdbdd44922954a6e640a1bcb3a96f446f6dbe6631afe667aa5e5d5f0fd`.
+Local tag v1.1.0_poc1 object `e265f3cbb995ad0a9a7748987b2d9c88019aa787` peels to
+`77a708019c9d8a11e657d7e5d2dde7b7ecb340ba`. The tag remains at package source;
+this later continuity update does not change the frozen package/input identity.
+[Product POC checkpoint](../project-cbm/docs/build/private-poc1.md) owns image/lock
+hashes and results. Runtime on a Raspberry Pi remains untested. STOP for owner review;
+no further Menu work, physical testing or publication is authorized automatically.
+All existing formal/recovery tags and main remain unchanged. Historical checkpoints
 below describe their original dates and unchanged immutable release baselines.
 
 
