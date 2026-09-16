@@ -1,5 +1,28 @@
 # First-boot/runtime activation — 2026-09-16 / IN PROGRESS
 
+## Runtime activation build stopped — 2026-09-16
+
+Menu source `bb8a66ea9da994b30f978ad87d61c9aedb03dad6` is tagged `v1.1.0_poc4`
+(tag object `ddd6b681b9ce5d8bd6887eefb8357968bcc41373`). It adds local first-run UI,
+activated configuration/import flows and safe refusal of generic SID autostart.
+Package `project-cbm-menu 1.1.0~poc4-1+pcbm1` / all, SHA-256
+`b1c95d128eb0f9b3d9ba59528ed7be39d7f94cf158933bd74c83f0eecb83999d`, requires
+`project-cbm-runtime-api (= 1)`. 50 Menu tests plus launcher checker pass; native
+package installation/payload checks and authenticated Terminal return passed.
+
+**No new candidate image exists.** Product pi-gen stopped in stage1: the invocation
+leaked a builder-only TMPDIR into its chroot, causing AppArmor postinst mktemp failure.
+No security bypass or retry. See the companion product `CURRENT-STATE.md` and
+`docs/build/poc4-blocked.md` for exact lock, evidence and next owner action. POC3
+remains the physically demonstrated foundation; these Menu changes are not physically
+qualified. No push/publication. Existing tags/POC1–3 unchanged.
+
+Recovery: configured bulk workspace `archive/runtime-activation-blocked-2026-09-16`,
+with exact final refs/bundles and offline restoration. Stop for owner review before
+construction-environment correction or another build attempt. Earlier sections below
+describe prior checkpoints and do not supersede this stop.
+
+
 Owner authorized one new private engineering candidate using the accepted architecture.
 Source now adds a short local first-run UI, active boot preference messaging, Wi-Fi
 selection, the constrained USB broker client, authenticated owner Terminal and the
