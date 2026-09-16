@@ -1,5 +1,29 @@
 # Configuration maturation complete — 2026-09-16 / STOP
 
+## Optional C64 application content routing — 2026-09-16 / STOP
+
+Owner authorized SID-Wizard/StrikeTerm integration following configuration maturation.
+CONTENT now consumes `pcbm-profiles content-profile FILE` from the product runtime:
+Music/Creation/SID-Wizard and Programs/Communications/StrikeTerm use the registry's
+validated x64sc with a regular standard D64; ordinary content retains the user's
+default. No preference write, new main-menu item, one-off launcher, sudo or downloader.
+Shared VICE launcher/F10/geometry/session/audio/diagnostics remain unchanged.
+
+Product admits only the verified SID-Wizard 1.97 native one-SID core for a later
+frozen candidate. StrikeTerm and the requested third-party SID/demo set remain
+owner-supplied. See [application guide](../project-cbm/docs/runtime/optional-applications.md)
+and [exact contract](../project-cbm/docs/runtime/optional-applications-contract.md).
+Matching product/Menu packages and normal runtime activation remain pending; no POC4,
+package/image build, new hardware qualification, service enablement or publication.
+
+44 Menu tests plus launcher checker and 120 product tests pass; the new content UI
+fixture covers profile routing, filenames with spaces, rejection and return. These
+are source tests, not application playback qualification. All prior POC evidence and
+tags remain unchanged. Checkpoint: configured bulk workspace
+`archive/optional-content-2026-09-16`, both bundles and exact refs restored offline.
+Next owner review is product first-boot/owner-account/runtime integration, not another
+Menu architecture study. Branch remains feature/1.1-debian-package; no push authorized.
+
 The owner-authorized final configuration architecture pass is source-complete.
 [Menu entry guide](docs/CONFIGURATION.md) links the product user, developer and
 activation contracts. CONTROL now invokes the coherent Bash/dialog pcbm-config;

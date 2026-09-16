@@ -77,7 +77,7 @@ pick_content_file() {
   menu_items+=("RETURN" "<- Return to the content menu")
 
   while true; do
-    prompt="Category: $label\nDefault launch machine: $(pcbm_default_machine_label)\n\nPlease select a file to launch."
+    prompt="Category: $label\nDefault launch machine: $(pcbm_default_machine_label)\n\nC64 application folders use Commodore 64 without changing your default.\nPlease select a file to launch."
     pcbm_show_menu "Launch $label" "$prompt" "${menu_items[@]}"
 
     case "$PCBM_STATUS" in
@@ -86,9 +86,9 @@ pick_content_file() {
           return 0
         fi
         if [[ -n "${files[$PCBM_CHOICE]}" ]]; then
-          emu=$(pcbm_default_machine)
+          emu=$(/usr/bin/pcbm-profiles content-profile "${files[$PCBM_CHOICE]}") || emu=
           if [[ -z "$emu" ]]; then
-            pcbm_show_msg "Machine unavailable" "The default machine could not be read. Check MACHINES and the runtime installation."
+            pcbm_show_msg "Machine unavailable" "This file or machine is unavailable. Application folders require a standard C64 D64 disk. Check the file and runtime installation."
             continue
           fi
           pcbm_infobox "Launching Content" "Launching $(basename "${files[$PCBM_CHOICE]}") with $emu..."

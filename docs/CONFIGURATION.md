@@ -34,3 +34,12 @@ product runtime dependency. Product's frozen POC1–3 packages and behavior are 
 Run `python3 -m unittest discover -s tests -v` with sibling product source and its pinned
 developer requirements. Fake dialogs/Linux operations prove control/data behavior;
 real TTY/dialog, Linux service/account integration and Pi performance require later tests.
+
+## Optional C64 applications
+
+The [product application guide](../../project-cbm/docs/runtime/optional-applications.md)
+describes SID-Wizard's admitted native core and owner-supplied StrikeTerm. Their
+normal CONTENT folders use the product registry's C64 profile without changing the
+saved default. This source consumer needs the matching product runtime; it does not
+update any frozen POC image. Other SID/demo rights and playback limits are in the
+[reference content guide](../../project-cbm/docs/runtime/reference-content.md).
