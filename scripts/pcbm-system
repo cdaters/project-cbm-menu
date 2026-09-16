@@ -108,7 +108,11 @@ while true; do
       case "$PCBM_CHOICE" in
         CONFIG)
           pcbm_cleanup_terminal
-          sudo -n raspi-config || pcbm_show_msg "Permission Required" "Launching raspi-config requires passwordless sudo for /usr/bin/raspi-config."
+          if [[ -f /etc/pcbm/engineering-poc ]]; then
+            pcbm_show_msg "Setup unavailable" "This engineering profile has no supported system/network enrollment path. Do not edit sudoers or repair this qualification image. Offline-capable appliance setup is required for Project CBM 1.1."
+          else
+            pcbm_show_msg "Advanced administration" "raspi-config requires authenticated administrator access. It is not a passwordless appliance setup interface."
+          fi
           ;;
         BOOTMODE)
           "$SCRIPT_DIR/pcbm-bootmode"

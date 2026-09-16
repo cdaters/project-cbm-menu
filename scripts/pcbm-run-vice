@@ -1,0 +1,38 @@
+#!/bin/bash
+# Shared unprivileged RUN/content launch contract. Product owns optional diagnostics.
+set -uo pipefail
+(( EUID != 0 )) || { echo "VICE must run unprivileged" >&2; exit 1; }
+profile=${1:?machine profile required}
+shift
+args=()
+case "$profile" in
+  x64|x64sc|xscpu64|x64dtv|x128|xcbm2|xcbm5x0|xvic|xplus4|xpet) emu=$profile ;;
+  x128-80col) emu=x128; args+=(-80col) ;;
+  *) echo "Unsupported machine profile" >&2; exit 2 ;;
+esac
+(( $# <= 1 )) || exit 2
+export HOME=/home/pi XDG_CONFIG_HOME=/home/pi/.config XDG_STATE_HOME=/home/pi/.local/state
+export XDG_DATA_HOME=/home/pi/.local/share SDL_AUDIODRIVER=alsa
+mkdir -p "$XDG_CONFIG_HOME/vice" "$XDG_STATE_HOME/vice" "$XDG_DATA_HOME/vice"
+cd /home/pi/pcbm || exit 1
+# VICE SDL MenuKey: F10 opens the emulator menu; choose Quit to return.
+args+=(-sounddev sdl -menukey 291)
+if (( $# )); then
+  [[ -f $1 ]] || { echo "Content file missing" >&2; exit 2; }
+  if [[ $emu == x64sc && -f /etc/pcbm/jiffydos.conf ]]; then
+    IFS= read -r rom < "/etc/pcbm/jiffydos.conf" || true
+    [[ -z ${rom:-} || ! -f $rom ]] || args+=(-kernal "$rom")
+  fi
+  args+=(-autostart "$1")
+fi
+cleanup() { stty sane 2>/dev/null || true; printf '\033[0m\033[?25h\033[2J\033[H'; }
+trap cleanup EXIT
+if [[ -f /etc/pcbm/engineering-poc && -x /usr/libexec/project-cbm/engineering.py ]]; then
+  /usr/libexec/project-cbm/engineering.py run "$profile" "/usr/bin/$emu" "${args[@]}"
+  status=$?
+else
+  /usr/bin/pcbm-audio auto --quiet >/dev/null 2>&1 || true
+  "/usr/bin/$emu" "${args[@]}"
+  status=$?
+fi
+exit "$status"

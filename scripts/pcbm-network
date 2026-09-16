@@ -41,6 +41,11 @@
 #
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/pcbm-dialog-lib.sh"
+if [[ -f /etc/pcbm/engineering-poc ]]; then
+  pcbm_show_msg "Private engineering candidate" "Network/service setup is unavailable in this offline engineering profile. SSH, Samba, TCPser, Avahi and NetworkManager remain disabled. Do not edit sudoers or repair the qualification image. Supported appliance setup is required for Project CBM 1.1."
+  exit 0
+fi
+
 pcbm_trap_cleanup
 
 TITLE="Project CBM Network"

@@ -87,3 +87,12 @@ contracts/tests and retention/package/integration/first-boot design plus Linux h
 research; STOP for the build-host options/recommendation checkpoint before installing
 software, provisioning a VM/container/host, allocating large disks, building packages,
 running pi-gen or building an image. No Menu feature branch without actual Menu work.
+
+## Current POC2 owner authorization
+
+Bounded shared unprivileged launch/F10 behavior, optional product diagnostics and
+truthful engineering setup guidance are authorized on the existing feature branch.
+No broad privilege/settings redesign or SSH. Preserve POC1 package/tag and all
+historical refs. Stop at product POC2 offline validation; no physical test or push.
+Use standard precise terminology in current docs, explain specialized terms, and
+maintain concise how-to guides. Historical build notes remain unchanged evidence.

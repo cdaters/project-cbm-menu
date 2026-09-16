@@ -14,3 +14,4 @@ scripts/pcbm-network usr/bin
 scripts/pcbm-roms usr/bin
 scripts/pcbm-start usr/bin
 scripts/pcbm-system usr/bin
+scripts/pcbm-run-vice usr/bin

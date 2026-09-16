@@ -1,3 +1,17 @@
+# POC2 launcher implementation checkpoint
+
+Owner authorized bounded POC2 work after physical Pi 3B POC1 black-screen failure.
+Active feature/1.1-debian-package adds pcbm-run-vice for both RUN and CONTENT,
+explicit unprivileged execution and F10 menu key (Quit returns to CBM). Product
+integration supplies optional engineering diagnostics; profile marker gates
+unsupported network/BBS/raspi-config actions. No broad sudo, SSH or settings redesign.
+Per-file Bash syntax and shared-launcher RUN/content/space-containing-path, exit-status
+and invalid-profile tests passed. Candidate version is 1.1.0_poc2; product lock must record its new tag/commit/hash.
+Historical tags/POC1 input remain unchanged. Product CURRENT-STATE and POC2 records
+own build/static/physical qualification; no Pi runtime pass is claimed here.
+
+---
+
 # Project CBM Menu current state
 
 ## Active private POC packaging — 2026-09-15

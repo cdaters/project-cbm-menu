@@ -624,62 +624,11 @@ pcbm_launch_machine() {
 }
 
 pcbm_launch_content() {
-  local emu="$1"
-  local file="$2"
-  local active_rom
-  local emu_bin="$emu"
   local status=0
-  local -a cmd extra_args
-
-  case "$emu" in
-    x128-80col)
-      emu_bin="x128"
-      extra_args=("-80col")
-      ;;
-  esac
-
-  if ! command -v "$emu_bin" >/dev/null 2>&1; then
-    pcbm_show_msg "Emulator Missing" "Project CBM could not find the emulator binary: $emu_bin"
-    return 1
-  fi
-
-  export HOME="/home/pi"
-  export XDG_CONFIG_HOME="$HOME/.config"
-  export XDG_STATE_HOME="$HOME/.local/state"
-  export XDG_DATA_HOME="$HOME/.local/share"
-
-  mkdir -p \
-    "$XDG_CONFIG_HOME/vice" \
-    "$XDG_STATE_HOME/vice" \
-    "$XDG_DATA_HOME/vice"
-
-  cmd=("$emu_bin" "${extra_args[@]}" "-sounddev" "sdl" "-autostart" "$file")
-  active_rom=$(pcbm_active_jiffydos)
-  if [[ "$emu_bin" == "x64sc" && -n "$active_rom" ]]; then
-    cmd=("$emu_bin" "-kernal" "$active_rom" "${extra_args[@]}" "-sounddev" "sdl" "-autostart" "$file")
-  fi
-
-  : >"$PCBM_VICE_LOG"
   pcbm_cleanup_terminal
-  # Refresh ALSA's default output before launching content.
-  # This keeps content launches aligned with the same HDMI auto-detection path as machine launches.
-  if command -v /usr/bin/pcbm-audio >/dev/null 2>&1; then
-    /usr/bin/pcbm-audio auto --quiet >>"$PCBM_VICE_LOG" 2>&1 || true
-  fi
-
-  /usr/bin/env \
-    HOME="$HOME" \
-    XDG_CONFIG_HOME="$XDG_CONFIG_HOME" \
-    XDG_STATE_HOME="$XDG_STATE_HOME" \
-    XDG_DATA_HOME="$XDG_DATA_HOME" \
-    SDL_AUDIODRIVER=alsa \
-    "${cmd[@]}" </dev/tty >"$PCBM_VICE_LOG" 2>&1
-
-  status=$?
-
+  /usr/bin/pcbm-run-vice "$1" "$2" || status=$?
   if (( status != 0 )); then
-    pcbm_show_msg "VICE Launch Failed" "Project CBM could not launch the selected content.\n\nSee log:\n$PCBM_VICE_LOG"
+    pcbm_show_msg "VICE Launch Failed" "VICE exited with status $status. For engineering diagnostics use tty2: pcbm-diagnostics"
   fi
-
-  return $status
+  return "$status"
 }
