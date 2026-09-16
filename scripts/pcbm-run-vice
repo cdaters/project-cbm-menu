@@ -5,11 +5,13 @@ set -uo pipefail
 profile=${1:?machine profile required}
 shift
 args=()
-case "$profile" in
-  x64|x64sc|xscpu64|x64dtv|x128|xcbm2|xcbm5x0|xvic|xplus4|xpet) emu=$profile ;;
-  x128-80col) emu=x128; args+=(-80col) ;;
-  *) echo "Unsupported machine profile" >&2; exit 2 ;;
-esac
+# Product validates the registry and exposes only a VICE basename and approved flags.
+resolved=$(/usr/bin/pcbm-profiles resolve "$profile" --launch-fields) || exit 2
+emu=
+while IFS= read -r field; do
+  if [[ -z $emu ]]; then emu=$field; else args+=("$field"); fi
+done <<< "$resolved"
+[[ -n $emu ]] || exit 2
 (( $# <= 1 )) || exit 2
 export HOME=/home/pi XDG_CONFIG_HOME=/home/pi/.config XDG_STATE_HOME=/home/pi/.local/state
 export XDG_DATA_HOME=/home/pi/.local/share SDL_AUDIODRIVER=alsa

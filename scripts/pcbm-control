@@ -48,7 +48,8 @@ control_items=(
   "AUDIO"   "Audio output selection, HDMI auto-detect, and speaker tests"
   "BBS"     "BBS and serial or modem communication settings"
   "ROMS"    "JiffyDOS and machine ROM import and viewing"
-  "SYSTEM"  "System settings and Project CBM information"
+  "INFO"    "System Information: build, hardware and current settings"
+  "SYSTEM"  "System settings and About Project CBM"
   "RETURN"  "<- Return to the main menu"
 )
 
@@ -67,6 +68,7 @@ while true; do
         AUDIO)   "$SCRIPT_DIR/pcbm-audio" ;;
         BBS)     "$SCRIPT_DIR/pcbm-bbs" ;;
         ROMS)    "$SCRIPT_DIR/pcbm-roms" ;;
+        INFO)    "$SCRIPT_DIR/pcbm-system-info" ;;
         SYSTEM)  "$SCRIPT_DIR/pcbm-system" ;;
         RETURN)  exit 0 ;;
       esac

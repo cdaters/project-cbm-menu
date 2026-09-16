@@ -26,7 +26,7 @@ class UI(unittest.TestCase):
         s,args=self.invoke();self.assertEqual(s,'0|success|RUN');self.assertIn('--no-mouse',args)
 
     def test_cancel_escape_failure(self):
-        for rc,status in [(1,'1|cancel|'),(255,'2|back|'),(2,'3|failure|'),(127,'3|failure|')]:
+        for rc,status in [(1,'1|cancel|'),(255,'2|back|'),(2,'3|failure|'),(127,'3|failure|'),(254,'3|failure|')]:
             with self.subTest(rc):self.assertEqual(self.invoke(rc)[0],status)
 
     def test_unexpected_selection_rejected(self):

@@ -42,10 +42,11 @@ pcbm_ui_invoke() {
   case "$kind" in
     menu) options+=(--menu "$message" "$lines" "$cols" "$((lines - 8))" "$@") ;;
     confirm) options+=(--defaultno --yesno "$message" "$lines" "$cols") ;;
+    textbox) options+=(--exit-label Back --textbox "$message" "$lines" "$cols") ;;
     message) options+=(--msgbox "$message" "$lines" "$cols") ;;
     *) pcbm_ui_result 4; return 4 ;;
   esac
-  if raw=$("${PCBM_DIALOG_BIN:-/usr/bin/dialog}" "${options[@]}"); then rc=0; else rc=$?; fi
+  if raw=$(DIALOG_OK=0 DIALOG_CANCEL=1 DIALOG_ESC=255 DIALOG_ERROR=254 DIALOG_HELP=2 DIALOG_EXTRA=3 "${PCBM_DIALOG_BIN:-/usr/bin/dialog}" "${options[@]}"); then rc=0; else rc=$?; fi
   case "$rc" in
     0) PCBM_UI_STATUS=success; PCBM_UI_CHOICE=$raw; return 0 ;;
     1) pcbm_ui_result 1; return 1 ;;
@@ -76,3 +77,18 @@ pcbm_ui_menu() {
 
 pcbm_ui_confirm() { pcbm_ui_invoke confirm "${1:-Confirm}" "${2:-Continue?}"; }
 pcbm_ui_message() { pcbm_ui_invoke message "${1:-Project CBM}" "${2:-}"; }
+
+# Call in the interactive entry point, not on import. No assumptions about HDMI size.
+pcbm_ui_terminal_size() {
+  local rows cols
+  if read -r rows cols < <(stty size 2>/dev/null) && [[ $rows =~ ^[0-9]+$ && $cols =~ ^[0-9]+$ ]] && (( rows > 0 && cols > 0 )); then
+    LINES=$rows COLUMNS=$cols
+  fi
+  export LINES=${LINES:-24} COLUMNS=${COLUMNS:-80}
+}
+
+# Caller owns a private, bounded, formatted file and removes it after display.
+pcbm_ui_textbox() {
+  [[ -f ${2:-} && -r ${2:-} ]] || { pcbm_ui_result 5; return 5; }
+  pcbm_ui_invoke textbox "${1:-Project CBM}" "$2"
+}

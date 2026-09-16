@@ -88,7 +88,10 @@ pick_content_file() {
         fi
         if [[ -n "${files[$PCBM_CHOICE]}" ]]; then
           emu=$(pcbm_default_machine)
-          [[ -z "$emu" ]] && emu="x64sc"
+          if [[ -z "$emu" ]]; then
+            pcbm_show_msg "Machine unavailable" "The default machine could not be read. Check MACHINES and the runtime installation."
+            continue
+          fi
           pcbm_infobox "Launching Content" "Launching $(basename "${files[$PCBM_CHOICE]}") with $emu..."
           sleep 1
           pcbm_launch_content "$emu" "${files[$PCBM_CHOICE]}"

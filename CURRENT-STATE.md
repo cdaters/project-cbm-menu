@@ -1,3 +1,38 @@
+# Information and machine consumers complete — 2026-09-16 / STOP
+
+The owner-authorized source slice adds CONTROL → INFO (System Information), consuming
+pcbm-info JSON without hardware/version probes. MACHINES lists profiles/current state
+from the product registry, saves a user-owned default without sudo and returns directly
+to Main Menu. RUN/cover/content/no-argument boot helper share validated product selection.
+Missing new preferences import recognized legacy state once; valid new data wins;
+malformed data is retained until explicit backed-up recovery. Boot preference is inactive.
+
+Read [user/developer navigation](docs/INFORMATION-MACHINES.md) and the product
+[checkpoint](../project-cbm/docs/runtime/information-machines-slice.md). Product owns
+runtime/bin/pcbm-info, pcbm-profiles, pcbm-preferences and their contracts. This Menu
+source requires the matching product runtime; future packaging must assign a new
+versioned dependency and validate installed paths. Existing VERSION, package changelog,
+POC2 tag/package and POC1–3 images remain unchanged. Nothing was built or installed.
+
+26 Menu tests plus the shared-launcher checker pass; 25 individual Bash syntax checks
+pass. Product has 86 tests passing. Tests use fixtures/fake dialog/VICE and sibling source
+checkouts. Performance samples are Mac-only; real dialog, Linux installation and new
+physical Pi qualification remain untested. No sudo grant, SSH, networking, session,
+geometry, audio, first boot or broad CONTROL change. No push/publication.
+
+Branches remain Menu feature/1.1-debian-package and product feature/1.1-build-foundation.
+New recovery checkpoint: configured external bulk workspace,
+archive/information-machines-2026-09-16, exact commits/ref inventories/bundles and verified
+offline restore. Earlier checkpoints remain immutable. Independent backup is unresolved.
+
+Remaining debt: dormant pcbm-start legacy dispatch/default reader (migrate before boot
+activation); existing About/version/status probes; unrelated legacy privileged helpers.
+Next owner review: bounded About/current-status cleanup using the structured authority.
+No POC4 or broader settings work is implied. Earlier sections below are historical
+completed checkpoints, not the current consumer state.
+
+---
+
 # Shared UI/result foundation complete — 2026-09-16 / STOP
 
 Owner approved retaining Bash + dialog and the pcbm-menu / pcbm-config / pcbm-info /

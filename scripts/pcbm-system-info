@@ -1,0 +1,18 @@
+#!/bin/bash
+# Read-only Project CBM information view. No detection or privileged operations here.
+set -uo pipefail
+source /usr/share/project-cbm-menu/pcbm-ui.sh
+pcbm_ui_terminal_size
+umask 077
+scratch=$(mktemp -d "${TMPDIR:-/tmp}/pcbm-information.XXXXXXXX") || exit 3
+trap 'rm -f "$scratch/report.json" "$scratch/view.txt"; rmdir "$scratch"' EXIT
+if /usr/bin/pcbm-info --json >"$scratch/report.json" 2>/dev/null &&
+   /usr/bin/python3 /usr/libexec/project-cbm-menu/pcbm_info_view.py --columns "$COLUMNS" <"$scratch/report.json" >"$scratch/view.txt" 2>/dev/null; then
+  if pcbm_ui_textbox "Project CBM System Information" "$scratch/view.txt"; then exit 0; else rc=$?; fi
+else
+  if pcbm_ui_message "System Information" "Information is unavailable. Return and try again. The rest of Project CBM remains usable."; then exit 0; else rc=$?; fi
+fi
+case "$rc" in
+  1|2) exit 0 ;; # Cancel/Escape return to CONTROL, never a domain failure.
+  *) printf '%s\n' 'System Information needs a terminal of at least 40 columns by 12 rows and the Project CBM runtime.' >&2; exit "$rc" ;;
+esac

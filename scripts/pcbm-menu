@@ -50,13 +50,18 @@ if [ "$(tty)" = "/dev/tty1" ] && [ -z "$PCBM_SPLASH_SHOWN" ]; then
   clear
 fi
 
+# One-time missing-file import is user-only; failure never prompts for sudo.
+if ! /usr/bin/pcbm-profiles initialize >/dev/null 2>&1; then
+  pcbm_show_msg "Preferences unavailable" "Using a validated fallback where possible. Choose MACHINES to review saved preferences. No administrator password is needed."
+fi
 while true; do
-  current_emu=$(pcbm_default_machine)
-  current_label=$(pcbm_default_machine_label)
+  pcbm_load_default_machine || true
+  current_emu=$PCBM_DEFAULT_ID
+  current_label=$PCBM_DEFAULT_LABEL
 
   main_items=(
     "RUN"      "Run the current default machine now"
-    "MACHINES" "Select a Commodore machine to boot or make the default"
+    "MACHINES" "Launch a Commodore machine or change the RUN default"
     "CONTENT"  "Launch games, demos, music, programs, or ROM files"
     "IMPORT"   "Import demos, games, music, or programs from USB"
     "CONTROL"  "Open network, BBS, ROM, and system settings"
@@ -67,6 +72,7 @@ while true; do
   )
 
   prompt="Default machine: $current_label\n\nPlease select a Project CBM option."
+  [[ $PCBM_PREFERENCE_STATUS != invalid ]] || prompt+="\nSaved preferences need recovery; using a validated fallback. Review MACHINES."
   pcbm_show_menu "Project CBM Main Menu" "$prompt" "${main_items[@]}"
 
   case "$PCBM_STATUS" in
@@ -74,9 +80,11 @@ while true; do
       case "$PCBM_CHOICE" in
         RUN)
           if [[ -z "$current_emu" ]]; then
-            pcbm_show_msg "Default Machine Not Set" "No default machine is currently configured.\n\nChoose MACHINES first, then set a default machine."
+            pcbm_show_msg "Default Machine Not Set" "The machine registry or preferences could not be read. Choose MACHINES to review the selection; check the runtime installation if it remains unavailable."
           else
-            pcbm_launch_machine "$current_emu"
+            if ! pcbm_launch_machine "$current_emu"; then
+              pcbm_show_msg "VICE Launch Failed" "VICE did not exit successfully. Engineering candidates can collect diagnostics from tty2."
+            fi
 
             if [ "$(tty)" = "/dev/tty1" ]; then
               /usr/bin/pcbm-cover

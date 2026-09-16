@@ -107,3 +107,14 @@ No new image/package build, broad Menu/CONTROL reorganization, first boot, servi
 SSH, other-model qualification or push. STOP for owner review after tests and recovery.
 Future consumers must use structured pcbm-info output, not duplicate hardware detection
 or parse its human display. Do not interpret arbitrary command exit 2 as UI Back.
+
+## Information and machine consumers (latest completed boundary / STOP)
+
+Owner-authorized source migration is complete. Read CURRENT-STATE and
+`docs/INFORMATION-MACHINES.md`. System Information consumes pcbm-info JSON; MACHINES,
+RUN and shared content/default/cover paths consume the product registry/preferences.
+Do not reintroduce machine tables, hardware probes or privileged default-machine writes.
+Missing state may import legacy once; invalid state requires explicit recovery. Boot
+preference/dormant pcbm-start activation remains deferred. Preserve frozen tags/packages/
+POC1–3. No package/image build, broad CONTROL/settings changes, SSH/services, new Pi test
+or push. STOP for owner review after tests and verified source recovery checkpoint.

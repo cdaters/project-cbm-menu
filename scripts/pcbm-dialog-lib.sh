@@ -331,102 +331,30 @@ pcbm_infobox() {
     --infobox "$text" "$PCBM_HEIGHT" "$PCBM_WIDTH"
 }
 
+# Product contract 1 supplies the registry and preference authority. No shell eval.
+pcbm_load_default_machine() {
+  local fields
+  PCBM_DEFAULT_ID= PCBM_DEFAULT_LABEL=Unavailable PCBM_PREFERENCE_STATUS=invalid
+  fields=$(/usr/bin/pcbm-profiles default) || return 1
+  IFS=$'\t' read -r PCBM_DEFAULT_ID PCBM_DEFAULT_LABEL PCBM_PREFERENCE_STATUS <<< "$fields"
+  [[ -n $PCBM_DEFAULT_ID && -n $PCBM_DEFAULT_LABEL ]]
+}
+
 pcbm_default_machine() {
-  cat "$PCBM_DEFAULT_MACHINE_CONF" 2>/dev/null
+  /usr/bin/pcbm-profiles default --id-only
 }
 
 pcbm_default_machine_label() {
-  case "$(pcbm_default_machine)" in
-    x64) echo "Commodore 64 (Fast)" ;;
-    x64sc) echo "Commodore 64 (Recommended for games and demos)" ;;
-    xscpu64) echo "Commodore 64 with CMD SuperCPU" ;;
-    x64dtv) echo "Commodore 64 DTV" ;;
-    x128) echo "Commodore 128 (40-column VIC display)" ;;
-    x128-80col) echo "Commodore 128 (80-column VDC mode)" ;;
-    xcbm2) echo "CBM-II" ;;
-    xcbm5x0) echo "CBM-5x0" ;;
-    xvic) echo "VIC-20" ;;
-    xplus4) echo "Plus/4" ;;
-    xpet) echo "PET" ;;
-    *) echo "Not set" ;;
-  esac
-}
-
-pcbm_machine_tag_to_emu() {
-  case "$1" in
-    C64) echo "x64" ;;
-    C64SC) echo "x64sc" ;;
-    SCPU64) echo "xscpu64" ;;
-    C64DTV) echo "x64dtv" ;;
-    C128) echo "x128" ;;
-    C12880) echo "x128-80col" ;;
-    CBM2) echo "xcbm2" ;;
-    CBM5) echo "xcbm5x0" ;;
-    VIC20) echo "xvic" ;;
-    PET) echo "xpet" ;;
-    PLUS4) echo "xplus4" ;;
-    *) return 1 ;;
-  esac
-}
-
-pcbm_emu_to_machine_tag() {
-  case "$1" in
-    x64) echo "C64" ;;
-    x64sc) echo "C64SC" ;;
-    xscpu64) echo "SCPU64" ;;
-    x64dtv) echo "C64DTV" ;;
-    x128) echo "C128" ;;
-    x128-80col) echo "C12880" ;;
-    xcbm2) echo "CBM2" ;;
-    xcbm5x0) echo "CBM5" ;;
-    xvic) echo "VIC20" ;;
-    xpet) echo "PET" ;;
-    xplus4) echo "PLUS4" ;;
-    *) return 1 ;;
-  esac
+  pcbm_load_default_machine || return 1
+  printf '%s\n' "$PCBM_DEFAULT_LABEL"
 }
 
 pcbm_emu_to_cover_tag() {
-  case "$1" in
-    x64|x64sc|xscpu64|x64dtv)
-      echo "c64"
-      ;;
-    x128|x128-80col)
-      echo "c128"
-      ;;
-    xcbm2)
-      echo "cbm2"
-      ;;
-    xcbm5x0)
-      echo "cbm5"
-      ;;
-    xvic)
-      echo "vic20"
-      ;;
-    xpet)
-      echo "pet"
-      ;;
-    xplus4)
-      echo "plus4"
-      ;;
-    *)
-      return 1
-      ;;
-  esac
+  /usr/bin/pcbm-profiles resolve "$1" --cover
 }
 
 pcbm_save_default_machine() {
-  local emu="$1"
-  if ! sudo -n mkdir -p "$PCBM_CONFIG_DIR" 2>/dev/null; then
-    pcbm_show_msg "Permission Required" "Project CBM could not create $PCBM_CONFIG_DIR without sudo.\n\nAdd a passwordless sudo rule for mkdir and tee, or create the file manually."
-    return 1
-  fi
-
-  if ! printf '%s\n' "$emu" | sudo -n tee "$PCBM_DEFAULT_MACHINE_CONF" >/dev/null 2>&1; then
-    pcbm_show_msg "Permission Required" "Project CBM could not save the default machine.\n\nAdd a passwordless sudo rule for /usr/bin/tee or save the file manually:\n$PCBM_DEFAULT_MACHINE_CONF"
-    return 1
-  fi
-  return 0
+  /usr/bin/pcbm-preferences set default_machine "$1" >/dev/null
 }
 
 pcbm_service_active() {
@@ -611,7 +539,6 @@ pcbm_launch_machine() {
   local emu="$1"
   local machine_tag
 
-  # machine_tag=$(pcbm_emu_to_machine_tag "$emu" | tr '[:upper:]' '[:lower:]')
   machine_tag=$(pcbm_emu_to_cover_tag "$emu")
 
   pcbm_cleanup_terminal

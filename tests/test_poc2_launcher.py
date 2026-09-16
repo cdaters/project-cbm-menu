@@ -4,6 +4,7 @@ src=(Path(__file__).resolve().parents[1]/'scripts/pcbm-run-vice').read_text()
 with tempfile.TemporaryDirectory() as tmp:
  root=Path(tmp);home=root/'home/pi';(home/'pcbm').mkdir(parents=True);(root/'usr/bin').mkdir(parents=True)
  script=root/'run';script.write_text(src.replace('/home/pi',str(home)).replace('/usr/bin/',str(root/'usr/bin')+'/').replace('/usr/libexec/',str(root/'usr/libexec')+'/').replace('/etc/pcbm/',str(root/'etc/pcbm')+'/'))
+ resolver=root/'usr/bin/pcbm-profiles';resolver.write_text('#!/bin/bash\nexec '+str(Path(__file__).resolve().parents[2]/'project-cbm/runtime/bin/pcbm-profiles')+' \"$@\"\n');resolver.chmod(0o755)
  emu=root/'usr/bin/x64sc';emu.write_text('#!/bin/bash\nprintf "%s\\n" "$@" > "$TEST_ARGS"\nexit "${TEST_STATUS:-0}"\n');emu.chmod(0o755)
  media=home/'pcbm/test content.prg';media.write_text('owned test')
  env=dict(os.environ,TEST_ARGS=str(root/'args'))

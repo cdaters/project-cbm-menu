@@ -1,7 +1,7 @@
 # Shared UI/result contract 1
 
-The new `lib/pcbm-ui.sh` is an opt-in Bash/dialog foundation. Existing Main Menu,
-CONTROL hierarchy, launcher and frozen packages are unchanged. Future packaging
+The new `lib/pcbm-ui.sh` is an opt-in Bash/dialog foundation. MACHINES and System Information now consume it; the wider CONTROL hierarchy remains
+legacy. Frozen packages are unchanged. Future packaging
 installs it under `/usr/share/project-cbm-menu/`; no package is built in this slice.
 No new tag/version is implied by modifying this feature branch.
 
@@ -79,3 +79,15 @@ are contract tests, not a Raspberry Pi or real-dialog rendering qualification.
 
 The product [runtime contract](../../project-cbm/docs/runtime/info-contract.md) defines
 how future pcbm-config consumes JSON. Keep detection in pcbm-info, not this library.
+
+## First consumers and scrolling text
+
+System Information and MACHINES use this contract now. See the
+[product consumer contract](../../project-cbm/docs/runtime/information-machines-contract.md).
+`pcbm_ui_terminal_size` explicitly measures the terminal at entry; importing the library
+still performs no probes. `pcbm_ui_textbox TITLE FILE` displays a caller-owned private,
+bounded formatted file with keyboard scrolling and a Back button. Enter acknowledges;
+Escape returns Back. Callers clean temporary files, report unavailable terminals, and
+normalize intentional navigation to a successful return to their parent screen.
+Dialog exit overrides are pinned per invocation so a real dialog error (254) is distinct
+from Escape (255); arbitrary operation exit codes still need their own handling.

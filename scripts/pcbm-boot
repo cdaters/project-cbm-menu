@@ -40,5 +40,6 @@
 # ================================================================
 #
 # One launch path for RUN, machines, direct boot and content.
-profile=${1:-$(tr -d '\r\n' </etc/pcbm/default-machine.conf)}
+profile=${1:-$(/usr/bin/pcbm-profiles default --id-only)}
+[[ -n $profile ]] || exit 2
 exec /usr/bin/pcbm-run-vice "$profile"
