@@ -1,3 +1,11 @@
+project-cbm-menu (1.1.0~poc4-1+pcbm1) trixie; urgency=medium
+
+  * Integrate accepted configuration, information and user preference contracts.
+  * Add retry-safe local setup UI, constrained USB import and Wi-Fi discovery.
+  * Preserve the shared VICE launcher and refuse invalid generic SID autostart.
+
+ -- Project CBM contributors <1015402+cdaters@users.noreply.github.com>  Wed, 16 Sep 2026 16:00:00 -0700
+
 project-cbm-menu (1.1.0~poc2-1+pcbm1) trixie; urgency=medium
 
   * Share the unprivileged RUN/content launcher and explicit F10 menu contract.

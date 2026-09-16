@@ -1,0 +1,56 @@
+#!/bin/bash
+# Local setup UI; passwords are never child-process arguments or files.
+set +x
+set -uo pipefail
+source /usr/share/project-cbm-menu/pcbm-ui.sh
+pcbm_ui_terminal_size
+bridge=/usr/libexec/project-cbm-menu/pcbm_config_bridge.py
+request() {
+    local op=$1 reply; shift
+    reply=$(printf '%s\n' "$@" | /usr/bin/python3 "$bridge" request "$op" | /usr/bin/pcbm-config-operation 2>/dev/null)
+    if printf '%s' "$reply" | /usr/bin/python3 "$bridge" result >/dev/null 2>&1; then return 0; fi
+    pcbm_ui_message "Setup not complete" "This step could not be confirmed. Previous completed steps are retained. Retry, or use tty2 diagnostics; do not assume setup succeeded." || true
+    return 1
+}
+step_done() {
+    /usr/bin/pcbm-setup-state "$1"
+    case $? in 0) return 0 ;; 1) return 1 ;; *) exit 2 ;; esac
+}
+if ! step_done complete; then
+    pcbm_ui_message "Welcome to Project CBM" "Set your region, create your owner administration password, and choose whether to use networking. Internet access is not required. Completed steps survive a restart." || exit 1
+fi
+if ! step_done region; then
+    pcbm_ui_input "Language" "UTF-8 locale (for example en_US.UTF-8). Menu text is currently English." "en_US.UTF-8" || exit 1
+    locale=$PCBM_UI_CHOICE
+    pcbm_ui_input "Keyboard" "Console layout (for example us or gb). The new layout applies after reboot; password entry uses the current layout." "us" || exit 1
+    keyboard=$PCBM_UI_CHOICE
+    pcbm_ui_input "Timezone" "Timezone (for example America/Phoenix or Europe/London). UTC is a safe default." "UTC" || exit 1
+    request setup-region "$locale" "$keyboard" "$PCBM_UI_CHOICE" || exit 1
+fi
+if ! step_done owner; then
+    pcbm_ui_secret "Owner administration" "Choose a unique password for the owner account (12–128 printable characters; no colon). This enables authenticated sudo, not automatic root access." || exit 1
+    secret=$PCBM_UI_CHOICE;PCBM_UI_CHOICE=
+    if ! pcbm_ui_secret "Confirm owner password" "Enter the same password again using the current keyboard layout."; then unset secret;exit 1;fi
+    if [[ $secret != "$PCBM_UI_CHOICE" ]]; then
+        unset secret;PCBM_UI_CHOICE=
+        pcbm_ui_message "Not saved" "Passwords did not match. Retry setup." || true;exit 1
+    fi
+    PCBM_UI_CHOICE=
+    request setup-owner "$secret";rc=$?;unset secret
+    [[ $rc == 0 ]] || exit 1
+fi
+join_wifi=false
+if ! step_done network; then
+    pcbm_ui_menu "Network" "Networking is optional. Optional sharing and remote access stay off until deliberately enabled." OFFLINE "Stay Offline / Skip Network" ETHERNET "Use Ethernet" WIFI "Configure Wi-Fi" || exit 1
+    case $PCBM_UI_CHOICE in
+      OFFLINE) request setup-network false || exit 1 ;;
+      ETHERNET) request setup-network true || exit 1 ;;
+      WIFI) request setup-network true || exit 1;join_wifi=true ;;
+      *) exit 2 ;;
+    esac
+fi
+/usr/bin/pcbm-profiles initialize >/dev/null 2>&1 || exit 2
+# Called even after the completion marker: repairs interrupted readiness publication.
+request setup-finish || exit 1
+if [[ $join_wifi == true ]]; then /usr/bin/pcbm-config network;fi
+exit 0

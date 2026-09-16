@@ -1,3 +1,20 @@
+# First-boot/runtime activation — 2026-09-16 / IN PROGRESS
+
+Owner authorized one new private engineering candidate using the accepted architecture.
+Source now adds a short local first-run UI, active boot preference messaging, Wi-Fi
+selection, the constrained USB broker client, authenticated owner Terminal and the
+safe refusal of generic SID autostart. Runtime API 1 is a versioned Debian dependency.
+Product owns root operations/accounts/service policy and exact optional media admission.
+No framework redesign, public release, push or physical test. POC1–3 remain untouched.
+
+Menu source version is 1.1.0_poc4; it is not yet a frozen/tagged candidate input.
+50 Menu tests plus launcher checks and 135 product tests pass at this source checkpoint.
+Native integration and matching package/image construction are still in progress.
+See [product progress and staging evidence](../project-cbm/docs/build/runtime-activation.md).
+Do not treat fixture passes or this source version as a hardware-qualified image.
+
+Earlier completed checkpoints below retain their original scope and conclusions.
+
 # Configuration maturation complete — 2026-09-16 / STOP
 
 ## Optional C64 application content routing — 2026-09-16 / STOP

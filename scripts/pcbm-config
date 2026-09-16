@@ -19,7 +19,7 @@ choose() {
 }
 ready() {
   if /usr/bin/pcbm-config-operation --ready "$1"; then return 0; fi
-  notify "Pending runtime activation" "This operation needs first-boot account/service initialization in a future candidate. You can continue using Project CBM offline."
+  notify "Pending runtime activation" "Complete local first-boot setup before changing this setting. Project CBM remains usable offline."
   return 1
 }
 apply_setting() {
@@ -57,12 +57,30 @@ region() {
   done
 }
 network() {
-  while choose "Network" STATUS "Network/Ethernet status" HOSTNAME "Pi hostname" COUNTRY "Wi-Fi country and radio" WIFI "Join Wi-Fi (WPA personal)" ONLINE "Enable normal networking" OFFLINE "Stay offline (disable connections)"; do
+  while choose "Network" STATUS "Network/Ethernet status" HOSTNAME "Pi hostname" COUNTRY "Wi-Fi country and radio" SCAN "Nearby Wi-Fi networks" WIFI "Join Wi-Fi by name (WPA personal)" DISCONNECT "Disconnect Project CBM Wi-Fi" FORGET "Forget Project CBM Wi-Fi" ONLINE "Enable normal networking" OFFLINE "Stay offline (disable connections)"; do
     case $PCBM_UI_CHOICE in
       STATUS) /usr/bin/pcbm-system-info ;;
       HOSTNAME) edit_value hostname "Short hostname: lowercase letters, digits and hyphens; for example project-cbm." ;;
       COUNTRY)
         if pcbm_ui_confirm "Wi-Fi country" "Set the country where this Pi is used. The Raspberry Pi country operation also enables the Wi-Fi radio. Continue?"; then edit_value wifi-country "Two-letter country code, for example US or GB."; fi ;;
+      SCAN)
+        ready wifi-enroll || continue
+        apply_setting wifi-rescan
+        rows=$(/usr/bin/pcbm-wifi-list | /usr/bin/python3 "$bridge" wifi-list)
+        names=();choices=()
+        while IFS=$'\t' read -r index name detail;do
+          [[ -n $index ]] || continue
+          names+=("$name");choices+=("$index" "$name ($detail)")
+        done <<< "$rows"
+        if (( ${#choices[@]}==0 ));then notify "Wi-Fi" "No supported WPA-personal networks are visible. Enable networking and set the Wi-Fi country/radio first, or join a hidden network by name. No Internet connection is required.";continue;fi
+        if pcbm_ui_menu "Nearby Wi-Fi" "Choose a WPA-personal network." "${choices[@]}";then
+          ssid=${names[$PCBM_UI_CHOICE]}
+          if pcbm_ui_secret "Wi-Fi password" "WPA personal password (8–63 ASCII characters).";then
+            secret=$PCBM_UI_CHOICE;PCBM_UI_CHOICE=
+            apply_setting wifi-enroll "$ssid" "$secret";unset secret
+          fi
+          unset ssid;PCBM_UI_CHOICE=
+        fi ;;
       WIFI)
         ready wifi-enroll || continue
         notify "Wi-Fi" "Set your Wi-Fi country first. This joins one WPA personal network; enterprise, open networks and unusual settings use authenticated owner administration. Existing owner-managed connections are retained."
@@ -75,6 +93,8 @@ network() {
           fi
           unset ssid; PCBM_UI_CHOICE=
         fi ;;
+      DISCONNECT) apply_setting wifi-disconnect ;;
+      FORGET) if pcbm_ui_confirm "Forget Wi-Fi?" "Remove the one Project CBM-managed Wi-Fi connection? Owner-managed profiles remain unchanged."; then apply_setting wifi-forget;fi ;;
       ONLINE) if pcbm_ui_confirm "Enable networking?" "Allow NetworkManager to activate configured Ethernet/Wi-Fi connections? Optional services remain separately controlled."; then apply_setting network true; fi ;;
       OFFLINE) if pcbm_ui_confirm "Stay offline?" "Disconnect networking, including Ethernet and remote sessions? Project CBM remains usable offline."; then apply_setting network false; fi ;;
     esac
@@ -91,7 +111,7 @@ services() {
     esac
     options=(ENABLE "Enable" DISABLE "Disable")
     [[ $service != sharing ]] || options+=(PASSWORD "Set separate Samba password")
-    [[ $service != modem ]] || options+=(SETTINGS "Modem port and speed (activation pending)")
+    [[ $service != modem ]] || options+=(SETTINGS "Modem port and speed")
     while choose "$label" "${options[@]}"; do
       case $PCBM_UI_CHOICE in
         ENABLE|DISABLE)
@@ -117,14 +137,14 @@ services() {
   done
 }
 machine() {
-  while choose "Machine and Startup" DEFAULT "Choose default Commodore machine" BOOT "Boot preference (activation pending)"; do
+  while choose "Machine and Startup" DEFAULT "Choose default Commodore machine" BOOT "Boot preference"; do
     case $PCBM_UI_CHOICE in
       DEFAULT) /usr/bin/pcbm-machines --default ;;
       BOOT)
         if choose "Boot preference" MENU "Menu (recommended)" EMULATOR "Default emulator"; then
           value=menu;[[ $PCBM_UI_CHOICE != EMULATOR ]] || value=emulator
           if /usr/bin/pcbm-preferences set boot_preference "$value" >/dev/null 2>&1; then
-            PCBM_CONFIG_NOTICE="Preference saved. Current engineering sessions still start at Menu; activation is pending."
+            PCBM_CONFIG_NOTICE="Preference saved for the next login/boot. After the emulator exits or fails, Project CBM returns to Menu."
           else notify "Not saved" "Check user preferences/recovery instructions. No administrator password is needed."; fi
         fi ;;
     esac
@@ -143,15 +163,15 @@ storage() {
   while choose "Content and Storage" SPACE "Capacity and free space" LOCATIONS "Content locations / USB import" BACKUP "Backup and restore guidance"; do
     case $PCBM_UI_CHOICE in
       SPACE) /usr/bin/pcbm-system-info ;;
-      LOCATIONS) notify "Content" "Use CONTENT, FILES and IMPORT on Main Menu. Content remains under /home/pi/pcbm (games, demos, programs, music and ROM resources). Safe removable-media import activation is pending; generic passwordless mounts are not provided." ;;
+      LOCATIONS) notify "Content" "Use CONTENT, FILES and IMPORT on Main Menu. Content remains under /home/pi/pcbm (games, demos, programs, music and ROM resources). IMPORT uses the constrained read-only removable-media broker. No generic passwordless mount access is provided." ;;
       BACKUP) notify "Backup and restore" "Keep an external copy of your content, user preferences and VICE configuration. For major/base upgrades: back up, flash a fresh image, then validate a selective restore. Never restore machine identity, host keys or old system configuration wholesale. Automated restore is pending; Advanced owner administration can copy your files." ;;
     esac
   done
 }
 advanced() {
-  while choose "Advanced" TERMINAL "Terminal (exit returns here)" OWNER "Authenticated owner shell" RASPI "Authenticated raspi-config" DIAGNOSTICS "Engineering diagnostics" GUIDE "Administration and recovery guidance"; do
+  while choose "Advanced" TERMINAL "Owner terminal (authenticated; exit returns)" RASPI "Authenticated raspi-config" DIAGNOSTICS "Engineering diagnostics" GUIDE "Administration and recovery guidance"; do
     case $PCBM_UI_CHOICE in
-      TERMINAL) /usr/bin/pcbm-admin terminal; stty sane 2>/dev/null || true ;;
+      TERMINAL) if ! /usr/bin/pcbm-admin terminal; then notify "Owner terminal" "Authentication was cancelled or failed, or owner setup is incomplete. Retry with the owner account password."; fi; stty sane 2>/dev/null || true ;;
       OWNER|RASPI)
         action=owner;[[ $PCBM_UI_CHOICE != RASPI ]] || action=raspi-config
         if pcbm_ui_confirm "Owner administration" "Advanced changes can alter or break the qualified configuration. Recovery may require restoring settings or reflashing. Continue with your owner account password?"; then

@@ -20,6 +20,9 @@ cd /home/pi/pcbm || exit 1
 # VICE SDL MenuKey: F10 opens the emulator menu; choose Quit to return.
 args+=(-sounddev sdl -menukey 291)
 if (( $# )); then
+  case $1 in
+    *.[sS][iI][dD]) echo "SID files are imported normally, but PSID/RSID playback awaits the dedicated player gate. No generic autostart was attempted." >&2; exit 2 ;;
+  esac
   [[ -f $1 ]] || { echo "Content file missing" >&2; exit 2; }
   if [[ $emu == x64sc && -f /etc/pcbm/jiffydos.conf ]]; then
     IFS= read -r rom < "/etc/pcbm/jiffydos.conf" || true

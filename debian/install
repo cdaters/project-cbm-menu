@@ -20,3 +20,4 @@ scripts/pcbm-system-info usr/bin
 lib/pcbm_info_view.py usr/libexec/project-cbm-menu
 scripts/pcbm-config usr/bin
 lib/pcbm_config_bridge.py usr/libexec/project-cbm-menu
+scripts/pcbm-first-run usr/bin

@@ -75,9 +75,9 @@ printf '%s' '{"format":"project-cbm.config-result","schema_version":1,"status":"
         self.assertEqual(p.returncode,0,p.stderr);self.assertEqual(json.loads((self.root/'requests').read_text())['operation'],'sharing-password')
 
     def test_terminal_returns_and_raspi_requires_confirmation(self):
-        p=self.run_ui('pcbm-config',['ADVANCED','TERMINAL','RASPI','CANCEL','OWNER','MESSAGE','BACK','BACK'])
+        p=self.run_ui('pcbm-config',['ADVANCED','TERMINAL','RASPI','CANCEL','RASPI','MESSAGE','BACK','BACK'])
         self.assertEqual(p.returncode,0,p.stderr)
-        self.assertEqual((self.root/'admin-args').read_text().splitlines(),['terminal','owner'])
+        self.assertEqual((self.root/'admin-args').read_text().splitlines(),['terminal','raspi-config'])
         self.assertFalse((self.root/'requests').exists())
 
     def test_about_uses_json_no_runtime_probe_and_cleans_up(self):
@@ -92,12 +92,12 @@ printf '%s' '{"format":"project-cbm.config-result","schema_version":1,"status":"
         self.assertEqual(p.returncode,0,p.stderr)
         self.assertEqual(json.loads((self.root/'requests').read_text())['values'],{'enabled':False})
 
-    def test_boot_preference_is_user_owned_and_labeled_pending(self):
+    def test_boot_preference_is_user_owned_and_has_active_consumer(self):
         p=self.run_ui('pcbm-config',['MACHINE','BOOT','EMULATOR','BACK','BACK'])
         self.assertEqual(p.returncode,0,p.stderr)
         from project_cbm import preferences
         self.assertEqual(preferences.read(self.home/'.config/project-cbm')['values']['boot_preference'],'emulator')
-        self.assertIn('activation is pending',(self.root/'dialog-args').read_text())
+        self.assertIn('Preference saved for the next login/boot.',(self.root/'dialog-args').read_text())
 
     def test_ui_error_does_not_loop_or_apply(self):
         p=self.run_ui('pcbm-config',['FAIL']);self.assertEqual(p.returncode,3)
