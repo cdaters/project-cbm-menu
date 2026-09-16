@@ -15,3 +15,4 @@ scripts/pcbm-roms usr/bin
 scripts/pcbm-start usr/bin
 scripts/pcbm-system usr/bin
 scripts/pcbm-run-vice usr/bin
+lib/pcbm-ui.sh usr/share/project-cbm-menu

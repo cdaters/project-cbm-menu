@@ -1,3 +1,32 @@
+# Shared UI/result foundation complete — 2026-09-16 / STOP
+
+Owner approved retaining Bash + dialog and the pcbm-menu / pcbm-config / pcbm-info /
+narrow-backend boundaries. This slice adds opt-in `lib/pcbm-ui.sh`, its future Debian
+install entry, [contract documentation](docs/UI-CONTRACT.md) and ten fake-dialog tests.
+Selection, Cancel, Escape/Back, success/failure, validation and unavailable are distinct.
+No existing Main Menu/CONTROL screen, launcher, boot flow or privilege behavior changed.
+A representative fake domain action runs only after successful selection.
+
+Ten UI tests, the existing launcher checker and 24 per-file Bash syntax checks pass
+on macOS Bash 3.2. ShellCheck is unavailable. No real dialog/Pi rendering performance
+or Linux runtime qualification is claimed. The product supplies read-only pcbm-info,
+user preference and profile-registry foundations; see its
+[runtime checkpoint](../project-cbm/docs/runtime/foundation-slice.md).
+
+Stay on feature/1.1-debian-package. VERSION and the frozen v1.1.0_poc2 tag/package are
+unchanged; no package was built. A future package requires an intentional new version,
+source pin and hash, never reuse/retag of POC2. Product POC3 physically passed its bounded
+Pi 3B test; the older checkpoints below retain their historical physical-UNTESTED state.
+
+Recovery: configured product bulk workspace, `archive/runtime-foundation-2026-09-16`,
+manifest and offline restore report for both repositories. No push/publication.
+Next owner decision: authorize a targeted read-only System Information consumer and
+machine-preference/registry migration, with explicit compatibility tests, before broad
+configuration reorganization. No POC4, image, first-boot/network/service implementation,
+additional-model testing or optional software is authorized by this completed slice.
+
+---
+
 # POC2 Menu package complete — owner physical review pending
 
 Active feature/1.1-debian-package supplied the frozen product POC2 Menu input:

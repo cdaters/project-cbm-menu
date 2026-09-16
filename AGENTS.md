@@ -96,3 +96,14 @@ No broad privilege/settings redesign or SSH. Preserve POC1 package/tag and all
 historical refs. Stop at product POC2 offline validation; no physical test or push.
 Use standard precise terminology in current docs, explain specialized terms, and
 maintain concise how-to guides. Historical build notes remain unchanged evidence.
+
+## Shared UI foundation (latest owner boundary / STOP)
+
+The owner approved Bash/dialog and the Menu/config/info/backend boundaries. The first
+slice adds only the opt-in UI/result library, contract/tests and future package install
+entry. Existing scripts and frozen POC packages/tags remain unchanged. Product owns
+pcbm-info and user preference/profile foundations; read its docs/runtime/foundation-slice.md.
+No new image/package build, broad Menu/CONTROL reorganization, first boot, services,
+SSH, other-model qualification or push. STOP for owner review after tests and recovery.
+Future consumers must use structured pcbm-info output, not duplicate hardware detection
+or parse its human display. Do not interpret arbitrary command exit 2 as UI Back.
