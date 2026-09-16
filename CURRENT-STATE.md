@@ -1,14 +1,25 @@
-# POC2 launcher implementation checkpoint
+# POC2 Menu package complete — owner physical review pending
 
-Owner authorized bounded POC2 work after physical Pi 3B POC1 black-screen failure.
-Active feature/1.1-debian-package adds pcbm-run-vice for both RUN and CONTENT,
-explicit unprivileged execution and F10 menu key (Quit returns to CBM). Product
-integration supplies optional engineering diagnostics; profile marker gates
-unsupported network/BBS/raspi-config actions. No broad sudo, SSH or settings redesign.
-Per-file Bash syntax and shared-launcher RUN/content/space-containing-path, exit-status
-and invalid-profile tests passed. Candidate version is 1.1.0_poc2; product lock must record its new tag/commit/hash.
-Historical tags/POC1 input remain unchanged. Product CURRENT-STATE and POC2 records
-own build/static/physical qualification; no Pi runtime pass is claimed here.
+Active feature/1.1-debian-package supplied the frozen product POC2 Menu input:
+local annotated v1.1.0_poc2 object 4ff0f9c5d94f16064e2c43c960a429ecb275372b,
+peeled 897cee7c792b11bfed80168a576f263340f5f57d. Package
+project-cbm-menu 1.1.0~poc2-1+pcbm1 (all), SHA-256
+e29bc3598f3be0869f79184250f88a03f4c59f1304a20a428223bac58c97bd11.
+Later documentation commits do not change that frozen source/package identity.
+
+pcbm-run-vice shares RUN/content behavior, rejects root and invalid profiles, and
+sets F10 to open VICE's menu (Quit returns to CBM). Product integration owns optional
+bounded diagnostics, getty/PAM sessions and the private non-root diagnostic VT.
+Engineering profile gates unsupported network/BBS/raspi-config setup. No broad sudo,
+SSH or full settings redesign. Per-file Bash syntax and shared-launcher argument/
+exit tests pass. Product POC2 passed offline payload checks; physical behavior is
+UNTESTED. POC1 had boot/Menu success and x64sc/console-recovery failure on Pi 3B.
+
+[Product checkpoint](../project-cbm/docs/build/private-poc2.md) owns exact image/
+lock/media identities and [physical procedure](../project-cbm/docs/qualification/poc2-pi3b-smoke-test.md).
+STOP for owner review. No physical testing, further code change, POC3 or publication.
+Main and all pre-existing tags remain unchanged; POC1 package/input is immutable.
+The historical checkpoints below retain their original context.
 
 ---
 
