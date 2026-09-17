@@ -18,6 +18,8 @@ narrow setup Wi-Fi gates, retry-safe region/network operations and fixed result 
 No broad root, arbitrary terminal reset or unrelated information-architecture redesign.
 
 Menu `020294c` adds three consecutive actual Menu-controller fixture cycles.
+Subsequent bounded follow-ups hide internal setup tags and make Advanced Back
+return to its selection screen. Exact commits are in the recovery source inventory.
 Menu 70/70 host tests PASS; Product 154/155 PASS with unchanged unsandboxed macOS mktemp
 expectation failure. Nine lifecycle tests pass including real host PTY three-cycle
 restoration. This does not prove physical KMS/VT/visibility/response or Wi-Fi operation.
