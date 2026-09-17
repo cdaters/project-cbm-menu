@@ -27,7 +27,7 @@ All seven artwork files and mappings remain unchanged. No version/tag/package/im
 was created. Existing frozen Menu v1.1.0_poc4.1 remains immutable, not source-corrected.
 
 Evidence `qualification/poc4-run2-2026-09-17`; related recovery
-`archive/poc4-run2-source-correction-2026-09-17`, under configured Product bulk storage.
+`archive/poc4-run2-source-correction-2026-09-17-verified`, under configured Product bulk storage.
 Final manifest binds both refs/bundles, restored refs/peeled tags/fsck, source inventories,
 validation and exact preserved evidence references, without duplicating images.
 AGENTS/owner-scope commits/protected refs unchanged; no push, VM start or physical test.
