@@ -1,3 +1,24 @@
+# POC4 attempt #2 offline-validated — 2026-09-16 / STOP
+
+Product's bounded builder/chroot environment correction succeeded. Menu source/package
+are unchanged: `v1.1.0_poc4`, peeled `bb8a66ea9da994b30f978ad87d61c9aedb03dad6`,
+`project-cbm-menu 1.1.0~poc4-1+pcbm1` / all, SHA-256
+`b1c95d128eb0f9b3d9ba59528ed7be39d7f94cf158933bd74c83f0eecb83999d`.
+50 Menu tests plus launcher checker pass; native package/UI-interface/authentication
+revalidation passes. New private image passed offline/static validation; physical
+first boot, configuration/services and applications remain UNTESTED for this candidate.
+
+Read companion product CURRENT-STATE and docs/build/private-poc4-attempt2.md for exact
+lock/artifact hashes. Physical procedure: docs/qualification/poc4-attempt2-pi3b-smoke-test.md
+in product. Lock SHA-256 `27f0e8ca522f745e240d088fc8fe8feab8f98c15eb165d72fad1a9ef18ee3fdf`.
+POC4 attempt #1 remains immutable FAILED/no-image evidence. POC3 remains the previous
+physical Pi 3B baseline. No runtime Menu change, retag, push or publication in this retry.
+
+Both repository branches/bundles and exact offline restoration are retained under
+configured bulk storage `archive/poc4-attempt2-2026-09-16`; prior checkpoint preserved.
+STOP for owner review and exact-hash Pi 3B testing. No automatic physical test, next
+candidate, other hardware or boot optimization. Earlier checkpoints below are historical.
+
 # First-boot/runtime activation — 2026-09-16 / IN PROGRESS
 
 ## Runtime activation build stopped — 2026-09-16
