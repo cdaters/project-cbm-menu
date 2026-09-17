@@ -16,10 +16,14 @@ fi
 pcbm_ui_menu "Import from USB" "Choose the source partition. It will be mounted read-only." "${options[@]}" || exit 0
 token=$PCBM_UI_CHOICE
 pcbm_ui_menu "Import destination" "Supported regular files go into the selected category's Imported folder. SID files always go into Music. Existing files are preserved. This candidate limits one import to 2 GiB and keeps 256 MiB free." programs "Programs / applications" games "Games / disk images" demos "Demos" music "Music / SID" || exit 0
+category=$PCBM_UI_CHOICE
+case $category in programs|games|demos|music) ;; *) exit 2 ;; esac
 printf '\nImporting supported content; please leave the USB drive connected...\n'
-reply=$(printf '%s\n' "$token" "$PCBM_UI_CHOICE" | /usr/bin/python3 "$bridge" import-request | /usr/bin/pcbm-import-operation)
+reply=$(printf '%s\n' "$token" "$category" | /usr/bin/python3 "$bridge" import-request | /usr/bin/pcbm-import-operation)
 if message=$(printf '%s' "$reply" | /usr/bin/python3 "$bridge" import-result);then
-  pcbm_ui_message "Import complete" "$message" || true
+  pcbm_ui_message "Import complete" "$message
+Destination: /home/pi/pcbm/$category/Imported
+SID files: /home/pi/pcbm/music/Imported" || true
 else
   pcbm_ui_message "Import incomplete" "Some files may have copied. Existing files were preserved. Check free space and diagnostics before retrying; do not remove a drive whose unmount failed." || true;exit 2
 fi

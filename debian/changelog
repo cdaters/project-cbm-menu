@@ -1,3 +1,11 @@
+project-cbm-menu (1.1.0~poc4.1-1+pcbm1) trixie; urgency=medium
+
+  * Restore existing machine Covers through the registry/shared SDL launcher.
+  * Add unprivileged Advanced Mixer and clearer USB import destinations.
+  * Retain runtime API 1 and the normal-user Midnight Commander workflow.
+
+ -- Project CBM contributors <1015402+cdaters@users.noreply.github.com>  Wed, 16 Sep 2026 17:45:00 -0700
+
 project-cbm-menu (1.1.0~poc4-1+pcbm1) trixie; urgency=medium
 
   * Integrate accepted configuration, information and user preference contracts.

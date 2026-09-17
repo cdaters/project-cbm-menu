@@ -42,6 +42,14 @@ print(json.dumps({{**result('ok'),'message':'untrusted-fixture-message'}}))
         self.assertEqual((self.root/'operations').read_text().splitlines(),['setup-region','setup-owner','setup-network','setup-finish'])
         for text in [(self.root/'dialog-args').read_text(),(self.root/'operations').read_text(),self.state.read_text(),p.stdout,p.stderr]:
             self.assertNotIn(secret,text);self.assertNotIn('untrusted-fixture-message',text)
+    def test_wifi_choice_finishes_setup_then_opens_network_without_ethernet(self):
+        self.state.write_text('{"completed":["region","owner"],"complete":false}')
+        self.write('pcbm-config','#!/bin/bash\nprintf "%s\\n" "$@" >> "$OPERATIONS"\n')
+        p=self.run_ui('pcbm-first-run',['MESSAGE','WIFI'])
+        self.assertEqual(p.returncode,0,p.stderr)
+        self.assertEqual((self.root/'operations').read_text().splitlines(),['setup-network','setup-finish','network'])
+        self.assertTrue(json.loads(self.state.read_text())['complete'])
+
     def test_cancel_does_not_initialize(self):
         p=self.run_ui('pcbm-first-run',['ESC'])
         self.assertEqual(p.returncode,1);self.assertFalse((self.root/'operations').exists())

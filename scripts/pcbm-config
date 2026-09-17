@@ -151,9 +151,21 @@ machine() {
   done
 }
 picture() {
-  while choose "Picture, Sound and Controllers" AUDIO "Audio output and test" VIDEO "Display / VICE picture settings" INPUT "VICE keyboard and controller settings"; do
+  while choose "Picture, Sound and Controllers" AUDIO "Audio output and test" MIXER "Advanced Mixer (ALSA)" VIDEO "Display / VICE picture settings" INPUT "VICE keyboard and controller settings"; do
     case $PCBM_UI_CHOICE in
       AUDIO) /usr/bin/pcbm-audio ;;
+      MIXER)
+        if [[ -x /usr/bin/alsamixer ]] && (( EUID != 0 )); then
+          if /usr/bin/alsamixer; then
+            PCBM_CONFIG_NOTICE="Mixer closed. Changes affect available ALSA controls; persistence follows the system's ALSA policy."
+          else
+            PCBM_CONFIG_NOTICE="Mixer unavailable for this device/session. Some digital outputs have no hardware mixer controls. Audio output settings remain available."
+          fi
+          stty sane 2>/dev/null || true
+        else
+          PCBM_CONFIG_NOTICE="Advanced Mixer requires alsa-utils and the normal Project CBM user session."
+        fi ;;
+
       VIDEO) notify "Display" "Project CBM initializes VICE with true-aspect fullscreen presentation. Unused side areas are intentional. Change emulator picture preferences in VICE via F10; saved preferences are retained. Advanced Raspberry Pi display options are under Advanced → raspi-config." ;;
       INPUT) notify "Keyboard and controllers" "Host keyboard layout is under Language, Keyboard and Region. Configure emulator keys and joystick ports in VICE via F10. No controller is required to operate Project CBM." ;;
     esac

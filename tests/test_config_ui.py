@@ -37,6 +37,58 @@ printf '%s' '{"format":"project-cbm.config-result","schema_version":1,"status":"
         for label in ['Machine and Startup','About Project CBM','Language, Keyboard and Region','Content and Storage']:self.assertIn(label,args)
         self.assertFalse((self.root/'requests').exists());self.assertNotIn('RELEASE',args)
 
+    def test_advanced_mixer_returns_without_privileged_requests(self):
+        self.write('alsamixer','#!/bin/bash\nprintf "mixer\\n" >> "$ADMIN_ARGS"\nexit "${MIXER_STATUS:-0}"\n')
+        for status in ('0','1'):
+            p=self.run_ui('pcbm-config',['PICTURE','MIXER','BACK','BACK'],MIXER_STATUS=status)
+            self.assertEqual(p.returncode,0,p.stderr)
+            self.assertFalse((self.root/'requests').exists())
+            self.assertIn('Advanced Mixer',(self.root/'dialog-args').read_text())
+        self.assertEqual((self.root/'admin-args').read_text().splitlines(),['mixer','mixer'])
+        raw=(ROOT/'scripts/pcbm-config').read_text()
+        block=raw[raw.index('      MIXER)'):raw.index('      VIDEO)')]
+        self.assertNotIn('sudo',block);self.assertNotIn('alsactl',block)
+        (self.bin/'alsamixer').unlink()
+        p=self.run_ui('pcbm-config',['PICTURE','MIXER','BACK','BACK'])
+        self.assertEqual(p.returncode,0,p.stderr)
+        self.assertIn('requires alsa-utils',(self.root/'dialog-args').read_text())
+
+    def test_country_scan_select_and_join_without_ethernet_ui(self):
+        self.write('pcbm-wifi-list',"#!/bin/bash\nprintf '%s' '{\"schema_version\":1,\"status\":\"ok\",\"networks\":[{\"ssid\":\"Synthetic WiFi\",\"signal_percent\":80,\"security\":\"WPA2\"}]}'\n")
+        p=self.run_ui('pcbm-config',['NETWORK','COUNTRY','MESSAGE','US','SCAN','0','synthetic-wifi-pass','BACK','BACK'])
+        self.assertEqual(p.returncode,0,p.stderr)
+        requests=[json.loads(line) for line in (self.root/'requests').read_text().splitlines()]
+        self.assertEqual([r['operation'] for r in requests],['wifi-country','wifi-rescan','wifi-enroll'])
+        self.assertEqual(requests[-1]['values']['ssid'],'Synthetic WiFi')
+        self.assertNotIn('synthetic-wifi-pass',(self.root/'dialog-args').read_text()+p.stdout+p.stderr)
+
+    def test_files_runs_normal_mc_and_returns_to_main_menu(self):
+        self.write('mc','#!/bin/bash\nprintf "mc:%s\\n" "$EUID" >> "$ADMIN_ARGS"\n')
+        self.env['PATH']=str(self.bin)+os.pathsep+os.environ['PATH']
+        p=self.run_ui('pcbm-menu',['FILES','TEST_EXIT'])
+        self.assertEqual(p.returncode,0,p.stderr)
+        self.assertEqual((self.root/'admin-args').read_text().strip(),'mc:'+str(os.geteuid()))
+        self.assertFalse((self.root/'requests').exists())
+        block=(ROOT/'scripts/pcbm-menu').read_text().split('        FILES)')[1].split('        POWER)')[0]
+        self.assertNotIn('sudo',block)
+
+    def test_import_reports_selected_destination_and_music_exception(self):
+        self.write('pcbm-import',(ROOT/'scripts/pcbm-import').read_text())
+        self.write('pcbm-import-operation','''#!/bin/bash
+request=$(cat)
+if [[ $request == *'"operation":"list"'* ]]; then
+ printf '%s' '{"schema_version":1,"status":"ok","devices":[{"token":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","label":"Synthetic USB partition"}]}'
+else
+ printf '%s' '{"schema_version":1,"status":"ok","copied":2,"skipped":1,"bytes":56}'
+fi
+''')
+        p=self.run_ui('pcbm-import',['aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','demos','MESSAGE'])
+        self.assertEqual(p.returncode,0,p.stderr)
+        text=(self.root/'dialog-args').read_text()
+        self.assertIn('/home/pi/pcbm/demos/Imported',text)
+        self.assertIn('/home/pi/pcbm/music/Imported',text)
+        self.assertIn('USB source unmounted',text)
+
     def test_system_setting_apply_cancel_and_failure(self):
         p=self.run_ui('pcbm-config',['REGION','TIMEZONE','America/Phoenix','KEYBOARD','ESC','BACK','BACK'])
         self.assertEqual(p.returncode,0,p.stderr)

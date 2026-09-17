@@ -1,3 +1,20 @@
+# POC4 attempt #3 integration — 2026-09-16 / IN PROGRESS
+
+Owner accepted attempt #2 and the later Covers source, and authorized one new frozen
+candidate after the bounded actual Combian V3.7 review. Do not physically test attempt
+#2; it remains immutable pre-Cover build evidence. Product docs/design/combian-v37-bounded-review.md
+records the four actual reference scripts. No Combian code/assets were copied.
+
+Menu 1.1.0_poc4.1 / Debian 1.1.0~poc4.1-1+pcbm1 adds the existing seven unchanged
+Covers, shared unprivileged bounded SDL renderer, Advanced Mixer and explicit import
+destinations. Runtime API remains exactly 1. FILES retains unprivileged standard mc.
+65 fixture tests and launcher checker pass; new package/staging/image gates remain
+in progress. No physical qualification, boot optimization, push or public release.
+
+Next: build this exact new version/tag/package, freeze distinct POC4 attempt #3 inputs,
+validate in Linux and offline, then stop with the exact-hash Pi 3B procedure/recovery.
+Never consume/relabel the earlier pre-Cover Menu package as this version.
+
 # Cover source follow-up — 2026-09-16 / STOP
 
 The owner clarified COVERS means the existing `covers/pcbmcover-*.jpg` artwork.
