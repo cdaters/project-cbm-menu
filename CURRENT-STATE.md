@@ -1,3 +1,34 @@
+# POC4 physical-regression investigation — 2026-09-17 / EVIDENCE STOP
+
+Exact POC4 attempt #3 Pi 3B owner results supersede the earlier physical-UNTESTED
+checkpoint: VICE/F10/Quit/visual return passed, but Cover visibility, returned Menu
+keyboard, Ctrl+Alt+F2 and Ctrl+C failed. mc launched; SID-Wizard/StrikeTerm operation
+remains UNTESTED. [Menu findings](docs/POC4-REGRESSION-2026-09-17.md) link the Product
+qualification, differential and first-boot audit. No lifecycle root cause is confirmed;
+Cover/input failures have UNKNOWN relationship. No runtime/UX source correction selected.
+
+New SDL Cover cleanup/timeout and Product state capture **after** Cover are a strong
+conditional candidate. Base packages/VICE/getty recipes match POC3; no physical-run logs
+were found in retained evidence. POC3 proves responsive Menu/VT return, not the new Cover.
+65/65 Menu baseline tests and launcher checker pass. Product 142/143 pass with one
+existing macOS mktemp expectation failure. Host tests do not prove KMS/VT cleanup.
+
+Frozen Menu remains `v1.1.0_poc4.1`, peeled `407ced58b711209631cdfb4db6dcd741a555f408`,
+package SHA-256 `6df8fb42a10b16e12ac114032accc149c49ebf51f0e5f45c34b77d2cefbb2767`.
+Product lock `435c6e0d7a5a45eaff3f45af6d384fca5b602139fa9fb640950e2f5e7b4f39a9` and
+raw image `37d2699c7a639e050e531a4d5a132d4b197e5a60270a969814c573f436036cd8` unchanged.
+Owner scopes `be73ff1`/`8a93683` and both AGENTS files are unchanged. All art preserved.
+
+Recovery: `archive/poc4-regression-investigation-2026-09-17`; evidence:
+`qualification/poc4-regression-2026-09-17`, under configured Product bulk storage.
+Final refs/bundles/offline restore are bound by its manifest. No new version/tag/package,
+lock/image, hardware test, VM start, push or unrelated menu reorganization. Independent
+backup/custody remains unresolved; next-candidate procedure is an unbound draft only.
+
+**Next owner action:** [collect existing card evidence read-only](../project-cbm/docs/qualification/poc4-regression-collect-evidence.md).
+Do not reflash, repeat RUN or repair the card. If the failed live session still exists,
+report it before power-off. STOP for owner review. Earlier checkpoints below are history.
+
 # POC4 attempt #3 complete — 2026-09-16 / STOP FOR OWNER REVIEW
 
 **Product build/offline validation PASS. READY FOR OWNER PHYSICAL TEST.**
