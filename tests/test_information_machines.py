@@ -74,6 +74,9 @@ class Consumers(unittest.TestCase):
         self.home=self.root/'home/pi';(self.home/'pcbm').mkdir(parents=True)
         self.share=self.root/'usr/share/project-cbm-menu';self.share.mkdir(parents=True)
         shutil.copyfile(ROOT/'lib/pcbm-ui.sh',self.share/'pcbm-ui.sh')
+        shutil.copyfile(ROOT/'lib/pcbm-setup-ui.sh',self.share/'pcbm-setup-ui.sh')
+        setup_ui=self.share/'pcbm-setup-ui.sh'
+        setup_ui.write_text(setup_ui.read_text().replace('/usr/bin/',str(self.bin)+'/'))
         self.libexec=self.root/'usr/libexec/project-cbm-menu';self.libexec.mkdir(parents=True)
         shutil.copyfile(ROOT/'lib/pcbm_info_view.py',self.libexec/'pcbm_info_view.py')
         for name in ['pcbm-profiles','pcbm-preferences']:
@@ -91,6 +94,8 @@ class Consumers(unittest.TestCase):
             stream.write(extra)
             stream.write('\npcbm_cleanup_terminal() { :; }\npcbm_show_msg() { printf "%s\\n" "$@" >> "$DIALOG_ARGS"; }\npcbm_show_menu() { PCBM_CHOICE=$("$PCBM_DIALOG_BIN" "$@"); PCBM_STATUS=$?; [[ $PCBM_CHOICE != TEST_EXIT ]] || exit 0; }\n')
         self.write('pcbm-cover','#!/bin/bash\nexit 0\n')
+        lifecycle=self.root/'usr/libexec/project-cbm/engineering.py';lifecycle.parent.mkdir(parents=True)
+        lifecycle.write_text('#!/bin/bash\n[[ $1 == run-with-cover ]] || exit 2\nshift 2\nexec "$@"\n');lifecycle.chmod(0o755)
         for name in ['pcbm-machines','pcbm-system-info','pcbm-run-vice','pcbm-boot','pcbm-menu']:
             self.write(name,(ROOT/'scripts'/name).read_text())
         for name in ['x64sc','xvic','x128']:
@@ -99,6 +104,7 @@ class Consumers(unittest.TestCase):
         self.write('pcbm-info','#!/bin/bash\n[[ $1 == --json ]] || exit 2\ncat "$INFO_FIXTURE"\nexit "${INFO_STATUS:-0}"\n')
         self.write('dialog','''#!/bin/bash
 printf '%s\\n' "$@" >> "$DIALOG_ARGS"
+[[ " $* " != *" --infobox "* ]] || exit 0
 if [[ " $* " == *" --textbox "* ]]; then
   previous=; for arg in "$@"; do [[ $previous != --textbox ]] || cat "$arg" >> "$VIEW"; previous=$arg; done
 fi

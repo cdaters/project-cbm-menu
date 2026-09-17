@@ -55,7 +55,7 @@ printf '%s' '{"format":"project-cbm.config-result","schema_version":1,"status":"
 
     def test_country_scan_select_and_join_without_ethernet_ui(self):
         self.write('pcbm-wifi-list',"#!/bin/bash\nprintf '%s' '{\"schema_version\":1,\"status\":\"ok\",\"networks\":[{\"ssid\":\"Synthetic WiFi\",\"signal_percent\":80,\"security\":\"WPA2\"}]}'\n")
-        p=self.run_ui('pcbm-config',['NETWORK','COUNTRY','MESSAGE','US','SCAN','0','synthetic-wifi-pass','BACK','BACK'])
+        p=self.run_ui('pcbm-config',['NETWORK','SCAN','US','0','synthetic-wifi-pass','BACK','BACK'])
         self.assertEqual(p.returncode,0,p.stderr)
         requests=[json.loads(line) for line in (self.root/'requests').read_text().splitlines()]
         self.assertEqual([r['operation'] for r in requests],['wifi-country','wifi-rescan','wifi-enroll'])
@@ -90,7 +90,7 @@ fi
         self.assertIn('USB source unmounted',text)
 
     def test_system_setting_apply_cancel_and_failure(self):
-        p=self.run_ui('pcbm-config',['REGION','TIMEZONE','America/Phoenix','KEYBOARD','ESC','BACK','BACK'])
+        p=self.run_ui('pcbm-config',['REGION','TIMEZONE','America.Phoenix','KEYBOARD','ESC','BACK','BACK'])
         self.assertEqual(p.returncode,0,p.stderr)
         request=json.loads((self.root/'requests').read_text());self.assertEqual(request['values'],{'value':'America/Phoenix'})
         self.assertIn('Setting applied',(self.root/'dialog-args').read_text())
@@ -163,6 +163,12 @@ for name in list(fixtures.Consumers.__dict__):
 
 
 class StaticBoundaries(unittest.TestCase):
+    def test_wifi_list_rejects_malformed_rows_atomically(self):
+        valid={'ssid':'fixture','signal_percent':70,'security':'WPA2'}
+        for row in [{**valid,'signal_percent':True},{**valid,'security':'WPA2\tESC'},{**valid,'ssid':'bad\nrow'},None]:
+            payload={'schema_version':1,'status':'ok','networks':[valid,row]}
+            p=subprocess.run([sys.executable,str(ROOT/'lib/pcbm_config_bridge.py'),'wifi-list'],input=json.dumps(payload),text=True,capture_output=True)
+            self.assertNotEqual(p.returncode,0);self.assertEqual(p.stdout,'')
     def test_old_routes_and_dead_actions_removed(self):
         for name in ['pcbm-control','pcbm-network','pcbm-bbs','pcbm-system','pcbm-bootmode']:
             raw=(ROOT/'scripts'/name).read_text();self.assertIn('exec /usr/bin/pcbm-config',raw)

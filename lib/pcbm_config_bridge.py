@@ -8,12 +8,17 @@ FIELDS={'hostname':['value'],'locale':['value'],'timezone':['value'],'keyboard':
         'sharing-password':['password'],'service':['service','enabled'],'modem':['port','baud'],'power':['action'],
         'setup-region':['locale','keyboard','timezone'],'setup-owner':['password'],
         'setup-network':['enabled'],'setup-finish':[], 'wifi-rescan':[], 'wifi-disconnect':[], 'wifi-forget':[]}
+for _op in ('wifi-country','wifi-rescan','wifi-enroll'):FIELDS['setup-'+_op]=FIELDS[_op]
 MESSAGES={'saved_restart': 'Keyboard layout saved. It applies after reboot; current console input is unchanged.', 'credentials_required':'Set a separate File Sharing password before enabling Samba.', 'ok':'Setting applied.','invalid':'Unsupported value. Check the setting and try again.',
           'pending':'Complete local first-boot setup before changing this setting.',
           'unavailable':'Required facility unavailable. Review System Information or Advanced guidance.',
           'failed':'The operation could not be confirmed. Review current state before retrying; part may have applied.',
           'busy':'Another configuration operation is running. Try again later.',
           'saved_pending':'Settings saved; runtime integration is pending. Service remains unchanged.'}
+
+
+MESSAGES.update(wifi_failed='Could not connect to Wi-Fi. Check the password, signal and router settings, then retry or choose another network. Authentication failure was not separately identified.',
+                wifi_country_required='Set the Wi-Fi country where this Pi is used before connecting.')
 
 
 def about(data, columns=80):
@@ -77,9 +82,15 @@ def main(argv):
             print(f"Copied {d['copied']} files ({d['bytes']} bytes); skipped {d['skipped']}. USB source unmounted. Find imported content through CONTENT.")
         elif action=='wifi-list':
             d=json.loads(raw)
-            for i,row in enumerate(d['networks'][:32]):
-                if not row['ssid'].isprintable() or len(row['ssid'].encode())>32:raise ValueError('ssid')
-                print(str(i)+'\t'+row['ssid']+'\t'+str(row['signal_percent'])+'% '+row['security'])
+            if not isinstance(d,dict) or d.get('schema_version')!=1 or d.get('status')!='ok' or not isinstance(d.get('networks'),list) or len(d['networks'])>32:raise ValueError('wifi')
+            rows=[]
+            for i,row in enumerate(d['networks']):
+                if not isinstance(row,dict) or set(row)!={'ssid','signal_percent','security'}:raise ValueError('row')
+                if not isinstance(row['ssid'],str) or not row['ssid'].isprintable() or not 1<=len(row['ssid'].encode())<=32:raise ValueError('ssid')
+                if type(row['signal_percent']) is not int or not 0<=row['signal_percent']<=100:raise ValueError('signal')
+                if not isinstance(row['security'],str) or not row['security'].isprintable() or len(row['security'])>64:raise ValueError('security')
+                rows.append(str(i)+'\t'+row['ssid']+'\t'+str(row['signal_percent'])+'% '+row['security'])
+            print('\n'.join(rows))
         elif action=='about':print(about(parse(raw),int(argv[1]) if len(argv)>1 else 80),end='')
         else:raise ValueError('action')
         return 0

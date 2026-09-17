@@ -4,6 +4,7 @@
 set +x
 set -uo pipefail
 source /usr/share/project-cbm-menu/pcbm-ui.sh
+source /usr/share/project-cbm-menu/pcbm-setup-ui.sh
 pcbm_ui_terminal_size
 PCBM_CONFIG_NOTICE=
 bridge=/usr/libexec/project-cbm-menu/pcbm_config_bridge.py
@@ -23,16 +24,28 @@ ready() {
   return 1
 }
 apply_setting() {
-  local op=$1 reply text; shift
+  local op=$1 reply text rc=0 label="Applying configuration..."; shift
+  case $op in
+    wifi-country) label="Configuring Wi-Fi country and radio..." ;;
+    wifi-rescan) label="Scanning for Wi-Fi networks..." ;;
+    wifi-enroll) label="Connecting to Wi-Fi (up to 30 seconds)..." ;;
+    keyboard) label="Configuring keyboard for next boot..." ;;
+    locale) label="Applying language settings..." ;;
+    timezone) label="Setting timezone..." ;;
+  esac
+  pcbm_ui_working "$label" || return 1
   # printf is a Bash builtin. Secret values never appear in child argv or files here.
   reply=$(printf '%s\n' "$@" | /usr/bin/python3 "$bridge" request "$op" | /usr/bin/pcbm-config-operation 2>/dev/null)
   if text=$(printf '%s' "$reply" | /usr/bin/python3 "$bridge" result 2>/dev/null); then
     PCBM_CONFIG_NOTICE=$text
   else
+    rc=1
     notify "Setting not active" "${text:-Configuration is pending runtime activation. No broad sudo rule is needed.}"
   fi
   unset reply text
+  return "$rc"
 }
+request() { apply_setting "$@"; }
 edit_value() {
   local op=$1 help=$2
   ready "$op" || return 0
@@ -50,9 +63,9 @@ show_about() {
 region() {
   while choose "Language, Keyboard and Region" LOCALE "System language/locale" KEYBOARD "Console keyboard layout" TIMEZONE "Timezone"; do
     case $PCBM_UI_CHOICE in
-      LOCALE) edit_value locale "UTF-8 locale, for example en_US.UTF-8. Applies to new sessions; menu translations are not yet provided." ;;
-      KEYBOARD) edit_value keyboard "Keyboard layout, for example us or gb. Saved for next boot; advanced variants remain owner-managed." ;;
-      TIMEZONE) edit_value timezone "Timezone, for example America/Phoenix or Europe/London." ;;
+      LOCALE) if ready locale && pcbm_setup_choice region;then apply_setting locale "$PCBM_UI_CHOICE";fi ;;
+      KEYBOARD) if ready keyboard && pcbm_setup_choice keyboard;then apply_setting keyboard "$PCBM_UI_CHOICE";fi ;;
+      TIMEZONE) if ready timezone && pcbm_setup_choice timezone;then apply_setting timezone "$PCBM_UI_CHOICE";fi ;;
     esac
   done
 }
@@ -62,25 +75,11 @@ network() {
       STATUS) /usr/bin/pcbm-system-info ;;
       HOSTNAME) edit_value hostname "Short hostname: lowercase letters, digits and hyphens; for example project-cbm." ;;
       COUNTRY)
-        if pcbm_ui_confirm "Wi-Fi country" "Set the country where this Pi is used. The Raspberry Pi country operation also enables the Wi-Fi radio. Continue?"; then edit_value wifi-country "Two-letter country code, for example US or GB."; fi ;;
+        if pcbm_ui_confirm "Wi-Fi country" "Set the country where this Pi is used. This enables the Wi-Fi radio. Continue?" && ready wifi-country && pcbm_setup_choice country;then apply_setting wifi-country "$PCBM_UI_CHOICE";fi ;;
       SCAN)
         ready wifi-enroll || continue
-        apply_setting wifi-rescan
-        rows=$(/usr/bin/pcbm-wifi-list | /usr/bin/python3 "$bridge" wifi-list)
-        names=();choices=()
-        while IFS=$'\t' read -r index name detail;do
-          [[ -n $index ]] || continue
-          names+=("$name");choices+=("$index" "$name ($detail)")
-        done <<< "$rows"
-        if (( ${#choices[@]}==0 ));then notify "Wi-Fi" "No supported WPA-personal networks are visible. Enable networking and set the Wi-Fi country/radio first, or join a hidden network by name. No Internet connection is required.";continue;fi
-        if pcbm_ui_menu "Nearby Wi-Fi" "Choose a WPA-personal network." "${choices[@]}";then
-          ssid=${names[$PCBM_UI_CHOICE]}
-          if pcbm_ui_secret "Wi-Fi password" "WPA personal password (8–63 ASCII characters).";then
-            secret=$PCBM_UI_CHOICE;PCBM_UI_CHOICE=
-            apply_setting wifi-enroll "$ssid" "$secret";unset secret
-          fi
-          unset ssid;PCBM_UI_CHOICE=
-        fi ;;
+        if pcbm_setup_wifi '';then PCBM_CONFIG_NOTICE="Connected to Wi-Fi."
+        else rc=$?;[[ $rc != 2 ]] || apply_setting network false;fi ;;
       WIFI)
         ready wifi-enroll || continue
         notify "Wi-Fi" "Set your Wi-Fi country first. This joins one WPA personal network; enterprise, open networks and unusual settings use authenticated owner administration. Existing owner-managed connections are retained."
@@ -207,3 +206,4 @@ while choose "Project CBM Control" MACHINE "Machine and Startup" PICTURE "Pictur
     ABOUT) show_about ;; ADVANCED) advanced ;;
   esac
 done
+exit 0

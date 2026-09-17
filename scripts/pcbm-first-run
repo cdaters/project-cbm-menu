@@ -1,56 +1,89 @@
 #!/bin/bash
-# Local setup UI; passwords are never child-process arguments or files.
+# Retry-safe first-boot UI; backend remains the state/privilege authority.
 set +x
 set -uo pipefail
 source /usr/share/project-cbm-menu/pcbm-ui.sh
+source /usr/share/project-cbm-menu/pcbm-setup-ui.sh
 pcbm_ui_terminal_size
 bridge=/usr/libexec/project-cbm-menu/pcbm_config_bridge.py
 request() {
-    local op=$1 reply; shift
+    local op=$1 reply text label;shift
+    case $op in
+      setup-region) label="Applying region, keyboard and timezone settings..." ;;
+      setup-owner) label="Preparing owner account..." ;;
+      setup-network) label="Configuring network access..." ;;
+      setup-wifi-country) label="Configuring Wi-Fi country and radio..." ;;
+      setup-wifi-rescan) label="Scanning for Wi-Fi networks..." ;;
+      setup-wifi-enroll) label="Connecting to Wi-Fi (up to 30 seconds)..." ;;
+      setup-finish) label="Saving configuration..." ;;
+      *) return 2 ;;
+    esac
+    pcbm_ui_working "$label" || return 1
     reply=$(printf '%s\n' "$@" | /usr/bin/python3 "$bridge" request "$op" | /usr/bin/pcbm-config-operation 2>/dev/null)
-    if printf '%s' "$reply" | /usr/bin/python3 "$bridge" result >/dev/null 2>&1; then return 0; fi
-    pcbm_ui_message "Setup not complete" "This step could not be confirmed. Previous completed steps are retained. Retry, or use tty2 diagnostics; do not assume setup succeeded." || true
+    if text=$(printf '%s' "$reply" | /usr/bin/python3 "$bridge" result 2>/dev/null);then return 0;fi
+    pcbm_ui_message "Setup not complete" "${text:-This operation could not be confirmed.} Previously applied changes remain. Correct the input and retry; Escape pauses setup safely." || true
     return 1
 }
 step_done() {
     /usr/bin/pcbm-setup-state "$1"
     case $? in 0) return 0 ;; 1) return 1 ;; *) exit 2 ;; esac
 }
-if ! step_done complete; then
-    pcbm_ui_message "Welcome to Project CBM" "Set your region, create your owner administration password, and choose whether to use networking. Internet access is not required. Completed steps survive a restart." || exit 1
-fi
-if ! step_done region; then
-    pcbm_ui_input "Language" "UTF-8 locale (for example en_US.UTF-8). Menu text is currently English." "en_US.UTF-8" || exit 1
-    locale=$PCBM_UI_CHOICE
-    pcbm_ui_input "Keyboard" "Console layout (for example us or gb). The new layout applies after reboot; password entry uses the current layout." "us" || exit 1
-    keyboard=$PCBM_UI_CHOICE
-    pcbm_ui_input "Timezone" "Timezone (for example America/Phoenix or Europe/London). UTC is a safe default." "UTC" || exit 1
-    request setup-region "$locale" "$keyboard" "$PCBM_UI_CHOICE" || exit 1
-fi
-if ! step_done owner; then
-    pcbm_ui_secret "Owner administration" "Choose a unique password for the owner account (12–128 printable characters; no colon). This enables authenticated sudo, not automatic root access." || exit 1
-    secret=$PCBM_UI_CHOICE;PCBM_UI_CHOICE=
-    if ! pcbm_ui_secret "Confirm owner password" "Enter the same password again using the current keyboard layout."; then unset secret;exit 1;fi
-    if [[ $secret != "$PCBM_UI_CHOICE" ]]; then
-        unset secret;PCBM_UI_CHOICE=
-        pcbm_ui_message "Not saved" "Passwords did not match. Retry setup." || true;exit 1
-    fi
-    PCBM_UI_CHOICE=
-    request setup-owner "$secret";rc=$?;unset secret
-    [[ $rc == 0 ]] || exit 1
-fi
-join_wifi=false
-if ! step_done network; then
-    pcbm_ui_menu "Network" "Networking is optional. Optional sharing and remote access stay off until deliberately enabled." OFFLINE "Stay Offline / Skip Network" ETHERNET "Use Ethernet" WIFI "Configure Wi-Fi" || exit 1
-    case $PCBM_UI_CHOICE in
-      OFFLINE) request setup-network false || exit 1 ;;
-      ETHERNET) request setup-network true || exit 1 ;;
-      WIFI) request setup-network true || exit 1;join_wifi=true ;;
-      *) exit 2 ;;
+back() {
+    case $1 in 1) stage=$2 ;; 2) unset secret;PCBM_UI_CHOICE=;exit 1 ;; *) exit 3 ;; esac
+}
+if step_done complete;then request setup-finish;exit $?;fi
+pcbm_ui_message "Welcome to Project CBM" "Set your region, owner password and optional networking. Back revisits a screen; Escape pauses setup. Applied changes survive a restart. Keyboard changes apply after reboot, so passwords use the current layout." || exit 1
+stage=region
+if step_done region;then stage=owner;fi
+if step_done owner;then stage=network;fi
+while true;do
+    case $stage in
+      region)
+        if pcbm_setup_choice region;then locale=$PCBM_UI_CHOICE;stage=keyboard
+        else rc=$?;[[ $rc == 1 || $rc == 2 ]] && exit 1;exit 3;fi ;;
+      keyboard)
+        if pcbm_setup_choice keyboard;then keyboard=$PCBM_UI_CHOICE;stage=timezone;else back $? region;fi ;;
+      timezone)
+        if pcbm_setup_choice timezone;then timezone=$PCBM_UI_CHOICE;stage=apply;else back $? keyboard;fi ;;
+      apply)
+        if request setup-region "$locale" "$keyboard" "$timezone";then
+          if step_done owner;then stage=network;else stage=owner;fi
+        else stage=region;fi ;;
+      owner)
+        if step_done owner;then stage=network;continue;fi
+        if pcbm_ui_secret "Owner administration" "Choose a unique owner password (12–128 printable characters; no colon). This enables authenticated sudo, not automatic root access.";then
+          secret=$PCBM_UI_CHOICE;PCBM_UI_CHOICE=;stage=confirm
+        else back $? region;fi ;;
+      confirm)
+        if pcbm_ui_secret "Confirm owner password" "Enter the same password using the current keyboard layout.";then
+          if [[ $secret != "$PCBM_UI_CHOICE" ]];then
+            unset secret;PCBM_UI_CHOICE=
+            pcbm_ui_message "Not saved" "Passwords did not match. Try again." || true;stage=owner;continue
+          fi
+          PCBM_UI_CHOICE=
+          if request setup-owner "$secret";then stage=network;else stage=owner;fi
+          unset secret
+        else rc=$?;unset secret;back "$rc" owner;fi ;;
+      network)
+        if pcbm_ui_menu "Network" "Networking is optional. Wi-Fi setup enables networking and the radio. Optional remote services remain off. Back revisits region; the owner password remains set." OFFLINE "Stay Offline" ETHERNET "Use Ethernet" WIFI "Configure Wi-Fi";then
+          case $PCBM_UI_CHOICE in
+            OFFLINE) if request setup-network false;then stage=finish;fi ;;
+            ETHERNET) if request setup-network true;then stage=finish;fi ;;
+            WIFI) if request setup-network true;then stage=wifi;fi ;;
+          esac
+        else back $? region;fi ;;
+      wifi)
+        if pcbm_setup_wifi setup-;then stage=finish
+        else rc=$?;case $rc in
+          1) stage=network ;;
+          2) if request setup-network false;then stage=finish;else stage=network;fi ;;
+          3) exit 1 ;;
+          *) exit 3 ;;
+        esac;fi ;;
+      finish)
+        pcbm_ui_working "Saving machine preferences..." || exit 1
+        /usr/bin/pcbm-profiles initialize >/dev/null 2>&1 || exit 2
+        if request setup-finish;then exit 0;fi
+        stage=network ;;
     esac
-fi
-/usr/bin/pcbm-profiles initialize >/dev/null 2>&1 || exit 2
-# Called even after the completion marker: repairs interrupted readiness publication.
-request setup-finish || exit 1
-if [[ $join_wifi == true ]]; then /usr/bin/pcbm-config network;fi
-exit 0
+done
