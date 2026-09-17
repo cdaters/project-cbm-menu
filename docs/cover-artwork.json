@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "scope": "existing machine-specific Project CBM covers",
+  "origin": "existing project-cbm-menu/covers; artwork bytes unchanged",
+  "source_revision": "e1f4bfd630712a02725e128a4d8a48b75db8ed2e",
+  "owner_statement": "Owner identifies these as my cover/splash images and requests preservation of the existing /covers/ artwork.",
+  "admission": "owner-authorized private engineering use",
+  "license_evidence": "Owner identification of Project CBM artwork; no new independent clearance of embedded third-party graphics/fonts established. Do not infer blanket MIT coverage for those constituents.",
+  "public_release_review": "Review constituent artwork/font redistribution evidence before public inclusion.",
+  "files": [
+    {
+      "cover_identity": "c64",
+      "path": "covers/pcbmcover-c64.jpg",
+      "size_bytes": 151271,
+      "sha256": "6e5b155eecb6c719f57ecdfba036f11e5ead23327424268d215ab865cdc1f76b"
+    },
+    {
+      "cover_identity": "c128",
+      "path": "covers/pcbmcover-c128.jpg",
+      "size_bytes": 153259,
+      "sha256": "c306250c04358b6bc94f97faa9976e714de61710629f3ce2d26c90e66f395367"
+    },
+    {
+      "cover_identity": "cbm2",
+      "path": "covers/pcbmcover-cbm2.jpg",
+      "size_bytes": 169129,
+      "sha256": "7d996ead73fa0954dc99037eaf14ecf4c2001541380e86327395862ac3c7012f"
+    },
+    {
+      "cover_identity": "cbm5",
+      "path": "covers/pcbmcover-cbm5.jpg",
+      "size_bytes": 169122,
+      "sha256": "09c6c01e2ef05ca25038fc0ac8795b3ecb464ebd192f6efa28828fce8ca66068"
+    },
+    {
+      "cover_identity": "pet",
+      "path": "covers/pcbmcover-pet.jpg",
+      "size_bytes": 171423,
+      "sha256": "25336594429d9c6a55cb711032fba6c4b076c5db416213ab976b228395e387ff"
+    },
+    {
+      "cover_identity": "plus4",
+      "path": "covers/pcbmcover-plus4.jpg",
+      "size_bytes": 172897,
+      "sha256": "32a85daa631215e28bb9a39d1b2b14d0b2b8bfc477cad0b602c6b776f40d4afb"
+    },
+    {
+      "cover_identity": "vic20",
+      "path": "covers/pcbmcover-vic20.jpg",
+      "size_bytes": 193056,
+      "sha256": "4cf2660de2d6bd6a952b633d85891cb69d272d789f7c15fb4f9baf70b1d90523"
+    }
+  ]
+}

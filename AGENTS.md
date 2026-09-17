@@ -135,3 +135,13 @@ are product gates. Preserve POC1–3, tags and earlier checkpoints. No POC4, pac
 build, service activation, new hardware test, boot optimization, optional software or
 push is authorized by this completed pass. Next owner review is first-boot/owner-account
 and runtime activation integration, not another Menu framework/architecture study.
+
+## Cover follow-up after frozen POC4 attempt #2
+
+Read CURRENT-STATE and product docs/runtime/covers.md. Preserve COVERS terminology,
+existing artwork names/bytes, registry mapping and shared-launcher transition ownership.
+No root/framebuffer/resolution workaround or per-menu cover mapping. Missing/failed
+covers must not block VICE. Source changes are not in the frozen attempt #2 image.
+New packaging/build needs owner review and a new version/tag/input identity, never
+mutation of completed packages/images. Public constituent-artwork rights remain a
+separate review; owner's existing artwork was identified for private engineering use.

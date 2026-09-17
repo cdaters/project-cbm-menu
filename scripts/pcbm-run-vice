@@ -32,6 +32,11 @@ if (( $# )); then
 fi
 cleanup() { stty sane 2>/dev/null || true; printf '\033[0m\033[?25h\033[2J\033[H'; }
 trap cleanup EXIT
+# One bounded cover transition for RUN, explicit profiles, direct boot and content.
+# No cover failure may prevent VICE. timeout waits/reaps before display handoff.
+if [[ -x /usr/bin/pcbm-cover ]]; then
+  /usr/bin/timeout --signal=TERM --kill-after=0.5s 2s /usr/bin/pcbm-cover --profile "$profile" >/dev/null 2>&1 || true
+fi
 if [[ -f /etc/pcbm/engineering-poc && -x /usr/libexec/project-cbm/engineering.py ]]; then
   /usr/libexec/project-cbm/engineering.py run "$profile" "/usr/bin/$emu" "${args[@]}"
   status=$?

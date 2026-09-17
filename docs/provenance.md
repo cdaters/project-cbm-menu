@@ -55,3 +55,15 @@ The [2026-09-15 privacy reconciliation](../../project-cbm/docs/privacy-reconcili
 records old/new commit and forensic-tag IDs, exact-content verification, retained
 private originals and current bundle/restore status. Existing published tags remain
 unchanged; older checkpoint records intentionally retain pre-rewrite identities.
+
+## Existing machine cover artwork — source follow-up
+
+The owner explicitly identified the existing /covers images as their Project CBM
+launch artwork and requested its preservation. The seven exact machine JPEGs remain
+unchanged; [cover-artwork.json](cover-artwork.json) records their hashes/source revision.
+Future private package metadata explicitly installs these filenames, not the generic
+numbered covers or historical source-art archives. This does not establish independent
+public redistribution clearance for every embedded third-party graphic/font or extend
+the source MIT license to otherwise unlicensed constituents. Review that evidence
+before public inclusion. No new package/image was built by this source follow-up.
+See the product [cover contract](../../project-cbm/docs/runtime/covers.md).

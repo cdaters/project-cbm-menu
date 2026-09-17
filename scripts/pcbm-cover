@@ -39,80 +39,22 @@
 # ================================================================
 #
 
-COVER_DIR="/usr/share/project-cbm-menu/covers"
-DISPLAY_TIME=3
-
-machine="${1:-}"
-
-[ ! -d "$COVER_DIR" ] && exit 0
-
-# Only run on tty1
-if [[ "$(tty)" != "/dev/tty1" ]]; then
-    exit 0
-fi
-
-pick_random_cover() {
-    mapfile -t COVERS < <(
-        find "$COVER_DIR" -maxdepth 1 -type f \
-        \( -iname "pcbmcover[0-9]*.jpg" -o -iname "pcbmcover[0-9]*.png" \)
-    )
-
-    [ ${#COVERS[@]} -eq 0 ] && return 1
-
-    printf '%s\n' "${COVERS[RANDOM % ${#COVERS[@]}]}"
-}
-
-pick_machine_cover() {
-    local candidate
-
-    candidate="$COVER_DIR/pcbmcover-${machine}.jpg"
-    [[ -f "$candidate" ]] && {
-        printf '%s\n' "$candidate"
-        return 0
-    }
-
-    candidate="$COVER_DIR/pcbmcover-${machine}.png"
-    [[ -f "$candidate" ]] && {
-        printf '%s\n' "$candidate"
-        return 0
-    }
-
-    pick_random_cover
-}
-
-if [[ -n "$machine" ]]; then
-    COVER="$(pick_machine_cover)"
+# Compatible cover basename/filenames; profile mapping belongs only to the registry.
+set -uo pipefail
+(( EUID != 0 )) || exit 0
+[[ $(tty 2>/dev/null) == /dev/tty1 ]] || exit 0
+if [[ ${1:-} == --profile && $# == 2 ]]; then
+  machine=$(/usr/bin/pcbm-profiles resolve "$2" --cover) || exit 0
+elif (( $# == 1 )); then
+  machine=$1 # Legacy callers may still pass an already resolved cover identity.
 else
-    COVER="$(pick_random_cover)"
+  exit 0 # Never substitute a random or unrelated machine cover.
 fi
-
-[ -z "$COVER" ] && exit 0
-
-tput civis 2>/dev/null
-
-cleanup() {
-    tput cnorm 2>/dev/null
-    clear
-}
-trap cleanup EXIT
-
-clear
-
-read FB_WIDTH FB_HEIGHT < <(
-    fbset -s | awk '/geometry/ {print $2, $3}'
-)
-
-TARGET_HEIGHT=$((FB_HEIGHT * 50 / 100))
-
-TMP_IMG="/tmp/pcbm_splash_$$.png"
-
-convert "$COVER" \
-  -resize x${TARGET_HEIGHT} \
-  -gravity center \
-  -background black \
-  -extent ${FB_WIDTH}x${FB_HEIGHT} \
-  "$TMP_IMG"
-
-fbi -a --autozoom --once -noverbose -t "$DISPLAY_TIME" "$TMP_IMG"
-
-rm -f "$TMP_IMG"
+[[ $machine =~ ^[a-z0-9]+$ ]] || exit 0
+for extension in jpg png; do
+  asset="/usr/share/project-cbm-menu/covers/pcbmcover-${machine}.${extension}"
+  if [[ -f $asset && ! -L $asset ]]; then
+    exec /usr/bin/python3 /usr/libexec/project-cbm-menu/pcbm_cover_view.py "$asset"
+  fi
+done
+exit 0

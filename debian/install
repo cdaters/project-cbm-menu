@@ -21,3 +21,12 @@ lib/pcbm_info_view.py usr/libexec/project-cbm-menu
 scripts/pcbm-config usr/bin
 lib/pcbm_config_bridge.py usr/libexec/project-cbm-menu
 scripts/pcbm-first-run usr/bin
+lib/pcbm_cover_view.py usr/libexec/project-cbm-menu
+covers/pcbmcover-c64.jpg usr/share/project-cbm-menu/covers
+covers/pcbmcover-c128.jpg usr/share/project-cbm-menu/covers
+covers/pcbmcover-cbm2.jpg usr/share/project-cbm-menu/covers
+covers/pcbmcover-cbm5.jpg usr/share/project-cbm-menu/covers
+covers/pcbmcover-pet.jpg usr/share/project-cbm-menu/covers
+covers/pcbmcover-plus4.jpg usr/share/project-cbm-menu/covers
+covers/pcbmcover-vic20.jpg usr/share/project-cbm-menu/covers
+docs/cover-artwork.json usr/share/doc/project-cbm-menu

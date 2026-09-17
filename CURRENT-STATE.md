@@ -1,3 +1,25 @@
+# Cover source follow-up — 2026-09-16 / STOP
+
+The owner clarified COVERS means the existing `covers/pcbmcover-*.jpg` artwork.
+Seven exact machine JPEGs are unchanged and explicitly listed for future private
+packaging; [manifest](docs/cover-artwork.json) records hashes and provenance limits.
+`pcbm-run-vice` now owns the registry-selected transition for default, explicit and
+content-selected profiles; the dialog-library duplicate call is removed.
+`pcbm-cover` uses a small unprivileged SDL2 helper with bounded/nonfatal fallback.
+No fbi, fbset, ImageMagick, temporary image, root or external resolution change.
+
+60 Menu tests plus launcher checker pass; native Debian SDL dummy tests decoded two
+real covers, cleaned up between runs and verified the actual hung-process timeout.
+Physical KMS/VT/VICE handoff remains UNTESTED. See product
+[cover design/status](../project-cbm/docs/runtime/covers.md).
+
+**This source work is NOT in the completed POC4 attempt #2 image or package.** No new
+package/image was built; `v1.1.0_poc4` and its package remain immutable. Before a new
+candidate, obtain owner review, assign a new Menu version/tag/package, freeze the new
+inputs and qualify the covers physically. Boot presentation remains deferred.
+No push/publication. Source recovery: `archive/covers-source-2026-09-16`; prior
+attempt #2 checkpoint unchanged. Earlier entries below describe completed history.
+
 # POC4 attempt #2 offline-validated — 2026-09-16 / STOP
 
 Product's bounded builder/chroot environment correction succeeded. Menu source/package

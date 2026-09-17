@@ -468,18 +468,8 @@ pcbm_active_jiffydos() {
 }
 
 pcbm_launch_machine() {
-  local emu="$1"
-  local machine_tag
-
-  machine_tag=$(pcbm_emu_to_cover_tag "$emu")
-
   pcbm_cleanup_terminal
-
-  if command -v /usr/bin/pcbm-cover >/dev/null 2>&1; then
-    /usr/bin/pcbm-cover "$machine_tag"
-  fi
-
-  /usr/bin/pcbm-boot "$emu"
+  /usr/bin/pcbm-boot "$1"
 }
 
 pcbm_launch_content() {
