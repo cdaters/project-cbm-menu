@@ -1,52 +1,90 @@
 # Working on Project CBM Menu
 
-## Current owner scope: frozen POC4 attempt #3
+## Current owner scope: POC4 lifecycle-regression investigation
 
-This section is the current owner-approved engineering scope. Earlier
-milestone-specific STOP/no-build boundaries below are retained as historical
-records of those completed milestones and do not prohibit later work that is
-explicitly authorized here.
+Product POC4 attempt #3 construction and offline validation are complete. The
+frozen Menu package, Cover assets, product image, release lock and checkpoints
+are immutable qualification evidence.
 
-The reviewed Project CBM Menu package containing the current Cover
-implementation is already frozen as an input for Product POC4 attempt #3.
+The owner physically tested the exact POC4 attempt #3 image on Raspberry Pi 3B.
 
-Follow the companion Product repository's current POC4 attempt #3 owner scope
-and frozen release lock.
+Observed Menu/runtime regressions include:
 
-Do not regenerate, replace or mutate the frozen Menu package, tag, Cover
-assets, package inputs or other accepted attempt #3 inputs.
+- RUN launches VICE;
+- the expected machine Cover is not visibly presented before VICE;
+- VICE runs and F10 -> Quit works;
+- the Project CBM Menu visually returns after VICE exits;
+- keyboard input is non-responsive after return;
+- Ctrl+Alt+F2 does not switch to diagnostic VT2;
+- Ctrl+C does not respond;
+- POC3 previously physically passed the complete Menu -> VICE -> Menu lifecycle
+  with responsive keyboard and VT switching.
+
+The owner authorizes bounded investigation and evidence-based correction of the
+Menu/Cover/shared-launcher portions of this regression in coordination with the
+Product repository.
 
 Preserve:
 
 - all seven existing Project CBM Cover artwork files unchanged;
-- existing Cover names and hashes;
-- machine-registry Cover mappings;
-- shared-launcher Cover transition ownership;
-- the unprivileged Cover renderer;
-- Cover failure/timeout fallback behavior;
-- current Menu/runtime interface contracts;
-- all existing tags, packages, recovery evidence and provenance;
-- third-party rights gates and security boundaries.
+- existing Cover names and provenance;
+- machine-registry Cover mappings unless evidence establishes a mapping defect;
+- shared-launcher ownership of the Cover/VICE transition;
+- unprivileged Cover presentation;
+- Cover failure-open behavior;
+- bounded Cover lifetime;
+- current machine registry/preferences authority;
+- POC3 geometry/F10/Quit behavior;
+- existing tags, frozen packages, recovery evidence and rights gates.
 
-The current authorized Product engineering scope permits one POC4 attempt #3
-image construction, offline validation, recovery checkpoint and preparation of
-the exact-hash Pi 3B physical-test procedure.
+Investigate rather than assume whether the SDL2 Cover renderer caused or
+contributed to the physical regression.
 
-No additional Menu source/package changes are authorized for this build unless
-a required validation gate fails and the owner explicitly authorizes a change.
+The corrected design must ensure:
+
+- a Cover process cannot retain keyboard, VT, SDL, DRM/KMS or display ownership
+  after its bounded presentation;
+- missing/failed Cover presentation cannot block VICE;
+- VICE launches through the one shared unprivileged path;
+- VICE exit restores terminal/session/input state completely;
+- the returned Project CBM Menu is immediately responsive;
+- diagnostic VT switching remains available according to the Product contract;
+- repeated launch/return cycles behave consistently.
+
+Add focused tests where host/native testing can meaningfully exercise Cover
+selection, renderer lifetime/failure, launcher cleanup, terminal restoration
+and repeated launch/return behavior.
+
+First-boot UI corrections owned by Menu may also be made where required by the
+Product current scope, including predictable Back/Cancel/retry semantics,
+human-readable choices, password-entry feedback and explicit working-state
+presentation.
+
+Do not expose credentials or replace validated Product configuration contracts
+with raw Linux configuration editing.
+
+The recent Dosbian 4.0 analysis is read-only design input. Do not copy Dosbian
+code, reproduce its menu structure, or adopt its broad sudo/raw-configuration
+patterns.
+
+Do not implement the proposed MEDIA/TOOLS/POWER/recovery menu reorganization
+during this regression milestone.
 
 This scope does NOT authorize:
 
-- another Menu redesign or architecture study;
-- mutation of completed packages/images;
-- physical Raspberry Pi testing;
-- another candidate after attempt #3;
+- mutation of the frozen POC4 attempt #3 Menu package;
+- mutation of completed images/locks;
+- broad Menu redesign;
+- unrelated feature expansion;
+- another image build;
+- physical testing by Codex;
 - boot-presentation optimization;
 - push;
 - publication.
 
-After successful Product attempt #3 construction and offline validation, STOP
-for owner review.
+If source changes are required, create normal logical commits and recovery
+evidence, but stop before new Menu packaging/input freeze/image construction
+unless a later owner scope explicitly authorizes them.
 
 Read CURRENT-STATE.md, docs/provenance.md, docs/VERSIONING.md and the companion
 product docs/recovery.md first. Update
