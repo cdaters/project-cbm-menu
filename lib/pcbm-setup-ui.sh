@@ -2,7 +2,7 @@
 # Common appliance selections and Wi-Fi flow. Caller supplies request().
 # No locale/radio probes or privileged writes in this presentation library.
 pcbm_setup_choice() {
-  local kind=$1 title value; local rows=()
+  local kind=$1 title value rc; local rows=()
   local PCBM_UI_HIDE_TAGS=true # Return stable IDs internally; show human names only.
   case $kind in
     region) title=Region;rows=(en_AU.UTF-8 "Australia — English" en_CA.UTF-8 "Canada — English" fr_CA.UTF-8 "Canada — French" fr_FR.UTF-8 "France — French" de_DE.UTF-8 "Germany — German" en_GB.UTF-8 "United Kingdom — English" en_US.UTF-8 "United States — English") ;;
@@ -11,6 +11,7 @@ pcbm_setup_choice() {
     country) title="Wi-Fi country";rows=(AU "Australia" CA "Canada" FR "France" DE "Germany" GB "United Kingdom" US "United States") ;;
     *) return 3 ;;
   esac
+  while true;do
   pcbm_ui_menu "$title" "Choose the setting for where you use this Pi. Advanced supports other configurations. Back returns without applying this screen." "${rows[@]}" ADVANCED "Advanced: enter an identifier" || return $?
   if [[ $PCBM_UI_CHOICE == ADVANCED ]]; then
     case $kind in
@@ -19,8 +20,14 @@ pcbm_setup_choice() {
       timezone) value=UTC ;;
       country) value=GB ;;
     esac
-    pcbm_ui_input "$title — Advanced" "Enter a supported $kind identifier (example: $value). Product validation checks it before applying." "" || return $?
+    if ! pcbm_ui_input "$title — Advanced" "Enter a supported $kind identifier (example: $value). Product validation checks it before applying." "";then
+      [[ $PCBM_UI_STATUS != cancel ]] || continue
+      [[ $PCBM_UI_STATUS != back ]] || return 2
+      return 3
+    fi
   elif [[ $kind == timezone ]]; then PCBM_UI_CHOICE=${PCBM_UI_CHOICE//./\/};fi
+  return 0
+  done
 }
 
 pcbm_setup_wifi() {

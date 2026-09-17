@@ -86,7 +86,7 @@ print(json.dumps({{**result('ok'),'message':'untrusted-fixture-message'}}))
         self.write('pcbm-wifi-list','#!/bin/bash\nprintf \'%s\\n\' \'{"schema_version":1,"status":"ok","networks":[{"ssid":"first","signal_percent":80,"security":"WPA2"},{"ssid":"second","signal_percent":70,"security":"WPA2"}]}\'\n')
 
     def test_back_revisits_then_changes_region_before_apply(self):
-        p=self.run_ui('pcbm-first-run',['MESSAGE','en_US.UTF-8','CANCEL','en_GB.UTF-8','gb','CANCEL','us','UTC','synthetic-password','synthetic-password','OFFLINE'])
+        p=self.run_ui('pcbm-first-run',['MESSAGE','ADVANCED','CANCEL','en_US.UTF-8','CANCEL','en_GB.UTF-8','gb','CANCEL','us','UTC','synthetic-password','synthetic-password','OFFLINE'])
         self.assertEqual(p.returncode,0,p.stderr)
         self.assertEqual((self.root/'operations').read_text().count('setup-region'),1)
         text=(self.root/'dialog-args').read_text()
