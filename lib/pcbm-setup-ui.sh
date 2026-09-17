@@ -3,6 +3,7 @@
 # No locale/radio probes or privileged writes in this presentation library.
 pcbm_setup_choice() {
   local kind=$1 title value; local rows=()
+  local PCBM_UI_HIDE_TAGS=true # Return stable IDs internally; show human names only.
   case $kind in
     region) title=Region;rows=(en_AU.UTF-8 "Australia — English" en_CA.UTF-8 "Canada — English" fr_CA.UTF-8 "Canada — French" fr_FR.UTF-8 "France — French" de_DE.UTF-8 "Germany — German" en_GB.UTF-8 "United Kingdom — English" en_US.UTF-8 "United States — English") ;;
     keyboard) title=Keyboard;rows=(us "English (US / Australia)" gb "English (UK)" ca "Canadian" fr "French" de "German") ;;
@@ -25,6 +26,7 @@ pcbm_setup_choice() {
 pcbm_setup_wifi() {
   local prefix=$1 stage=country rows index name detail ssid secret rc
   local names=() choices=()
+  local PCBM_UI_HIDE_TAGS=true
   while true; do
     case $stage in
       country)

@@ -91,6 +91,7 @@ print(json.dumps({{**result('ok'),'message':'untrusted-fixture-message'}}))
         self.assertEqual((self.root/'operations').read_text().count('setup-region'),1)
         text=(self.root/'dialog-args').read_text()
         self.assertIn('United Kingdom',text);self.assertIn('intentionally hidden',text)
+        self.assertIn('--no-tags',text)
 
     def test_invalid_region_retries_without_owner_commit(self):
         p=self.run_ui('pcbm-first-run',['MESSAGE','en_US.UTF-8','us','UTC','MESSAGE','en_GB.UTF-8','gb','UTC','synthetic-password','synthetic-password','OFFLINE'],REJECT_ONCE='setup-region')

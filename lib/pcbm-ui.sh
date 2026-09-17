@@ -39,6 +39,7 @@ pcbm_ui_invoke() {
   done
   if [[ ! -x ${PCBM_DIALOG_BIN:-/usr/bin/dialog} ]]; then pcbm_ui_result 5; return 5; fi
   local options=(--stdout --no-mouse --backtitle 'Project CBM' --title "$title" --cancel-label Back)
+  [[ ${PCBM_UI_HIDE_TAGS:-false} != true ]] || options+=(--no-tags)
   case "$kind" in
     menu) options+=(--menu "$message" "$lines" "$cols" "$((lines - 8))" "$@") ;;
     input) options+=(--max-input 128 --inputbox "$message" "$lines" "$cols" "${1:-}") ;;
