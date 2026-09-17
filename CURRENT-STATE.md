@@ -1,19 +1,31 @@
-# POC4 attempt #3 integration — 2026-09-16 / IN PROGRESS
+# POC4 attempt #3 — 2026-09-16 / APPROVAL-BLOCKED BEFORE BUILD
 
-Owner accepted attempt #2 and the later Covers source, and authorized one new frozen
-candidate after the bounded actual Combian V3.7 review. Do not physically test attempt
-#2; it remains immutable pre-Cover build evidence. Product docs/design/combian-v37-bounded-review.md
-records the four actual reference scripts. No Combian code/assets were copied.
+The bounded actual Combian V3.7 review is complete. No architecture change: Advanced
+Mixer (unprivileged alsamixer, no global store) and import destination feedback only.
+FILES remains normal-user mc. All seven original Covers are unchanged and packaged.
 
-Menu 1.1.0_poc4.1 / Debian 1.1.0~poc4.1-1+pcbm1 adds the existing seven unchanged
-Covers, shared unprivileged bounded SDL renderer, Advanced Mixer and explicit import
-destinations. Runtime API remains exactly 1. FILES retains unprivileged standard mc.
-65 fixture tests and launcher checker pass; new package/staging/image gates remain
-in progress. No physical qualification, boot optimization, push or public release.
+Menu tag `v1.1.0_poc4.1`, peeled `407ced58b711209631cdfb4db6dcd741a555f408`, tag object
+`003ff32cb3dce01292304511430e541c800f79e6`; package `1.1.0~poc4.1-1+pcbm1 / all`,
+SHA-256 `6df8fb42a10b16e12ac114032accc149c49ebf51f0e5f45c34b77d2cefbb2767`, API 1.
+65 Menu tests plus launcher checker PASS. Native installed mc PTY/F10, alsamixer tool,
+SDL dummy Cover lifecycle/timeout and Product/runtime staging pass. Physical KMS/VT/
+VICE transition remains UNTESTED; no new image exists.
 
-Next: build this exact new version/tag/package, freeze distinct POC4 attempt #3 inputs,
-validate in Linux and offline, then stop with the exact-hash Pi 3B procedure/recovery.
-Never consume/relabel the earlier pre-Cover Menu package as this version.
+Product frozen integration `b362c70215cef0e2c6c6a845635c47fd39b3ebbf`, lock
+`inputs/frozen-poc4-attempt3/release-lock.json`, SHA-256
+`435c6e0d7a5a45eaff3f45af6d384fca5b602139fa9fb640950e2f5e7b4f39a9`.
+Automatic approval review rejected construction and an attempted AGENTS authorization
+addendum. That addendum was removed; no build workaround. Read the Product
+[full report](../project-cbm/docs/build/poc4-attempt3-owner-review.md) for exact status
+and the separately blocked cleanup of two accidental disposable staging copies.
+No frozen input/package is changed by this continuity-only update.
+
+Recovery: `archive/poc4-attempt3-prebuild-blocked-2026-09-16` beneath configured bulk
+storage. Exact final refs/bundles/restore results are recorded there. VM stopped.
+**Next:** owner resolves approval block for the single already-frozen build and exact
+accidental-copy cleanup; then build/offline-validation/hash-binding gates precede Pi
+qualification. Do not physically test pre-Cover attempt #2. No new architecture work,
+boot optimization, SID implementation, push/publication. Earlier records are historical.
 
 # Cover source follow-up — 2026-09-16 / STOP
 
