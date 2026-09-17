@@ -1,5 +1,53 @@
 # Working on Project CBM Menu
 
+## Current owner scope: frozen POC4 attempt #3
+
+This section is the current owner-approved engineering scope. Earlier
+milestone-specific STOP/no-build boundaries below are retained as historical
+records of those completed milestones and do not prohibit later work that is
+explicitly authorized here.
+
+The reviewed Project CBM Menu package containing the current Cover
+implementation is already frozen as an input for Product POC4 attempt #3.
+
+Follow the companion Product repository's current POC4 attempt #3 owner scope
+and frozen release lock.
+
+Do not regenerate, replace or mutate the frozen Menu package, tag, Cover
+assets, package inputs or other accepted attempt #3 inputs.
+
+Preserve:
+
+- all seven existing Project CBM Cover artwork files unchanged;
+- existing Cover names and hashes;
+- machine-registry Cover mappings;
+- shared-launcher Cover transition ownership;
+- the unprivileged Cover renderer;
+- Cover failure/timeout fallback behavior;
+- current Menu/runtime interface contracts;
+- all existing tags, packages, recovery evidence and provenance;
+- third-party rights gates and security boundaries.
+
+The current authorized Product engineering scope permits one POC4 attempt #3
+image construction, offline validation, recovery checkpoint and preparation of
+the exact-hash Pi 3B physical-test procedure.
+
+No additional Menu source/package changes are authorized for this build unless
+a required validation gate fails and the owner explicitly authorizes a change.
+
+This scope does NOT authorize:
+
+- another Menu redesign or architecture study;
+- mutation of completed packages/images;
+- physical Raspberry Pi testing;
+- another candidate after attempt #3;
+- boot-presentation optimization;
+- push;
+- publication.
+
+After successful Product attempt #3 construction and offline validation, STOP
+for owner review.
+
 Read CURRENT-STATE.md, docs/provenance.md, docs/VERSIONING.md and the companion
 product docs/recovery.md first. Update
 CURRENT-STATE.md after meaningful work; no prior Codex session is required.
