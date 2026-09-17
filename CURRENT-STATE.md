@@ -1,3 +1,35 @@
+# POC4 attempt #3 complete — 2026-09-16 / STOP FOR OWNER REVIEW
+
+**Product build/offline validation PASS. READY FOR OWNER PHYSICAL TEST.**
+Menu `v1.1.0_poc4.1`, peeled `407ced58b711209631cdfb4db6dcd741a555f408`, is now
+installed in the exact attempt #3 image with all seven unchanged Covers, shared
+unprivileged renderer/launcher, Advanced Mixer and normal-user Midnight Commander.
+Package `1.1.0~poc4.1-1+pcbm1`, SHA-256
+`6df8fb42a10b16e12ac114032accc149c49ebf51f0e5f45c34b77d2cefbb2767`.
+No Menu source, tag, package, artwork or runtime interface changed in construction.
+
+Product lock SHA-256:
+`435c6e0d7a5a45eaff3f45af6d384fca5b602139fa9fb640950e2f5e7b4f39a9`.
+Raw SHA-256: `37d2699c7a639e050e531a4d5a132d4b197e5a60270a969814c573f436036cd8`.
+XZ SHA-256: `4a6bce98e089e3c39246393b7476c687a7818ea5a6b67fa811fb6bee8da5a83e`.
+[Product report](../project-cbm/docs/build/private-poc4-attempt3.md) records exact paths,
+sizes, capacity and evidence. The [exact-hash Pi 3B procedure](../project-cbm/docs/qualification/poc4-attempt3-pi3b-smoke-test.md)
+is ready for owner review/testing; all physical behavior remains UNTESTED.
+
+121 main + 20 supplemental + 26 Cover/utility offline checks, filesystem/systemd,
+127 ELF dependency objects, 672 package identities, raw/XZ equivalence and host guards
+passed. Covers/mappings match frozen hashes. Physical KMS/VT/VICE transition, actual
+Pi response, mc/mixer controls and application behavior still need owner testing.
+
+Recovery: `archive/poc4-attempt3-2026-09-16` under configured bulk storage; final refs,
+bundles and offline restoration/fsck are recorded there. Evidence:
+`qualification/poc4-attempt3-construction-2026-09-16`. VM stopped. All earlier inputs,
+artifacts/tags and blocked checkpoints preserved. Owner removed the two excluded copies
+before this session; no additional deletion/cleanup. No physical test, next candidate,
+boot optimization, PSID/RSID implementation, push or publication. Independent custody
+and public third-party artwork/StrikeTerm rights remain unresolved. STOP for owner review.
+Earlier records below are historical checkpoints.
+
 # POC4 attempt #3 — 2026-09-16 / APPROVAL-BLOCKED BEFORE BUILD
 
 The bounded actual Combian V3.7 review is complete. No architecture change: Advanced
