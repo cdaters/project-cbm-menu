@@ -8,6 +8,8 @@ with tempfile.TemporaryDirectory() as tmp:
  emu=root/'usr/bin/x64sc';emu.write_text('#!/bin/bash\nprintf "%s\\n" "$@" > "$TEST_ARGS"\nexit "${TEST_STATUS:-0}"\n');emu.chmod(0o755)
  media=home/'pcbm/test content.prg';media.write_text('owned test')
  env=dict(os.environ,TEST_ARGS=str(root/'args'))
+ lifecycle=root/'usr/libexec/project-cbm/engineering.py';lifecycle.parent.mkdir(parents=True)
+ lifecycle.write_text('#!/bin/bash\n[[ $1 == run-with-cover ]] || exit 2\nshift 2\nexec "$@"\n');lifecycle.chmod(0o755)
  for args in [['x64sc'],['x64sc',str(media)]]:
   p=subprocess.run(['bash',str(script),*args],env=env,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
   assert p.returncode==0,p.stderr

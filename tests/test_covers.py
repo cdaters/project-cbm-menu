@@ -53,7 +53,7 @@ class CoverRenderer(unittest.TestCase):
     def test_success_and_failure_release_every_created_resource(self):
         for failed in (False,True):
             sdl=SDL(failed)
-            with patch.object(view.time,'monotonic',side_effect=[0,0,1]),patch.object(view.time,'sleep'):
+            with patch.object(view,'DURATION_SECONDS',.001),patch.object(view.time,'sleep'):
                 result=view.display(Path('synthetic.jpg'),sdl,sdl)
             self.assertEqual(result,int(failed))
             self.assertEqual(sdl.calls[-4:],['SDL_DestroyRenderer','SDL_DestroyWindow','IMG_Quit','SDL_Quit'])
@@ -77,6 +77,8 @@ class CoverLaunch(unittest.TestCase):
         self.home=self.root/'home/pi';(self.home/'pcbm').mkdir(parents=True)
         self.covers=self.root/'usr/share/project-cbm-menu/covers';self.covers.mkdir(parents=True)
         self.lib=self.root/'usr/libexec/project-cbm-menu';self.lib.mkdir(parents=True)
+        lifecycle=self.root/'usr/libexec/project-cbm/engineering.py';lifecycle.parent.mkdir(parents=True)
+        lifecycle.write_text('#!/bin/bash\n[[ $1 == run-with-cover ]] || exit 2\nprofile=$2;shift 2\n'+str(self.bin)+'/pcbm-cover --profile "$profile" || true\nexec "$@"\n');lifecycle.chmod(0o755)
         for name in ('pcbm-run-vice','pcbm-boot','pcbm-cover'):
             text=(ROOT/'scripts'/name).read_text()
             for prefix in ('/usr/bin/','/usr/libexec/','/usr/share/','/etc/pcbm/','/home/pi'):

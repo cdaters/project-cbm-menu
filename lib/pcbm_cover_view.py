@@ -6,6 +6,8 @@ The launcher bounds the entire subprocess and waits for exit before starting VIC
 import ctypes as C
 import ctypes.util
 import os
+import json
+import re
 from pathlib import Path
 import signal
 import sys
@@ -29,6 +31,21 @@ class Event(C.Union):
     _fields_ = [('type', C.c_uint32), ('padding', C.c_uint64 * 8)]
 
 
+class RendererInfo(C.Structure):
+    _fields_ = [('name',C.c_char_p),('flags',C.c_uint32),('num_texture_formats',C.c_uint32),
+                ('texture_formats',C.c_uint32*16),('max_texture_width',C.c_int),('max_texture_height',C.c_int)]
+
+
+def telemetry(stage, **fields):
+    # Fixed diagnostic fields only: never SDL error text, environment or asset paths.
+    print('PCBM_COVER '+json.dumps({'stage':stage,**fields}),flush=True)
+
+
+def label(value):
+    value=value.decode('ascii',errors='replace') if isinstance(value,bytes) else ''
+    return value if re.fullmatch(r'[A-Za-z0-9_-]{1,40}',value) else 'unknown'
+
+
 def fit(width, height, image_width, image_height):
     if min(width, height, image_width, image_height) <= 0:
         raise ValueError('invalid dimensions')
@@ -49,6 +66,8 @@ def libraries():
     p, i, u = C.c_void_p, C.c_int, C.c_uint32
     for name, result, args in [
         ('SDL_Init', i, [u]), ('SDL_Quit', None, []),
+        ('SDL_GetCurrentVideoDriver', C.c_char_p, []),
+        ('SDL_GetRendererInfo', i, [p,C.POINTER(RendererInfo)]),
         ('SDL_GetCurrentDisplayMode', i, [i, C.POINTER(DisplayMode)]),
         ('SDL_CreateWindow', p, [C.c_char_p, i, i, i, i, u]),
         ('SDL_DestroyWindow', None, [p]), ('SDL_CreateRenderer', p, [p, i, u]),
@@ -72,8 +91,11 @@ def display(path, sdl, img):
         nonlocal stopping
         stopping = True
     previous = {s: signal.signal(s, stop) for s in (signal.SIGTERM, signal.SIGINT)}
+    started=time.monotonic()
     try:
+        telemetry('initializing')
         if sdl.SDL_Init(0x20) != 0: return 1  # VIDEO only, no audio initialization.
+        telemetry('video',driver=label(sdl.SDL_GetCurrentVideoDriver()))
         img.IMG_Init(3)  # JPG / PNG; load failure remains a non-blocking fallback.
         mode = DisplayMode()
         if sdl.SDL_GetCurrentDisplayMode(0, C.byref(mode)) != 0: return 1
@@ -82,6 +104,9 @@ def display(path, sdl, img):
         if not window: return 1
         renderer = sdl.SDL_CreateRenderer(window, -1, 2) or sdl.SDL_CreateRenderer(window, -1, 1)
         if not renderer: return 1
+        info=RendererInfo()
+        if sdl.SDL_GetRendererInfo(renderer,C.byref(info))==0:
+            telemetry('renderer',renderer=label(info.name))
         texture = img.IMG_LoadTexture(renderer, os.fsencode(path))
         if not texture: return 1
         iw, ih, width, height = (C.c_int() for _ in range(4))
@@ -91,21 +116,34 @@ def display(path, sdl, img):
         rect = fit(width.value, height.value, iw.value, ih.value)
         sdl.SDL_ShowCursor(0)
         if sdl.SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255) != 0: return 1
-        event = Event(); deadline = time.monotonic() + DURATION_SECONDS
+        event = Event(); deadline = time.monotonic() + DURATION_SECONDS;presented=False
         while not stopping and time.monotonic() < deadline:
             while sdl.SDL_PollEvent(C.byref(event)):
-                if event.type in (0x100, 0x300): stopping = True  # Quit / any key skips.
+                if event.type == 0x100: stopping = True  # Window quit, not a held RUN key.
             if sdl.SDL_RenderClear(renderer) != 0: return 1
             if sdl.SDL_RenderCopy(renderer, texture, None, C.byref(rect)) != 0: return 1
             sdl.SDL_RenderPresent(renderer)
+            if not presented:
+                telemetry('presented',width=width.value,height=height.value,
+                          elapsed_ms=int((time.monotonic()-started)*1000));presented=True
             time.sleep(0.02)
         return 0
     finally:
-        if texture: sdl.SDL_DestroyTexture(texture)
-        if renderer: sdl.SDL_DestroyRenderer(renderer)
-        if window: sdl.SDL_DestroyWindow(window)
-        img.IMG_Quit(); sdl.SDL_Quit()
-        for sig, handler in previous.items(): signal.signal(sig, handler)
+        try:
+            try:
+                if texture: sdl.SDL_DestroyTexture(texture)
+            finally:
+                try:
+                    if renderer: sdl.SDL_DestroyRenderer(renderer)
+                finally:
+                    try:
+                        if window: sdl.SDL_DestroyWindow(window)
+                    finally:
+                        try:img.IMG_Quit()
+                        finally:sdl.SDL_Quit()
+        finally:
+            for sig, handler in previous.items(): signal.signal(sig, handler)
+            telemetry('released',elapsed_ms=int((time.monotonic()-started)*1000))
 
 
 def main(argv=None):
