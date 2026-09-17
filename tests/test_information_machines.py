@@ -136,9 +136,10 @@ esac
 
     def test_actual_main_run_and_return_uses_saved_preference(self):
         preferences.update({'default_machine':'xvic'},self.home/'.config/project-cbm')
-        p=self.run_ui('pcbm-menu',['RUN','TEST_EXIT'])
+        p=self.run_ui('pcbm-menu',['RUN','RUN','RUN','TEST_EXIT'])
         self.assertEqual(p.returncode,0,p.stderr)
         self.assertEqual((self.root/'launch').read_text().splitlines()[0],'xvic')
+        self.assertEqual((self.root/'launch').read_text().splitlines().count('xvic'),3)
         self.assertGreaterEqual((self.root/'dialog-args').read_text().count('Commodore VIC-20'),2)
 
     def test_main_failed_launch_reports_then_returns(self):
