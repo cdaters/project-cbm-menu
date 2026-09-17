@@ -1,5 +1,14 @@
 # POC4 attempt #3 lifecycle investigation
 
+Subsequent owner-approved engineering extraction and source correction are described
+in [the run2 source-review report](../../project-cbm/docs/qualification/poc4-run2-source-review-2026-09-17.md)
+and current CURRENT-STATE. The card's installed identity matched; recovered VICE exit0
+does not prove cleanup. Defensive pre-Cover ownership, bounded same-group supervision,
+structured renderer/terminal phase records and first-boot navigation/feedback changes
+are now source-implemented and tested. Neither physical cause nor shared cause is proven.
+No new Menu version/tag/package or candidate exists. Earlier evidence-stop text below
+retains its original dated context; it is no longer the current work boundary.
+
 2026-09-17: **STOP for existing physical SD-card evidence. No runtime correction
 selected and no new Menu version/tag/package.** The governing owner scope is the
 unchanged AGENTS.md at predecessor `be73ff1`; Product predecessor is `8a93683`.

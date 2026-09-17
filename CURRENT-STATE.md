@@ -1,3 +1,38 @@
+# POC4 run2 evidence / defensive source correction — 2026-09-17
+
+[Product source-review report](../project-cbm/docs/qualification/poc4-run2-source-review-2026-09-17.md)
+and [run2 evidence](../project-cbm/docs/qualification/poc4-attempt3-run2-2026-09-17.json)
+supersede the evidence stop below. Nine card files and five photos were retained as
+owner-approved read-only engineering evidence, not pristine forensic capture. No card
+write/remount. VICE x64sc/KMSDRM/OpenGL exited0; missing Cover/dead input/VT root causes
+and their relationship remain UNKNOWN, with pre-Cover/postcleanup facts uninstrumented.
+
+Menu source `be16c4033a748366c01dea8229f4afa0757bddd1` delegates the entire transition
+to Product's `run-with-cover` terminal owner, retains renderer stages, performs complete
+resource cleanup and prevents held RUN from skipping decoration. Matching Product
+integration `83241a145ad69dfb6579d0b6fd88ec83c6e66451` is required; no unsafe fallback.
+Menu `e3a82eee578691ae1f648c38e06859abfd627f46` implements common human selections,
+Back/retry/resume, working-state feedback and explicit hidden-password instructions.
+Matching Product runtime/backend `d7a74bcfde422ca289ab0c9438877e1a89ca3f4d` supplies
+narrow setup Wi-Fi gates, retry-safe region/network operations and fixed result codes.
+No broad root, arbitrary terminal reset or unrelated information-architecture redesign.
+
+Menu `020294c` adds three consecutive actual Menu-controller fixture cycles.
+Menu 70/70 host tests PASS; Product 154/155 PASS with unchanged unsandboxed macOS mktemp
+expectation failure. Nine lifecycle tests pass including real host PTY three-cycle
+restoration. This does not prove physical KMS/VT/visibility/response or Wi-Fi operation.
+All seven artwork files and mappings remain unchanged. No version/tag/package/image
+was created. Existing frozen Menu v1.1.0_poc4.1 remains immutable, not source-corrected.
+
+Evidence `qualification/poc4-run2-2026-09-17`; related recovery
+`archive/poc4-run2-source-correction-2026-09-17`, under configured Product bulk storage.
+Final manifest binds both refs/bundles, restored refs/peeled tags/fsck, source inventories,
+validation and exact preserved evidence references, without duplicating images.
+AGENTS/owner-scope commits/protected refs unchanged; no push, VM start or physical test.
+Independent custody remains unresolved. **Next owner action:** review source and
+authorize separately versioned next-candidate work. Stop before release/tag/package,
+input freeze/image construction. Source hardening is not a confirmed physical fix.
+
 # POC4 physical-regression investigation — 2026-09-17 / EVIDENCE STOP
 
 Exact POC4 attempt #3 Pi 3B owner results supersede the earlier physical-UNTESTED
