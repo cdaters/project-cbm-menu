@@ -1,3 +1,32 @@
+# Corrective POC4 attempt #4 complete — 2026-09-17 / OWNER REVIEW
+
+Menu `v1.1.0_poc4.2`, peeled `171e67b3de181074245fb2bdc70cb60af5688b8e`, Debian
+`1.1.0~poc4.2-1+pcbm1`, 1102572 bytes, SHA-256
+`15f7d10c37fd67195941d56e1067bb87a45bb5aed1adcc0dbd2dc35e978bf5ac`, is installed in the new corrective Product image.
+[Product handoff](../project-cbm/docs/build/private-poc4-attempt4.md) and
+[hash-bound Pi 3B procedure](../project-cbm/docs/qualification/poc4-attempt4-pi3b-regression.md)
+are authoritative. **READY FOR OWNER PHYSICAL TEST.** Physical behavior remains UNTESTED.
+
+Guarded launcher/Cover telemetry and first-boot selectors/Advanced/Back/retry/resume/
+working feedback/Wi-Fi guidance are included. Seven Covers remain unchanged. Host and
+native Menu suites 70/70 PASS; installed Product lifecycle 9/9 and all seven native SDL
+Covers plus three renderer/VICE-fixture cycles PASS. Actual image passes 206 offline
+checks; no physical Cover/KMS/VT/keyboard/Wi-Fi fix is claimed. Product host 155/156
+retains the known macOS mktemp failure; native Product 156/156 PASS.
+
+Lock SHA-256 `b3430b626d5156c582f4e3e457d47916a16b527c3dcf7586a90cae96c3882b72`; raw
+`f699595fdd31a7f8125bb1882ce8d468ce7dd1b4734d85986b1962e992875b21`; XZ
+`076a42911faa24bc4f2d4c225c92d621498261b630e63de35b6c7dc8af0760e2`. Raw/XZ agreement and external copies PASS.
+Recovery `archive/poc4-attempt4-2026-09-17` binds final refs/bundles, verified offline
+restoration/fsck and evidence. Earlier packages/tags/candidates/checkpoints and both
+AGENTS files unchanged. Actual owner authorization commit remains `aeb4350`.
+
+Builder stopped. No push, publication, physical test or unrelated design work. Public
+StrikeTerm/Cover rights, independent custody and reproducibility remain open. Next:
+owner flashes exact new image and follows the linked priority Pi 3B lifecycle procedure,
+then later setup/application/service/persistence tests. STOP FOR OWNER REVIEW; no
+second candidate. Earlier dated checkpoints below remain historical evidence.
+
 # POC4 corrective attempt #4 preparation — 2026-09-17
 
 The top AGENTS owner scope authorizes one corrective Product candidate. Actual owner
