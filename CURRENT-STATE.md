@@ -1,3 +1,20 @@
+# POC4 corrective attempt #4 preparation — 2026-09-17
+
+The top AGENTS owner scope authorizes one corrective Product candidate. Actual owner
+scope commit is `aeb43508c53c11fe62a5a1e7f4bafc08e4bafa29` (the task's `deb4350`
+spelling is not the repository identity). AGENTS is unchanged. Accepted source/checkpoint
+files verify exactly; checkpoint manifest SHA-256 is
+`b79f26c9649e24c4532d1e1545f15e0a142b9ad183c2eab903740187b3744ed3`.
+
+New independent Menu version: `1.1.0_poc4.2`, Debian `1.1.0~poc4.2-1+pcbm1`.
+Only release metadata changes beyond the accepted source corrections. All seven Covers
+remain byte-identical. Matching Product runtime and integration are required; no
+physical fix is claimed. Host Menu 70/70 PASS. Product 154/155 retains its known macOS
+mktemp expectation failure. Native package validation, freeze and image are pending.
+Evidence: configured bulk `qualification/poc4-attempt4-2026-09-17`.
+Next: build/validate this package for the single Product POC4 corrective attempt #4,
+then stop at the Product owner-review boundary. No push or physical testing.
+
 # POC4 run2 evidence / defensive source correction — 2026-09-17
 
 [Product source-review report](../project-cbm/docs/qualification/poc4-run2-source-review-2026-09-17.md)

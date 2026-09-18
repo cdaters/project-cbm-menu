@@ -1,3 +1,12 @@
+project-cbm-menu (1.1.0~poc4.2-1+pcbm1) trixie; urgency=medium
+
+  * Delegate Cover and VICE to the matching guarded Product lifecycle owner.
+  * Retain structured Cover telemetry and repeated launch/return behavior.
+  * Package human-readable setup, Advanced, Back/retry/resume and working feedback.
+  * Preserve all seven Cover artwork files and protected credential transport.
+
+ -- Project CBM contributors <1015402+cdaters@users.noreply.github.com>  Thu, 17 Sep 2026 17:50:00 -0700
+
 project-cbm-menu (1.1.0~poc4.1-1+pcbm1) trixie; urgency=medium
 
   * Restore existing machine Covers through the registry/shared SDL launcher.
