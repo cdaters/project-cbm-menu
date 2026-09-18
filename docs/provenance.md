@@ -1,5 +1,12 @@
 # Menu release, image recovery and maintenance
 
+2026-09-18 private engineering version `v1.1.0_poc4.3`, peeled
+`664b0a76b798a64d697e0d2d3baa0d45a5406ebd`, is installed in
+[POC4 corrective attempt #5](../../project-cbm/docs/build/private-poc4-attempt5.md).
+Its new package contains controlling-terminal admission/skip diagnostics and an
+information view consuming the Product network authority. Seven artwork files are
+unchanged; old packages/tags/images and physical reports remain immutable.
+
 The [product provenance record](../../project-cbm/docs/provenance.md) is authoritative
 for image/input history and storage. [Current state](../CURRENT-STATE.md) provides
 the exact refs without requiring old conversations. The [full reconciled audit](../../project-cbm/docs/audit-2026-09-15.md)

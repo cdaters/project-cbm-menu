@@ -1,3 +1,36 @@
+# POC4 corrective attempt #5 complete — 2026-09-18 / OWNER REVIEW
+
+Menu `v1.1.0_poc4.3`, peeled `664b0a76b798a64d697e0d2d3baa0d45a5406ebd`, Debian
+`1.1.0~poc4.3-1+pcbm1`, 1103688 bytes, SHA-256
+`849974423c31c42298970650b5ae2eaf4578f87e80da35933785c5c66e233e7a`, is verified in the new private Product image.
+[Owner handoff](../project-cbm/docs/build/private-poc4-attempt5.md) and
+[hash-bound Pi 3B procedure](../project-cbm/docs/qualification/poc4-attempt5-pi3b-regression.md).
+**READY FOR OWNER PHYSICAL TEST.** This candidate's physical behavior is UNTESTED.
+
+Kernel controlling-tty/active-VT/foreground admission accepts the valid `/dev/tty`
+alias and records fixed admission/skip/asset stages. Product's passing supervisor and
+terminal restoration remain unchanged. All seven artworks and mapping preserve bytes.
+System Information and the existing Network information view consume Product-owned
+per-interface IP/MAC/type/state/active SSID; no competing probes or new top-level item.
+First-boot human selectors/Advanced/Back/retry/resume/working feedback remain included.
+
+Host/native Menu 76/76, Product native 163/163, installed lifecycle 9/9, seven SDL dummy
+Covers and three cycles PASS. Product host 162/163 preserves known macOS mktemp failure.
+Actual image 220/220, filesystem/closure/security/identity/host-drift gates PASS.
+No physical Cover fix is claimed. Attempt #4 lifecycle PASS and Cover FAIL remain intact.
+
+Lock `4568aa184063aa7e3a0ae5217a98320f68735665f5e08340d48368530c88968e`; raw
+`5385acc822d7f280dd2eb5654368ef282ed941d4dc946368871510d98c752e66`; XZ
+`3923c319e485bbccad642b8a8b8039fc8acd0694a308ec631aeeffa64ed3e567`. External hashes/decompression PASS.
+Recovery `archive/poc4-attempt5-2026-09-18` binds final refs, verified bundles/offline
+restore/fsck and evidence. Owner governance commits and AGENTS unchanged. Older
+artifacts/tags/evidence preserved. Builder stopped; no push or publication.
+
+Next owner action: flash the exact new image and follow the linked Pi 3B procedure,
+prioritizing visible Cover and still-responsive Menu/VT return for three cycles, then
+network information/setup and later qualification. Stop for owner review. Quiet/fast
+boot remain backlog; no physical test, boot optimization or new rights decision made.
+
 # POC4 attempt #5 source correction — 2026-09-18
 
 Standing governance was committed by the owner at Menu `668ff0a` and Product
