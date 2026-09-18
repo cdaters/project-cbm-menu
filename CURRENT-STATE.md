@@ -1,3 +1,21 @@
+# Release-readiness refinement in progress — 2026-09-18
+
+Attempt #6 owner Pi 3B report now confirms first boot, first scan/connection/persistence,
+masking/ASCII guidance, Main Menu IP, correct visible Covers and stated Menu/VICE/input
+lifecycle PASS. VICE-active VT shortcut FAIL; before/after VT PASS. Unreported functions
+remain UNTESTED. Exact report belongs to Product.
+
+Menu 1.1.0_poc4.5 adds Product-owned appliance/service status hierarchy, useful state-aware
+actions, explicit owner/SSH and separate File Sharing credential help, current connection
+examples and Computer Name terminology. No Cover/VICE/getty/PAM/session changes. Product
+owns projectcbm default identity, service confirmation and Samba/Avahi discovery. Host/native
+Menu tests 96/96 pass; Product native services, local mDNS and SSH login, real dialog
+layouts and installed lifecycle pass. Package/image gates remain pending. Quiet/fast boot deferred.
+
+Next: finish Product-owned attempt #7 native tests, frozen package/lock/image validation,
+recovery and exact-hash physical procedure. No flash/push/publication. Historical readiness
+below applies only to those candidates; new candidate is not yet READY TO FLASH.
+
 # Menu attempt #6 candidate complete — 2026-09-18
 
 **READY FOR OWNER PHYSICAL TEST.** Product-owned attempt6 build/offline gates pass.

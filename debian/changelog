@@ -1,3 +1,11 @@
+project-cbm-menu (1.1.0~poc4.5-1+pcbm1) unstable; urgency=medium
+
+  * Present authoritative appliance/service status and state-aware actions.
+  * Explain owner credentials and current SSH/File Sharing connection addresses.
+  * Use Computer Name and friendly service terminology throughout normal settings.
+
+ -- Project CBM contributors <1015402+cdaters@users.noreply.github.com>  Fri, 18 Sep 2026 18:00:00 -0700
+
 project-cbm-menu (1.1.0~poc4.4-1+pcbm1) unstable; urgency=medium
 
   * Time Cover dwell after first presentation and report graphics phases.

@@ -69,9 +69,9 @@ while true; do
     "REBOOT"   "Restart Project CBM"
   )
 
-  # Product owns live IP collection; this JSON projection has a one-second budget.
-  network_summary=$(/usr/bin/pcbm-info --json --network-only 2>/dev/null | /usr/bin/python3 /usr/libexec/project-cbm-menu/pcbm_info_view.py --network-summary 2>/dev/null) || network_summary="Network: information unavailable"
-  prompt="Default machine: $current_label\n$network_summary\n\nPlease select a Project CBM option."
+  # Product owns live IP collection; this JSON projection has a two-second budget.
+  network_summary=$(/usr/bin/pcbm-info --json --appliance 2>/dev/null | /usr/bin/python3 /usr/libexec/project-cbm-menu/pcbm_status_view.py view main 2>/dev/null) || network_summary="Network: information unavailable"
+  prompt="Default: $current_label\n$network_summary\n\nPlease select a Project CBM option."
   [[ $PCBM_PREFERENCE_STATUS != invalid ]] || prompt+="\nSaved preferences need recovery; using a validated fallback. Review MACHINES."
   pcbm_show_menu "Project CBM Main Menu" "$prompt" "${main_items[@]}"
 

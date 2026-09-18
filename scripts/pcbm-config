@@ -7,11 +7,13 @@ source /usr/share/project-cbm-menu/pcbm-ui.sh
 source /usr/share/project-cbm-menu/pcbm-setup-ui.sh
 pcbm_ui_terminal_size
 PCBM_CONFIG_NOTICE=
+PCBM_CONFIG_STATUS=
 bridge=/usr/libexec/project-cbm-menu/pcbm_config_bridge.py
 notify() { pcbm_ui_message "$1" "$2" || true; }
 choose() {
   local title=$1; shift
-  if pcbm_ui_menu "$title" "${PCBM_CONFIG_NOTICE:-Choose a setting. Escape returns.}" "$@" BACK "Back"; then
+  if pcbm_ui_menu "$title" "${PCBM_CONFIG_STATUS}${PCBM_CONFIG_STATUS:+
+}${PCBM_CONFIG_NOTICE:-Choose a setting. Escape returns.}" "$@" BACK "Back"; then
     PCBM_CONFIG_NOTICE=
     [[ $PCBM_UI_CHOICE != BACK ]]
   else
@@ -20,7 +22,7 @@ choose() {
 }
 ready() {
   if /usr/bin/pcbm-config-operation --ready "$1"; then return 0; fi
-  notify "Pending runtime activation" "Complete local first-boot setup before changing this setting. Project CBM remains usable offline."
+  notify "Setup required" "Complete local first-boot setup before changing this setting. Project CBM remains usable offline."
   return 1
 }
 apply_setting() {
@@ -37,10 +39,11 @@ apply_setting() {
   # printf is a Bash builtin. Secret values never appear in child argv or files here.
   reply=$(printf '%s\n' "$@" | /usr/bin/python3 "$bridge" request "$op" | /usr/bin/pcbm-config-operation 2>/dev/null)
   if text=$(printf '%s' "$reply" | /usr/bin/python3 "$bridge" result 2>/dev/null); then
-    PCBM_CONFIG_NOTICE=$text
+    PCBM_CONFIG_NOTICE=
+    [[ $op == service || $op == sharing-password ]] || PCBM_CONFIG_NOTICE=$text
   else
     rc=1
-    notify "Setting not active" "${text:-Configuration is pending runtime activation. No broad sudo rule is needed.}"
+    notify "Setting not active" "${text:-Configuration is pending runtime activation. Please review the current status and retry.}"
   fi
   unset reply text
   return "$rc"
@@ -60,6 +63,36 @@ show_about() {
   else notify "About Project CBM" "Project CBM is a Commodore appliance for Raspberry Pi. Installed build information is unavailable. See https://github.com/cdaters/project-cbm"; fi
   rm -f "$dir/view"; rmdir "$dir"
 }
+status_refresh() {
+  PCBM_APPLIANCE=$(/usr/bin/pcbm-info --json --appliance 2>/dev/null) || PCBM_APPLIANCE=
+}
+status_text() {
+  printf '%s' "$PCBM_APPLIANCE" | /usr/bin/python3 /usr/libexec/project-cbm-menu/pcbm_status_view.py "$@" 2>/dev/null
+}
+connection_help() {
+  local dir
+  umask 077
+  dir=$(mktemp -d "${TMPDIR:-/tmp}/pcbm-connection.XXXXXXXX") || return 3
+  if status_text connection "$1" > "$dir/view";then pcbm_ui_textbox "How to connect" "$dir/view" || true
+  else notify "Connection information" "Current information is unavailable. Check System Information.";fi
+  rm -f "$dir/view";rmdir "$dir"
+}
+sharing_password() {
+  local secret
+  ready sharing-password || return 1
+  if pcbm_ui_secret "File Sharing password" "File Sharing uses a separate password (12-128 printable characters). Sign in with the username shown on its service screen.";then
+    secret=$PCBM_UI_CHOICE;PCBM_UI_CHOICE=
+    if pcbm_ui_secret "Confirm File Sharing password" "Enter the same password again.";then
+      if [[ $secret == "$PCBM_UI_CHOICE" ]];then
+        PCBM_UI_CHOICE=
+        apply_setting sharing-password "$secret";local rc=$?
+        unset secret;return "$rc"
+      fi
+      notify "Not saved" "Passwords did not match."
+    fi
+  fi
+  unset secret;PCBM_UI_CHOICE=;return 1
+}
 region() {
   while choose "Language, Keyboard and Region" LOCALE "System language/locale" KEYBOARD "Console keyboard layout" TIMEZONE "Timezone"; do
     case $PCBM_UI_CHOICE in
@@ -70,10 +103,13 @@ region() {
   done
 }
 network() {
-  while choose "Network" STATUS "Network information (IP/MAC and status)" HOSTNAME "Pi hostname" COUNTRY "Wi-Fi country and radio" SCAN "Nearby Wi-Fi networks" WIFI "Join Wi-Fi by name (WPA personal)" DISCONNECT "Disconnect Project CBM Wi-Fi" FORGET "Forget Project CBM Wi-Fi" ONLINE "Enable normal networking" OFFLINE "Stay offline (disable connections)"; do
+  while true; do
+    status_refresh
+    PCBM_CONFIG_STATUS=$(status_text view network) || PCBM_CONFIG_STATUS="Network information unavailable"
+    choose "Network" STATUS "Network information (IP/MAC and status)" HOSTNAME "Computer Name" COUNTRY "Wi-Fi country and radio" SCAN "Nearby Wi-Fi networks" WIFI "Join Wi-Fi by name (WPA personal)" DISCONNECT "Disconnect Project CBM Wi-Fi" FORGET "Forget Project CBM Wi-Fi" ONLINE "Enable normal networking" OFFLINE "Stay offline (disable connections)" || break
     case $PCBM_UI_CHOICE in
       STATUS) /usr/bin/pcbm-system-info ;;
-      HOSTNAME) edit_value hostname "Short hostname: lowercase letters, digits and hyphens; for example project-cbm." ;;
+      HOSTNAME) edit_value hostname "Computer Name: lowercase letters, digits and hyphens; for example projectcbm. Other computers use this name when Network Discovery is on." ;;
       COUNTRY)
         if pcbm_ui_confirm "Wi-Fi country" "Set the country where this Pi is used. This enables the Wi-Fi radio. Continue?" && ready wifi-country && pcbm_setup_choice country;then apply_setting wifi-country "$PCBM_UI_CHOICE";fi ;;
       SCAN)
@@ -98,42 +134,56 @@ network() {
       OFFLINE) if pcbm_ui_confirm "Stay offline?" "Disconnect networking, including Ethernet and remote sessions? Project CBM remains usable offline."; then apply_setting network false; fi ;;
     esac
   done
+  PCBM_CONFIG_STATUS=
+}
+service_screen() {
+  local service=$1 label=$2 tag action enabled port
+  while true;do
+    status_refresh
+    PCBM_CONFIG_STATUS=$(status_text view "$service") || PCBM_CONFIG_STATUS="Status: Unavailable"
+    options=()
+    while IFS=$'\t' read -r tag action;do
+      [[ -n $tag ]] && options+=("$tag" "$action")
+    done < <(status_text actions "$service")
+    [[ $service != sharing ]] || options+=(PASSWORD "Set / change File Sharing password")
+    [[ $service != modem ]] || options+=(SETTINGS "Modem port and speed")
+    options+=(CONNECTION "How to connect" REFRESH "Refresh status")
+    choose "$label" "${options[@]}" || break
+    case $PCBM_UI_CHOICE in
+      ENABLE)
+        if [[ $service == sharing ]];then
+          if [[ $(status_text field sharing_password_set) != yes ]];then sharing_password || continue;fi
+          pcbm_ui_confirm "Turn On File Sharing" "Share your Project CBM content with password-protected access on your home network? Network Discovery will also turn on." || continue
+        else
+          pcbm_ui_confirm "Turn On $label" "Allow $label on your home network? You can turn it off on this screen." || continue
+        fi
+        apply_setting service "$service" true || true ;;
+      DISABLE) apply_setting service "$service" false || true ;;
+      PASSWORD) sharing_password || true ;;
+      CONNECTION) connection_help "$service" ;;
+      REFRESH) ;;
+      SETTINGS)
+        if pcbm_ui_input "Modem" "Local emulator modem port (1024-65535), normally 25232.";then
+          port=$PCBM_UI_CHOICE
+          if pcbm_ui_input "Modem" "Baud: 300, 1200, 2400, 9600, 19200 or 38400.";then apply_setting modem "$port" "$PCBM_UI_CHOICE";fi
+        fi ;;
+    esac
+  done
+  PCBM_CONFIG_STATUS=
 }
 services() {
-  while choose "Services" STATUS "Service status" SHARING "File Sharing (Samba)" SSH "Remote Shell (SSH)" MODEM "BBS / Modem" DISCOVERY "Local name discovery (mDNS)"; do
+  while true;do
+    status_refresh
+    PCBM_CONFIG_STATUS=$(status_text view services) || PCBM_CONFIG_STATUS="Service information unavailable"
+    choose "Services" SHARING "File Sharing" SSH "Remote Access (SSH)" DISCOVERY "Network Discovery" MODEM "BBS / Modem" || break
     case $PCBM_UI_CHOICE in
-      STATUS) /usr/bin/pcbm-system-info; continue ;;
-      SHARING) service=sharing; label="File Sharing" ;;
-      SSH) service=ssh; label="Remote Shell" ;;
-      MODEM) service=modem; label="BBS / Modem" ;;
-      DISCOVERY) service=discovery; label="Local name discovery" ;;
+      SHARING) service_screen sharing "File Sharing" ;;
+      SSH) service_screen ssh "Remote Access (SSH)" ;;
+      DISCOVERY) service_screen discovery "Network Discovery" ;;
+      MODEM) service_screen modem "BBS / Modem" ;;
     esac
-    options=(ENABLE "Enable" DISABLE "Disable")
-    [[ $service != sharing ]] || options+=(PASSWORD "Set separate Samba password")
-    [[ $service != modem ]] || options+=(SETTINGS "Modem port and speed")
-    while choose "$label" "${options[@]}"; do
-      case $PCBM_UI_CHOICE in
-        ENABLE|DISABLE)
-          enabled=false; [[ $PCBM_UI_CHOICE != ENABLE ]] || enabled=true
-          if pcbm_ui_confirm "$label" "Apply this service change? Enabling may expose a network listener. It requires first-boot/credential readiness and does not bypass engineering masks."; then apply_setting service "$service" "$enabled"; fi ;;
-        PASSWORD)
-          ready sharing-password || continue
-          if pcbm_ui_secret "Samba password" "Separate file-sharing password (12-128 characters). This does not change Unix or owner passwords."; then
-            secret=$PCBM_UI_CHOICE;PCBM_UI_CHOICE=
-            if pcbm_ui_secret "Confirm Samba password" "Enter the same password again."; then
-              if [[ $secret == "$PCBM_UI_CHOICE" ]]; then apply_setting sharing-password "$secret"; else notify "Not saved" "Passwords did not match."; fi
-            fi
-            unset secret;PCBM_UI_CHOICE=
-          fi ;;
-        SETTINGS)
-          ready modem || continue
-          if pcbm_ui_input "Modem" "Local IP232 port (1024-65535), for example 25232. External exposure remains an activation decision."; then
-            port=$PCBM_UI_CHOICE
-            if pcbm_ui_input "Modem" "Baud: 300, 1200, 2400, 9600, 19200 or 38400."; then apply_setting modem "$port" "$PCBM_UI_CHOICE"; fi
-          fi ;;
-      esac
-    done
   done
+  PCBM_CONFIG_STATUS=
 }
 machine() {
   while choose "Machine and Startup" DEFAULT "Choose default Commodore machine" BOOT "Boot preference"; do
@@ -174,7 +224,7 @@ storage() {
   while choose "Content and Storage" SPACE "Capacity and free space" LOCATIONS "Content locations / USB import" BACKUP "Backup and restore guidance"; do
     case $PCBM_UI_CHOICE in
       SPACE) /usr/bin/pcbm-system-info ;;
-      LOCATIONS) notify "Content" "Use CONTENT, FILES and IMPORT on Main Menu. Content remains under /home/pi/pcbm (games, demos, programs, music and ROM resources). IMPORT uses the constrained read-only removable-media broker. No generic passwordless mount access is provided." ;;
+      LOCATIONS) notify "Content" "Use CONTENT, FILES and IMPORT on Main Menu. Content remains under /home/pi/pcbm (games, demos, programs, music and ROM resources). IMPORT copies chosen files into the selected content folder and safely disconnects the source. Find them in CONTENT or FILES." ;;
       BACKUP) notify "Backup and restore" "Keep an external copy of your content, user preferences and VICE configuration. For major/base upgrades: back up, flash a fresh image, then validate a selective restore. Never restore machine identity, host keys or old system configuration wholesale. Automated restore is pending; Advanced owner administration can copy your files." ;;
     esac
   done

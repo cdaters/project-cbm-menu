@@ -31,6 +31,6 @@ class Summary(unittest.TestCase):
   self.assertEqual(summary([r]),'Ethernet: 192.0.2.3')
  def test_menu_consumes_only_product_projection(self):
   text=(Path(__file__).resolve().parents[1]/'scripts/pcbm-menu').read_text()
-  self.assertIn('pcbm-info --json --network-only',text)
+  self.assertIn('pcbm-info --json --appliance',text)
   for probe in ['nmcli','hostname -I','ip address','ifconfig']:self.assertNotIn(probe,text)
 if __name__=='__main__':unittest.main()

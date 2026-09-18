@@ -9,7 +9,7 @@ FIELDS={'hostname':['value'],'locale':['value'],'timezone':['value'],'keyboard':
         'setup-region':['locale','keyboard','timezone'],'setup-owner':['password'],
         'setup-network':['enabled'],'setup-finish':[], 'wifi-rescan':[], 'wifi-disconnect':[], 'wifi-forget':[]}
 for _op in ('wifi-country','wifi-rescan','wifi-enroll'):FIELDS['setup-'+_op]=FIELDS[_op]
-MESSAGES={'saved_restart': 'Keyboard layout saved. It applies after reboot; current console input is unchanged.', 'credentials_required':'Set a separate File Sharing password before enabling Samba.', 'ok':'Setting applied.','invalid':'Unsupported value. Check the setting and try again.',
+MESSAGES={'saved_restart': 'Keyboard layout saved. It applies after reboot; current console input is unchanged.', 'credentials_required':'Set a separate File Sharing password before turning it on.', 'ok':'Setting applied.','invalid':'Unsupported value. Check the setting and try again.',
           'pending':'Complete local first-boot setup before changing this setting.',
           'unavailable':'Required facility unavailable. Review System Information or Advanced guidance.',
           'failed':'The operation could not be confirmed. Review current state before retrying; part may have applied.',

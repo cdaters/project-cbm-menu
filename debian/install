@@ -31,3 +31,4 @@ covers/pcbmcover-pet.jpg usr/share/project-cbm-menu/covers
 covers/pcbmcover-plus4.jpg usr/share/project-cbm-menu/covers
 covers/pcbmcover-vic20.jpg usr/share/project-cbm-menu/covers
 docs/cover-artwork.json usr/share/doc/project-cbm-menu
+lib/pcbm_status_view.py usr/libexec/project-cbm-menu

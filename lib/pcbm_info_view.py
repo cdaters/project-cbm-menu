@@ -120,6 +120,8 @@ def rows(data):
         elif state.get('ActiveState')=='failed':status='failed'
         elif state.get('ActiveState')=='inactive':status='enabled but stopped' if state.get('UnitFileState')=='enabled' else 'off'
         else:status=UNKNOWN
+        effective=object_value(object_value(c.get('appliance')).get('services')).get({'samba':'sharing','ssh':'ssh','tcpser':'modem','avahi':'discovery'}[key],{})
+        status={'on':'On','off':'Off','pending':'Starting / Pending','unavailable':'Unavailable','failed':'Failed'}.get(effective.get('state'),status)
         service_rows.append(label+': '+status)
     result.append(('Services','; '.join(service_rows)))
     boot = object_value(c.get('boot_mode'))

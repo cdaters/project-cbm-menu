@@ -1,3 +1,11 @@
+> Current 1.1 refinement: Menu consumes `pcbm-info --json --appliance` for network
+> and service state, without local probing. Main Menu is concise; submenus and service
+> screens add actual readiness, useful state-aware actions and connection help. Owner
+> login is `owner`; SSH uses the first-boot password, File Sharing a separate password.
+> Default Computer Name is `projectcbm`. Product's [connection guide](../../project-cbm/docs/release/networking.md)
+> is authoritative. Earlier activation-pending notes below describe historical staging.
+> Cover/VICE/session ownership remains unchanged.
+
 # Project CBM configuration
 
 Use **CONTROL** on Main Menu, or `pcbm-config`. The familiar Bash/dialog front door

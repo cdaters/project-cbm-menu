@@ -22,6 +22,11 @@ class ConfigurationUI(fixtures.Consumers):
         self.write('pcbm-config',(ROOT/'scripts/pcbm-config').read_text())
         import shutil
         shutil.copyfile(ROOT/'lib/pcbm_config_bridge.py',self.libexec/'pcbm_config_bridge.py')
+        shutil.copyfile(ROOT/'lib/pcbm_status_view.py',self.libexec/'pcbm_status_view.py')
+        from test_status_view import fixture
+        self.appliance=self.root/'appliance.json';self.appliance.write_text(json.dumps(fixture()))
+        self.env['APPLIANCE_FIXTURE']=str(self.appliance)
+        self.write('pcbm-info','#!/bin/bash\nif [[ ${2:-} == --appliance ]];then cat "$APPLIANCE_FIXTURE";else cat "$INFO_FIXTURE";fi\n')
         self.write('pcbm-config-operation','''#!/bin/bash
 if [[ ${1:-} == --ready ]]; then exit "${READY_STATUS:-0}"; fi
 cat >> "$REQUESTS"
@@ -119,6 +124,27 @@ fi
         p=self.run_ui('pcbm-config',['SERVICES','SSH','ENABLE','CANCEL','ENABLE','MESSAGE','BACK','BACK','BACK'])
         self.assertEqual(p.returncode,0,p.stderr)
         request=json.loads((self.root/'requests').read_text());self.assertEqual(request['values'],{'service':'ssh','enabled':True})
+
+    def test_service_refresh_reflects_actual_transition_without_success_ack(self):
+        # Fake Product applies a transition and changes its next authoritative snapshot.
+        self.write('pcbm-config-operation', '#!'+sys.executable+'\n'+"""
+import json,os,sys
+if len(sys.argv)>1:raise SystemExit(0)
+r=json.load(sys.stdin)
+with open(os.environ['REQUESTS'],'a') as f:f.write(json.dumps(r)+'\\n')
+p=os.environ['APPLIANCE_FIXTURE']
+d=json.load(open(p));on=r['values']['enabled']
+d['services'][r['values']['service']]={'state':'on' if on else 'off','enabled':on,'listening':on}
+with open(p,'w') as f:json.dump(d,f)
+print(json.dumps({'format':'project-cbm.config-result','schema_version':1,'status':'ok','message':'untrusted-secret'}))
+""")
+        p=self.run_ui('pcbm-config',['SERVICES','SSH','ENABLE','MESSAGE','DISABLE','BACK','BACK','BACK'])
+        self.assertEqual(p.returncode,0,p.stderr)
+        requests=[json.loads(x) for x in (self.root/'requests').read_text().splitlines()]
+        self.assertEqual([r['values']['enabled'] for r in requests],[True,False])
+        text=(self.root/'dialog-args').read_text()
+        self.assertIn('Status: On',text);self.assertIn('Status: Off',text)
+        self.assertNotIn('Setting applied.',text);self.assertNotIn('untrusted-secret',text)
 
     def test_samba_password_confirmation(self):
         p=self.run_ui('pcbm-config',['SERVICES','SHARING','PASSWORD','fixture-samba-pass','mismatch','MESSAGE','BACK','BACK','BACK'])
