@@ -1,3 +1,19 @@
+# Attempt #6 source checkpoint — 2026-09-18
+
+Menu `1.1.0_poc4.4` corrects Cover dwell timing and adds elapsed graphics-phase
+markers, safe dialog asterisks, ASCII password ranges and Main Menu IP summary from
+Product's `pcbm-info --json --network-only`. All seven Covers and shared unprivileged
+launch/session/terminal ownership remain. Product increases the bounded Cover budget
+and waits for actually completed Wi-Fi scans; UI shows truthful bounded progress.
+
+[Product findings](../project-cbm/docs/runtime/physical-ux-correction-2026-09-18.md)
+bind the exact attempt #5 Pi3B owner report and read-only card evidence. Cover remains
+physically FAIL; previous tty admission now demonstrably succeeds. Native source
+Menu85/85 and real dialog masking/ASCII tests pass; full candidate/package/image gates
+are pending. Next: complete Product-owned attempt #6 build/validation/recovery and
+exact physical procedure. No push/publication/physical testing. Standing private
+engineering authority applies; historical STOPs below describe prior scope.
+
 # POC4 corrective attempt #5 complete — 2026-09-18 / OWNER REVIEW
 
 Menu `v1.1.0_poc4.3`, peeled `664b0a76b798a64d697e0d2d3baa0d45a5406ebd`, Debian

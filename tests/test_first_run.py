@@ -47,6 +47,23 @@ print(json.dumps({{**result('ok'),'message':'untrusted-fixture-message'}}))
         self.assertEqual((self.root/'operations').read_text().splitlines(),['setup-region','setup-owner','setup-network','setup-finish'])
         for text in [(self.root/'dialog-args').read_text(),(self.root/'operations').read_text(),self.state.read_text(),p.stdout,p.stderr]:
             self.assertNotIn(secret,text);self.assertNotIn('untrusted-fixture-message',text)
+
+    def test_password_prompt_ranges_are_plain_ascii_without_formatting(self):
+        secret='synthetic-password'
+        p=self.run_ui('pcbm-first-run',['MESSAGE','en_US.UTF-8','us','UTC',secret,secret,'OFFLINE'])
+        self.assertEqual(p.returncode,0,p.stderr)
+        args=(self.root/'dialog-args').read_text()
+        self.assertIn('12-128 printable characters',args)
+        self.assertTrue(args.isascii())
+        self.assertNotIn('\\Z',args);self.assertNotIn('\x1b',args)
+        self.wifi_fixture()
+        p=self.run_ui('pcbm-first-run',['MESSAGE','WIFI','US','0','synthetic wifi !'])
+        self.assertEqual(p.returncode,0,p.stderr)
+        args=(self.root/'dialog-args').read_text()
+        self.assertIn('8-63 printable ASCII characters',args)
+        self.assertTrue(args.isascii())
+        self.assertNotIn('\\Z',args);self.assertNotIn('\x1b',args)
+
     def test_wifi_choice_stays_in_setup_until_connection_succeeds(self):
         self.state.write_text('{"completed":["region","owner"],"complete":false}')
         self.write('pcbm-wifi-list','#!/bin/bash\nprintf \'%s\\n\' \'{"schema_version":1,"status":"ok","networks":[{"ssid":"fixture","signal_percent":80,"security":"WPA2"}]}\'\n')
@@ -90,7 +107,7 @@ print(json.dumps({{**result('ok'),'message':'untrusted-fixture-message'}}))
         self.assertEqual(p.returncode,0,p.stderr)
         self.assertEqual((self.root/'operations').read_text().count('setup-region'),1)
         text=(self.root/'dialog-args').read_text()
-        self.assertIn('United Kingdom',text);self.assertIn('intentionally hidden',text)
+        self.assertIn('United Kingdom',text);self.assertIn('masked with asterisks',text)
         self.assertIn('--no-tags',text)
 
     def test_invalid_region_retries_without_owner_commit(self):

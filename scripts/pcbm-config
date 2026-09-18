@@ -27,7 +27,7 @@ apply_setting() {
   local op=$1 reply text rc=0 label="Applying configuration..."; shift
   case $op in
     wifi-country) label="Configuring Wi-Fi country and radio..." ;;
-    wifi-rescan) label="Scanning for Wi-Fi networks..." ;;
+    wifi-rescan) label="Waiting for Wi-Fi readiness and a fresh scan (up to 25 seconds)..." ;;
     wifi-enroll) label="Connecting to Wi-Fi (up to 30 seconds)..." ;;
     keyboard) label="Configuring keyboard for next boot..." ;;
     locale) label="Applying language settings..." ;;
@@ -85,7 +85,7 @@ network() {
         notify "Wi-Fi" "Set your Wi-Fi country first. This joins one WPA personal network; enterprise, open networks and unusual settings use authenticated owner administration. Existing owner-managed connections are retained."
         if pcbm_ui_input "Wi-Fi network" "Network name (SSID), exactly as configured, up to 32 UTF-8 bytes."; then
           ssid=$PCBM_UI_CHOICE
-          if pcbm_ui_secret "Wi-Fi password" "WPA personal password (8–63 ASCII characters). It will not be logged."; then
+          if pcbm_ui_secret "Wi-Fi password" "WPA personal password (8-63 ASCII characters). It will not be logged."; then
             secret=$PCBM_UI_CHOICE; PCBM_UI_CHOICE=
             if pcbm_ui_confirm "Join Wi-Fi?" "Save this connection and attempt to join it? This enables network access."; then apply_setting wifi-enroll "$ssid" "$secret"; fi
             unset secret
@@ -118,7 +118,7 @@ services() {
           if pcbm_ui_confirm "$label" "Apply this service change? Enabling may expose a network listener. It requires first-boot/credential readiness and does not bypass engineering masks."; then apply_setting service "$service" "$enabled"; fi ;;
         PASSWORD)
           ready sharing-password || continue
-          if pcbm_ui_secret "Samba password" "Separate file-sharing password (12–128 characters). This does not change Unix or owner passwords."; then
+          if pcbm_ui_secret "Samba password" "Separate file-sharing password (12-128 characters). This does not change Unix or owner passwords."; then
             secret=$PCBM_UI_CHOICE;PCBM_UI_CHOICE=
             if pcbm_ui_secret "Confirm Samba password" "Enter the same password again."; then
               if [[ $secret == "$PCBM_UI_CHOICE" ]]; then apply_setting sharing-password "$secret"; else notify "Not saved" "Passwords did not match."; fi
@@ -127,7 +127,7 @@ services() {
           fi ;;
         SETTINGS)
           ready modem || continue
-          if pcbm_ui_input "Modem" "Local IP232 port (1024–65535), for example 25232. External exposure remains an activation decision."; then
+          if pcbm_ui_input "Modem" "Local IP232 port (1024-65535), for example 25232. External exposure remains an activation decision."; then
             port=$PCBM_UI_CHOICE
             if pcbm_ui_input "Modem" "Baud: 300, 1200, 2400, 9600, 19200 or 38400."; then apply_setting modem "$port" "$PCBM_UI_CHOICE"; fi
           fi ;;

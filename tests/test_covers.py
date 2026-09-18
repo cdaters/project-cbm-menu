@@ -58,6 +58,22 @@ class CoverRenderer(unittest.TestCase):
             self.assertEqual(result,int(failed))
             self.assertEqual(sdl.calls[-4:],['SDL_DestroyRenderer','SDL_DestroyWindow','IMG_Quit','SDL_Quit'])
             if not failed:self.assertIn('SDL_DestroyTexture',sdl.calls)
+    def test_first_present_delay_does_not_consume_visible_dwell(self):
+        now=[0.0];frames=[];events=[]
+        sdl=SDL();original=sdl.SDL_RenderPresent
+        def present(renderer):
+            if not frames:now[0]+=1.0
+            frames.append(now[0]);return original(renderer)
+        sdl.SDL_RenderPresent=present
+        def pause(seconds):now[0]+=seconds
+        with patch.object(view.time,'monotonic',side_effect=lambda:now[0]),patch.object(view.time,'sleep',side_effect=pause),patch.object(view,'telemetry',side_effect=lambda stage,**fields:events.append({'stage':stage,**fields})):
+            self.assertEqual(view.display(Path('synthetic.jpg'),sdl,sdl),0)
+        self.assertGreaterEqual(now[0]-frames[0],.75)
+        self.assertGreater(len(frames),1)
+        stages=[x['stage'] for x in events]
+        self.assertEqual(stages,['initializing','video','decoder_init','window_create','renderer_create','renderer','texture_load','present_begin','presented','releasing','released'])
+        self.assertTrue(all(type(x['elapsed_ms']) is int for x in events))
+        self.assertEqual(events[8]['elapsed_ms'],1000)
     def test_no_root_framebuffer_vt_or_mode_change_commands(self):
         text=(ROOT/'lib/pcbm_cover_view.py').read_text()+(ROOT/'scripts/pcbm-cover').read_text()
         for forbidden in ('sudo','fbset','fbi ', 'convert ', 'chvt','SDL_SetDisplayMode','/dev/fb0'):

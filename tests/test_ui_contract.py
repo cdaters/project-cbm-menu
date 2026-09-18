@@ -65,5 +65,15 @@ class UI(unittest.TestCase):
         self.fake.unlink()
         self.assertEqual(self.invoke()[0],'5|unavailable|')
 
+    def test_password_mask_has_no_initial_value_or_plaintext_argument(self):
+        secret='synthetic secret only'
+        result,args=self.invoke(choice=secret,call='pcbm_ui_secret Owner "12-128 printable characters"')
+        self.assertEqual(result,'0|success|'+secret)
+        self.assertIn('--insecure\n--passwordbox\n',args)
+        self.assertIn('masked with asterisks',args)
+        self.assertNotIn(secret,args)
+        self.assertNotIn('--inputbox',args)
+        self.assertEqual(args.splitlines()[-2:],['22','80'])
+
 
 if __name__=='__main__':unittest.main()

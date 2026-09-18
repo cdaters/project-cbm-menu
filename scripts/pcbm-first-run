@@ -13,7 +13,7 @@ request() {
       setup-owner) label="Preparing owner account..." ;;
       setup-network) label="Configuring network access..." ;;
       setup-wifi-country) label="Configuring Wi-Fi country and radio..." ;;
-      setup-wifi-rescan) label="Scanning for Wi-Fi networks..." ;;
+      setup-wifi-rescan) label="Waiting for Wi-Fi readiness and a fresh scan (up to 25 seconds)..." ;;
       setup-wifi-enroll) label="Connecting to Wi-Fi (up to 30 seconds)..." ;;
       setup-finish) label="Saving configuration..." ;;
       *) return 2 ;;
@@ -51,7 +51,7 @@ while true;do
         else stage=region;fi ;;
       owner)
         if step_done owner;then stage=network;continue;fi
-        if pcbm_ui_secret "Owner administration" "Choose a unique owner password (12–128 printable characters; no colon). This enables authenticated sudo, not automatic root access.";then
+        if pcbm_ui_secret "Owner administration" "Choose a unique owner password (12-128 printable characters; no colon). This enables authenticated sudo, not automatic root access.";then
           secret=$PCBM_UI_CHOICE;PCBM_UI_CHOICE=;stage=confirm
         else back $? region;fi ;;
       confirm)

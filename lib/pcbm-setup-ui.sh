@@ -5,7 +5,7 @@ pcbm_setup_choice() {
   local kind=$1 title value rc; local rows=()
   local PCBM_UI_HIDE_TAGS=true # Return stable IDs internally; show human names only.
   case $kind in
-    region) title=Region;rows=(en_AU.UTF-8 "Australia — English" en_CA.UTF-8 "Canada — English" fr_CA.UTF-8 "Canada — French" fr_FR.UTF-8 "France — French" de_DE.UTF-8 "Germany — German" en_GB.UTF-8 "United Kingdom — English" en_US.UTF-8 "United States — English") ;;
+    region) title=Region;rows=(en_AU.UTF-8 "Australia - English" en_CA.UTF-8 "Canada - English" fr_CA.UTF-8 "Canada - French" fr_FR.UTF-8 "France - French" de_DE.UTF-8 "Germany - German" en_GB.UTF-8 "United Kingdom - English" en_US.UTF-8 "United States - English") ;;
     keyboard) title=Keyboard;rows=(us "English (US / Australia)" gb "English (UK)" ca "Canadian" fr "French" de "German") ;;
     timezone) title=Timezone;rows=(UTC "Coordinated Universal Time" America.Phoenix "Phoenix (Arizona)" America.New_York "New York (Eastern)" America.Chicago "Chicago (Central)" America.Denver "Denver (Mountain)" America.Los_Angeles "Los Angeles (Pacific)" America.Toronto "Toronto" America.Vancouver "Vancouver" Europe.London "London" Europe.Paris "Paris" Europe.Berlin "Berlin" Australia.Sydney "Sydney" Australia.Perth "Perth" Asia.Tokyo "Tokyo" Asia.Kolkata "Kolkata") ;;
     country) title="Wi-Fi country";rows=(AU "Australia" CA "Canada" FR "France" DE "Germany" GB "United Kingdom" US "United States") ;;
@@ -20,7 +20,7 @@ pcbm_setup_choice() {
       timezone) value=UTC ;;
       country) value=GB ;;
     esac
-    if ! pcbm_ui_input "$title — Advanced" "Enter a supported $kind identifier (example: $value). Product validation checks it before applying." "";then
+    if ! pcbm_ui_input "$title - Advanced" "Enter a supported $kind identifier (example: $value). Product validation checks it before applying." "";then
       [[ $PCBM_UI_STATUS != cancel ]] || continue
       [[ $PCBM_UI_STATUS != back ]] || return 2
       return 3
@@ -59,7 +59,7 @@ pcbm_setup_wifi() {
           ssid=${names[$PCBM_UI_CHOICE]};stage=password
         else [[ $PCBM_UI_STATUS != back ]] || return 3;stage=country;fi ;;
       password)
-        if ! pcbm_ui_secret "Wi-Fi password" "Enter the password for $ssid (8–63 printable ASCII characters, including spaces and punctuation). Back selects another network.";then [[ $PCBM_UI_STATUS != back ]] || return 3;stage=scan;continue;fi
+        if ! pcbm_ui_secret "Wi-Fi password" "Enter the password for $ssid (8-63 printable ASCII characters, including spaces and punctuation). Back selects another network.";then [[ $PCBM_UI_STATUS != back ]] || return 3;stage=scan;continue;fi
         secret=$PCBM_UI_CHOICE;PCBM_UI_CHOICE=
         if request "${prefix}wifi-enroll" "$ssid" "$secret";then unset secret;return 0;fi
         unset secret;stage=recover ;;

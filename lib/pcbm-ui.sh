@@ -43,7 +43,7 @@ pcbm_ui_invoke() {
   case "$kind" in
     menu) options+=(--menu "$message" "$lines" "$cols" "$((lines - 8))" "$@") ;;
     input) options+=(--max-input 128 --inputbox "$message" "$lines" "$cols" "${1:-}") ;;
-    secret) options+=(--max-input 128 --passwordbox "$message Typed characters are intentionally hidden and will not be displayed." "$lines" "$cols") ;;
+    secret) options+=(--max-input 128 --insecure --passwordbox "$message Typed characters are masked with asterisks." "$lines" "$cols") ;;
     working) options+=(--infobox "$message" 5 "$cols") ;;
     confirm) options+=(--defaultno --yesno "$message" "$lines" "$cols") ;;
     textbox) options+=(--exit-label Back --textbox "$message" "$lines" "$cols") ;;

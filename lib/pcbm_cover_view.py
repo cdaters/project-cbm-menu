@@ -121,21 +121,27 @@ def display(path, sdl, img):
         stopping = True
     previous = {s: signal.signal(s, stop) for s in (signal.SIGTERM, signal.SIGINT)}
     started=time.monotonic()
+    def stage(name, **fields):
+        telemetry(name, elapsed_ms=int((time.monotonic()-started)*1000), **fields)
     try:
-        telemetry('initializing')
+        stage('initializing')
         if sdl.SDL_Init(0x20) != 0: return 1  # VIDEO only, no audio initialization.
-        telemetry('video',driver=label(sdl.SDL_GetCurrentVideoDriver()))
+        stage('video',driver=label(sdl.SDL_GetCurrentVideoDriver()))
+        stage('decoder_init')
         img.IMG_Init(3)  # JPG / PNG; load failure remains a non-blocking fallback.
         mode = DisplayMode()
         if sdl.SDL_GetCurrentDisplayMode(0, C.byref(mode)) != 0: return 1
+        stage('window_create')
         window = sdl.SDL_CreateWindow(b'Project CBM cover', 0x1fff0000, 0x1fff0000,
                                       mode.w, mode.h, 0x1001)  # FULLSCREEN_DESKTOP
         if not window: return 1
+        stage('renderer_create')
         renderer = sdl.SDL_CreateRenderer(window, -1, 2) or sdl.SDL_CreateRenderer(window, -1, 1)
         if not renderer: return 1
         info=RendererInfo()
         if sdl.SDL_GetRendererInfo(renderer,C.byref(info))==0:
-            telemetry('renderer',renderer=label(info.name))
+            stage('renderer',renderer=label(info.name))
+        stage('texture_load')
         texture = img.IMG_LoadTexture(renderer, os.fsencode(path))
         if not texture: return 1
         iw, ih, width, height = (C.c_int() for _ in range(4))
@@ -145,19 +151,23 @@ def display(path, sdl, img):
         rect = fit(width.value, height.value, iw.value, ih.value)
         sdl.SDL_ShowCursor(0)
         if sdl.SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255) != 0: return 1
-        event = Event(); deadline = time.monotonic() + DURATION_SECONDS;presented=False
-        while not stopping and time.monotonic() < deadline:
+        # First present may block during KMS/driver setup. Start visible dwell
+        # only after it returns; initialization must not consume presentation.
+        event = Event(); deadline = None;presented=False
+        stage('present_begin')
+        while not stopping and (deadline is None or time.monotonic() < deadline):
             while sdl.SDL_PollEvent(C.byref(event)):
                 if event.type == 0x100: stopping = True  # Window quit, not a held RUN key.
             if sdl.SDL_RenderClear(renderer) != 0: return 1
             if sdl.SDL_RenderCopy(renderer, texture, None, C.byref(rect)) != 0: return 1
             sdl.SDL_RenderPresent(renderer)
             if not presented:
-                telemetry('presented',width=width.value,height=height.value,
-                          elapsed_ms=int((time.monotonic()-started)*1000));presented=True
+                deadline = time.monotonic() + DURATION_SECONDS
+                stage('presented',width=width.value,height=height.value);presented=True
             time.sleep(0.02)
         return 0
     finally:
+        stage('releasing')
         try:
             try:
                 if texture: sdl.SDL_DestroyTexture(texture)
@@ -172,7 +182,7 @@ def display(path, sdl, img):
                         finally:sdl.SDL_Quit()
         finally:
             for sig, handler in previous.items(): signal.signal(sig, handler)
-            telemetry('released',elapsed_ms=int((time.monotonic()-started)*1000))
+            stage('released')
 
 
 def main(argv=None):

@@ -17,7 +17,7 @@ MESSAGES={'saved_restart': 'Keyboard layout saved. It applies after reboot; curr
           'saved_pending':'Settings saved; runtime integration is pending. Service remains unchanged.'}
 
 
-MESSAGES.update(wifi_failed='Could not connect to Wi-Fi. Check the password, signal and router settings, then retry or choose another network. Authentication failure was not separately identified.',
+MESSAGES.update(wifi_scan_unconfirmed="Wi-Fi readiness or scan completion could not be confirmed within 25 seconds. Retry, check the radio/country settings, or stay offline.",wifi_failed='Could not connect to Wi-Fi. Check the password, signal and router settings, then retry or choose another network. Authentication failure was not separately identified.',
                 wifi_country_required='Set the Wi-Fi country where this Pi is used before connecting.')
 
 

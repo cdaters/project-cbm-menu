@@ -1,3 +1,11 @@
+project-cbm-menu (1.1.0~poc4.4-1+pcbm1) unstable; urgency=medium
+
+  * Time Cover dwell after first presentation and report graphics phases.
+  * Show safe password masking, ASCII guidance and truthful scan progress.
+  * Present concise current IP information from the Product authority.
+
+ -- Project CBM contributors <1015402+cdaters@users.noreply.github.com>  Fri, 18 Sep 2026 12:00:00 -0700
+
 project-cbm-menu (1.1.0~poc4.3-1+pcbm1) unstable; urgency=medium
 
   * Admit the controlling tty1 device through /dev/tty with fixed skip diagnostics.

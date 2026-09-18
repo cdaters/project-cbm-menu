@@ -1,5 +1,7 @@
 """Presentation only: consume pcbm-info contract 1; never probe Linux or run a command."""
 import argparse
+import ipaddress
+import re
 import json
 import sys
 import unicodedata
@@ -168,11 +170,56 @@ def render(data, columns=80):
     return '\n'.join(lines) + '\n'
 
 
+def network_summary(raw):
+    # Product's small projection uses the same collector as System Information.
+    if len(raw)>65536: raise ValueError('size')
+    data=json.loads(raw)
+    if (not isinstance(data,dict) or data.get('format')!='project-cbm.network-info'
+            or type(data.get('schema_version')) is not int or data['schema_version']!=1):
+        raise ValueError('network_contract')
+    entries=data.get('interfaces')
+    if not isinstance(entries,list): return 'Network: information unavailable'
+    if len(entries)>32: raise ValueError('interfaces')
+    connected=[]
+    for entry in entries:
+        if not isinstance(entry,dict): raise ValueError('interface')
+        if entry.get('state')!='connected': continue
+        name=entry.get('interface')
+        if not isinstance(name,str) or not re.fullmatch(r'[A-Za-z0-9_.:-]{1,15}',name):
+            raise ValueError('interface_name')
+        addresses=[]
+        for key,version in [('ipv4',4),('ipv6',6)]:
+            values=entry.get(key)
+            if not isinstance(values,list) or len(values)>32: raise ValueError('addresses')
+            for value in values:
+                if not isinstance(value,str) or '%' in value: raise ValueError('address')
+                address=ipaddress.ip_interface(value).ip
+                if address.version!=version: raise ValueError('family')
+                if address.is_unspecified or address.is_loopback or address.is_multicast: continue
+                addresses.append(address)
+        addresses.sort(key=lambda a:(a.is_link_local,a.version,int(a)))
+        address=addresses[0] if addresses else None
+        label={'ethernet':'Ethernet','wifi':'Wi-Fi'}.get(entry.get('type'),'Network')
+        connected.append((label,name,address))
+    if not connected:
+        return 'Network: information unavailable' if data.get('issues') else 'Network: no connected interface'
+    lines=[]
+    for label,name,address in connected[:2]:
+        if sum(row[0]==label for row in connected)>1: label+=' ('+name+')'
+        value=str(address) if address else 'awaiting IP'
+        if address and address.version==6 and address.is_link_local: value+='%'+name
+        lines.append(label+': '+value)
+    if len(connected)>2: lines[-1]+='; +'+str(len(connected)-2)+' more'
+    return '\n'.join(lines)
+
+
 def main():
     parser = argparse.ArgumentParser(); parser.add_argument('--columns', type=int, default=80)
+    parser.add_argument('--network-summary', action='store_true')
     args = parser.parse_args()
     try:
-        print(render(parse(sys.stdin.buffer.read(65537)), args.columns), end='')
+        raw=sys.stdin.buffer.read(65537)
+        print(network_summary(raw) if args.network_summary else render(parse(raw), args.columns), end='\n' if args.network_summary else '')
         return 0
     except (ValueError, TypeError, RecursionError, UnicodeError):
         print('Project CBM information is unavailable. Return and try again.', file=sys.stderr)
