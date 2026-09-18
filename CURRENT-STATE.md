@@ -1,3 +1,35 @@
+# Attempt #4 read-only card evidence — 2026-09-17 / OWNER REVIEW
+
+[Product card review](../project-cbm/docs/qualification/poc4-attempt4-card-review-2026-09-17.md)
+supersedes the collection blocker below. Owner made rootfs read-only; exact installed
+attempt #4 identity and 41 allowlisted files verify. No card write/remount/repair,
+execution, boot access or credential/profile read. Used-card engineering evidence,
+not pristine forensic capture. Inventory SHA-256:
+`e098884fc5621696b587eb3a24a73e9bf38b7267ac879b65751bafcf46b5adf8`.
+
+All four retained launches show Product's `/dev/tty` descriptor, while the matching
+Menu wrapper requires literal `/dev/tty1`: Cover exits0 in about10ms without any
+renderer stage, timeout or signal. Confirmed source admission mismatch; high-confidence
+explanation of missing Cover, with branch attribution inferred (no explicit guard
+reason stored). All seven artwork files and wrapper/renderer bytes match. No asset
+selection/load or Cover SDL backend is established. Both restores verify and all four
+VICE processes exit0. Owner-reported immediate keyboard/VT lifecycle stays PHYSICALLY
+PASSING; visible Cover FAIL. Attempt #3's root cause remains unproven.
+
+Propose narrow tty1 device-identity admission plus a fixed guard diagnostic; preserve
+Product supervision/terminal ownership and immutable art. Existing characterization
+3/3 and lifecycle9/9 results retained; new evidence checks pass. No runtime source,
+package/version/tag/image or boot change under the completed one-candidate top scope.
+Network information remains a Product-authority/schema plus existing-view proposal;
+quiet/fast boot remains separate backlog. Other unreported physical tests UNTESTED.
+
+Evidence `qualification/poc4-attempt4-physical-2026-09-17/card-evidence`; distinct recovery
+`archive/poc4-attempt4-card-analysis-2026-09-17` binds final refs, full bundles, offline
+restore/refs/peeled tags/symbolic HEAD/fsck and private card files. Prior checkpoints,
+attempt #4 and AGENTS unchanged. No push/publication or new build. Next owner action:
+authorize bounded source-only Cover admission/diagnostic and pcbm-info/network-view
+work, preserving the passing lifecycle and excluding another image. STOP for review.
+
 # POC4 attempt #4 owner physical follow-up — 2026-09-17
 
 **Pi 3B lifecycle PHYSICALLY PASSING; Cover visibility FAIL.** Owner reports working
