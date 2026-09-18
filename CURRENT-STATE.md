@@ -1,3 +1,35 @@
+# POC4 attempt #4 owner physical follow-up — 2026-09-17
+
+**Pi 3B lifecycle PHYSICALLY PASSING; Cover visibility FAIL.** Owner reports working
+Menu keyboard/VT before RUN and immediately after VICE/F10/Quit, with responsive
+return from each available profile. Attempt #3 dead input/VT was NOT REPRODUCED;
+its precise root cause is not retrospectively proven. Detailed unreported tests
+remain UNTESTED. [Product review](../project-cbm/docs/qualification/poc4-attempt4-physical-review-2026-09-17.md)
+and [attestation](../project-cbm/docs/qualification/poc4-attempt4-pi3b-owner-report-2026-09-17.json)
+are additive to the unchanged frozen candidate and build-time records.
+
+Card rootfs is writable in Paragon, so no card file/identity/diagnostic was read;
+owner must supply read-only mount before collection. A source mismatch is confirmed:
+Product opens `/dev/tty` for Cover stdin but Menu requires literal `/dev/tty1` from
+`tty`. Isolated host alias experiment and 3/3 wrapper characterization support a
+strong hypothesis; Pi cause remains UNCONFIRMED pending the phase records. Existing
+Product lifecycle tests 9/9 pass. Preserve the now-working supervisor/terminal owner.
+
+pcbm-info/schema currently supply only interface/link state. Product recommends a
+bounded authoritative IP/MAC/type/state/optional active SSID extension and existing
+System Information/Network status consumers. No competing Menu probes or top-level
+SHOW IP. Quiet/fast boot is separately recorded backlog only.
+
+Top scopes still describe the completed one-candidate milestone. No subsequent runtime
+source correction, package/version/tag/image or boot change made. AGENTS and seven
+Covers remain unchanged. Menu v1.1.0_poc4.2 still peels to
+171e67b3de181074245fb2bdc70cb60af5688b8e. Future approved source changes need a new
+Menu package; existing packages/tags are immutable. No build, physical test, push or
+publication. Evidence `qualification/poc4-attempt4-physical-2026-09-17`; recovery
+`archive/poc4-attempt4-physical-review-2026-09-17`, with final refs/bundles/offline
+restoration in its manifest/restore report. Next owner action: make rootfs read-only
+through Paragon and resume allowlisted collection. STOP for owner review.
+
 # Corrective POC4 attempt #4 complete — 2026-09-17 / OWNER REVIEW
 
 Menu `v1.1.0_poc4.2`, peeled `171e67b3de181074245fb2bdc70cb60af5688b8e`, Debian
