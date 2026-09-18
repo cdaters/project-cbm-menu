@@ -1,3 +1,23 @@
+# Menu attempt #6 candidate complete — 2026-09-18
+
+**READY FOR OWNER PHYSICAL TEST.** Product-owned attempt6 build/offline gates pass.
+Menu `v1.1.0_poc4.4`, peeled `6522111691ce494b00637549365d6a5f2a7773ff`,
+annotated object `f1d4560c678288d7d7d6b2bfcfd26e58a6fa9f45`, package
+`1.1.0~poc4.4-1+pcbm1`, SHA-256
+`f1d5c59561c2a8b09ce823d0e2380d7f90ed143ced7b9e8d49f0bb057a8cf82c`.
+
+Cover dwell/phases, password masking/ASCII guidance and authoritative Main Menu IP
+summary are included. Seven artwork files and shared terminal lifecycle are preserved.
+Menu host/native 85/85; Product host/native 173/173; installed lifecycle 10/10;
+actual-image 230 checks, raw/XZ equivalence and host integrity PASS. Physical Cover,
+first-scan behavior and Pi latency UNTESTED; attempt5 owner failures remain recorded.
+
+[Product report](../project-cbm/docs/build/private-poc4-attempt6.md),
+[exact physical procedure](../project-cbm/docs/qualification/poc4-attempt6-pi3b-regression.md).
+Recovery `archive/poc4-attempt6-2026-09-18` verifies both repos/bundles/offline refs/fsck.
+Builder stopped; no push/publication. Stop for owner testing; independent backup,
+reproducibility and private-content public rights remain open.
+
 # Attempt #6 source checkpoint — 2026-09-18
 
 Menu `1.1.0_poc4.4` corrects Cover dwell timing and adds elapsed graphics-phase
