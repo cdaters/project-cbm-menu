@@ -1,3 +1,28 @@
+# Attempt #7 release-readiness candidate complete — 2026-09-18
+
+**READY FOR OWNER PHYSICAL TEST.** [Product report](../project-cbm/docs/build/private-poc4-attempt7.md)
+and [exact-hash Pi 3B procedure](../project-cbm/docs/qualification/poc4-attempt7-pi3b-regression.md).
+Menu `v1.1.0_poc4.5`, peeled `4c88fa38ce28c63b6342adfb5d7a084a21248684`, annotated
+object `5e80d20cddbeb1a52dc5c3e1d0dc3576f31cc110`; package `1.1.0~poc4.5-1+pcbm1`,
+1106552 bytes, SHA-256 `de724923dc088838cfaea9c7699b28e3a8df86b623a385caec61b08c7eef0f5a`.
+
+State hierarchy, useful service actions, Computer Name/owner credentials and connection
+help consume the Product authority. Cover/VICE/PAM/TTY/session ownership and seven
+artwork bytes are unchanged. SDL-active keyboard VT switching remains an accepted
+limitation; quit VICE before switching. Quiet/fast boot are deferred.
+
+Menu host/native 96/96; Product host/native 184/184; installed lifecycle 10/10 PASS.
+253 actual-image checks, 672 package identities, 127 ELF objects, raw/XZ equivalence,
+installed docs/payload and host integrity PASS. Native local SSH login/disable, SMB mDNS,
+actual services/name state and real dialog pass; new image physical behavior UNTESTED.
+Attempt #6 owner PASS/FAIL results remain exact in Product's additive report.
+
+Recovery `archive/poc4-attempt7-2026-09-18` retains final bundles/refs/offline restores/fsck;
+external manifest is authoritative. Nothing pushed/published. Stop for owner exact-hash
+Pi 3B testing; preserve all prior candidates. Independent custody/reproducibility and
+public redistribution gates remain open. Next dedicated milestone after physical pass:
+quiet boot + measured fast boot + final RC polish.
+
 # Release-readiness refinement in progress — 2026-09-18
 
 Attempt #6 owner Pi 3B report now confirms first boot, first scan/connection/persistence,
