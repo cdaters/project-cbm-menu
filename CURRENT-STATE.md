@@ -1,3 +1,44 @@
+# Current checkpoint: standing governance refactor — 2026-09-17
+
+[AGENTS.md](AGENTS.md) now defines standing Menu private-engineering authority,
+permanent protections and hard owner gates, coordinated with
+[Product governance](../project-cbm/AGENTS.md). Historical milestone authorization,
+one-candidate and STOP clauses below or in linked documents are retained historical
+scope, not active permission gates. Use this top entry and the
+[Product current state](../project-cbm/CURRENT-STATE.md) for the current next action.
+
+Only AGENTS.md and CURRENT-STATE.md in each repository change for this cleanup;
+the user requested review-ready, uncommitted changes. No runtime source, package,
+version/tag, image, builder, push or publication change is included. The previous
+complete Menu AGENTS is preserved at
+`a6ecf0a59e8ff5c5b8b94c046aca1eacb003a1b6:AGENTS.md`; Product's is at
+`33cf4c8bc2a474082986f0b0098b343516fb54b0:AGENTS.md`. Earlier text and canonical evidence
+remain unchanged. The existing `archive/poc4-attempt4-card-analysis-2026-09-17`
+checkpoint predates these edits; no new verified recovery checkpoint is claimed.
+
+Attempt #4 remains lifecycle PHYSICALLY PASSING within the owner report and visible
+Cover FAIL. The [card review](../project-cbm/docs/qualification/poc4-attempt4-card-review-2026-09-17.md)
+identifies Product's `/dev/tty` descriptor versus Menu's literal `/dev/tty1` admission
+contract mismatch; the corrected renderer still needs physical qualification.
+Preserve Product terminal ownership/supervision, shared launch behavior and all seven
+artwork files. Network information remains Product-owned; Menu only consumes its
+structured authority. Quiet/fast boot remains separate backlog; other tests UNTESTED.
+
+**Exact next action for this handoff:** review and commit the two documentation
+changes in each repository. This uncommitted handoff does not create a standing
+approval gate for later private iterations.
+
+**Next Menu engineering action:** correct tty1 device-identity admission and fixed
+Cover guard diagnostics, add focused regression tests, and adapt existing information
+views to the Product pcbm-info/schema network extension. Preserve passing lifecycle
+behavior and avoid duplicate probes/credential reads. Validate and supply a newly
+versioned, exactly pinned Menu package for Product's distinct next POC4 corrective
+attempt, with coordinated recovery evidence. Product owns freeze/build/offline checks
+and the exact-hash owner physical procedure. Further private candidates need no new
+milestone authorization.
+
+## Historical checkpoints (original text follows unchanged)
+
 # Attempt #4 read-only card evidence — 2026-09-17 / OWNER REVIEW
 
 [Product card review](../project-cbm/docs/qualification/poc4-attempt4-card-review-2026-09-17.md)

@@ -1,222 +1,155 @@
-# Working on Project CBM Menu
+# Project CBM Menu Development Rules
 
-## Current owner scope: next POC4 corrective candidate
+Menu is the keyboard-first front panel for Project CBM. Preserve its personality,
+user control and reliable emulator return while simplifying common tasks. Favor
+clear Bash/dialog interfaces and measurable responsiveness on the Pi 3 floor.
 
-The POC4 lifecycle-regression investigation and source-correction milestone is
-complete.
+## Authority and continuity
 
-The owner accepts the Menu lifecycle, Cover, diagnostic and first-boot source
-corrections from that milestone.
+This file is standing Menu governance. It replaces all former milestone-specific
+STOP/owner-review clauses, one-candidate limits and authorization sections in earlier
+AGENTS revisions. Dated copies in CURRENT-STATE and build/recovery/qualification
+records describe historical scope, not active restrictions on private engineering.
+Their technical requirements, evidence and permanent protections remain applicable.
 
-All completed Menu packages, tags, Cover assets, candidate inputs,
-qualification evidence and recovery checkpoints remain immutable evidence.
+Read [CURRENT-STATE.md](CURRENT-STATE.md), [provenance](docs/provenance.md),
+[versioning](docs/VERSIONING.md) and the [Product recovery contract](../project-cbm/docs/recovery.md).
+Inspect actual refs/dirty work; never erase unknown work to match a checkpoint.
+Current user instructions define and may narrow the task, including leaving changes
+uncommitted. Do not expand a bounded task into unrelated backlog. Tool/sandbox
+permissions still apply. Old sessions and reference projects are not dependencies.
 
-The owner now authorizes the Menu work required for ONE new corrective Product
-engineering candidate.
+Keep candidate identities, changing status, results and exact next actions in
+CURRENT-STATE and canonical Product build/qualification/recovery records. Edit
+AGENTS only for durable governance changes, not each milestone or candidate.
 
-Authorized work includes:
+## Standing private engineering authority and owner gates
 
-- verify the accepted Menu source-correction checkpoint;
-- run required Menu/native regression validation;
-- assign the next appropriate Menu package/version identity according to
-  existing versioning policy;
-- build the new Menu package required by the corrective Product candidate;
-- preserve exact source/tag/peeled-commit/package identities and hashes;
-- provide the package/input identity required by the Product frozen release
-  lock;
-- perform package/install/native validation;
-- update continuity, qualification and recovery documentation.
+Within the requested outcome and these protections, Codex may autonomously
+investigate, fix, test, commit locally, version/package Menu, supply frozen inputs,
+validate installation, checkpoint and iterate on successive private candidates.
+Coordinated Product work may freeze distinct candidates and build/validate them via
+the approved Lima/VZ + pinned pi-gen factory under [Product governance](../project-cbm/AGENTS.md).
+No fresh owner authorization or AGENTS edit is required for each private iteration.
 
-The candidate Menu must incorporate the accepted corrections for:
+Halt an affected build/validation on integrity failure, retain the failed attempt,
+and diagnose it without bypassing gates. Evidence-supported fixes and distinct
+retries are authorized once required gates pass. Escalate only a genuine missing
+owner decision or hard-gated action, not a historical phase boundary.
 
-- terminal state ownership across Cover/VICE transitions;
-- bounded Cover lifetime;
-- Cover supervision/termination/reaping;
-- Cover diagnostics;
-- failure-open behavior;
-- repeated Menu -> Cover -> VICE -> Menu operation;
-- human-readable first-boot selections;
-- Back/retry/resume behavior;
-- working-state feedback;
-- Wi-Fi/password guidance.
+Explicit owner approval is required for push/publication; destructive changes to
+historical evidence, frozen inputs/outputs or recovery records; security/privacy/
+privilege weakening; major architecture or repository-boundary changes; unresolved
+third-party redistribution decisions; rewriting published history or replacing
+protected tags/assets; and physical testing/flashing or advancing hardware claims
+beyond exact retained owner reports. Approval cannot replace evidence or rights.
+Recording an existing owner report additively needs no second approval. New local
+private version tags and packages do not grant publication permission.
 
-Preserve:
+## Menu and Product responsibilities
 
-- all seven existing Project CBM Cover artwork files unchanged;
-- Cover names/provenance;
-- registry-driven Cover mapping;
-- one shared unprivileged VICE launch path;
-- existing machine registry/preferences authority;
-- POC3 geometry/F10/Quit behavior;
-- security/privilege boundaries;
-- existing rights gates.
+- Menu owns independently versioned scripts/assets, UI and interface contracts,
+  packaging and focused tests. Product owns OS/runtime integration, accounts and
+  services, image construction, release identity/mapping, hardware policy,
+  qualification, artifacts, recovery and product docs. public-docs is a historical
+  packaging mirror, not a competing authority.
+- `pcbm-menu` presents navigation; `pcbm-config` presents/orchestrates configuration.
+  Product's read-only `pcbm-info` JSON is the information authority: consume its
+  versioned structured data, never duplicate hardware/network probes or scrape its
+  human display. See [information/machines](docs/INFORMATION-MACHINES.md) and the
+  [configuration contract](../project-cbm/docs/runtime/configuration-contract.md).
+- Product registry and user-owned validated preferences own machine/profile/default
+  selection. No duplicate machine tables or privileged default writes. Valid new
+  state wins, missing state may import legacy once, invalid state needs explicit
+  recovery. Saved boot/modem/service intent is not activated runtime behavior.
+- UI/client code stays unprivileged. Root operations belong to Product's fixed,
+  validated, readiness-gated backend. Preserve authenticated owner administration,
+  protected credential transport/storage and deliberate service/listener opt-in.
+  No universal credentials, broad sudo or unrestricted passwordless root.
+- Keep one shared unprivileged VICE launcher and Product terminal/session ownership.
+  Capture state before Cover, supervise/bound/terminate/reap it, restore/verify before
+  and after VICE and retain bounded diagnostics. Missing/failed Cover must permit
+  VICE launch without weakening terminal safety. Retain F10/Quit, user preferences,
+  VICE per-chip aspect-preserving geometry and reliable repeated Menu return.
+- Preserve COVERS terminology, all seven existing artwork files/names/bytes/provenance
+  and Product registry mapping. No per-menu mapping, root/framebuffer/resolution
+  workaround or artwork substitution. See [Covers](../project-cbm/docs/runtime/covers.md).
+  Private engineering use does not clear constituent artwork for public distribution.
+- Preserve Bash/dialog, console getty/PAM/session behavior, SDL2 VICE and ALSA.
+  Pi 3 is the performance floor; Pi 3A+ needs separate 512 MiB qualification. Target
+  Pi 3 through Pi 500+ only where supportable and individually qualified. No Pi 5-only
+  optimization or renderer migration for novelty.
+- Improve layout where concrete before/after benefit warrants it. Use shared UI/results,
+  predictable Back/Cancel/retry/resume, human-readable setup choices and truthful
+  working/error/hidden-password feedback. Do not equate arbitrary command exit 2
+  with UI Back. Preserve user preferences and measure Pi 3 cost of material changes.
 
-Do not implement the proposed MEDIA/TOOLS/POWER/recovery menu restructuring
-during this candidate.
+## Versioning and immutable integration inputs
 
-Do not mutate an existing Menu package or tag. Create the required new
-versioned identity.
+- Menu and Product versions are independent. 1.0.x is important/security maintenance
+  of the original Trixie line; 1.1.x is active modernization. Formal v1.0.0 and the
+  recovered image runtime differ; forensic recovery refs are evidence, not releases.
+  Preserve tags/history/assets; never infer Menu version from Product version.
+- Every Product candidate consumes an explicit Menu version/tag, annotated tag object
+  where applicable, peeled full commit and artifact SHA-256, never arbitrary main.
+  Supply packaging recipes, patches/assets/licenses, schema compatibility and tests.
+  See the [Product build contract](../project-cbm/docs/build-and-release.md).
+- Changed package inputs require a new versioned identity; never replace completed
+  package bytes or move tags. Verify exact identity/compatibility before reusing
+  unchanged inputs. Product owns distinct frozen locks, build/attempt directories,
+  full-image validation, raw/XZ hashes and host drift/capability gates.
+- Source changes do not retroactively exist in frozen packages/images. A Menu package
+  pass is not a Product image, reproducibility or physical qualification pass.
+  Integrated version displays consume Product-generated metadata, not a competing
+  editable Product identity.
 
-This scope does NOT authorize:
+## Storage, preservation, security and recovery
 
-- another Menu redesign/architecture study;
-- physical testing by Codex;
-- another candidate after this one;
-- unrelated feature expansion;
-- boot-presentation optimization;
-- mutation of historical packages/images;
-- push;
-- publication.
+- Source/docs stay in configured Git roots (currently ~/Code); large inputs, packages,
+  images, trees, caches, build temp and evidence belong on mounted
+  /Volumes/TheBench/ProjectCBM-Work. Verify mount identity/capacity; never fall back
+  silently to internal SSD. Tooling uses configured roots and portable locators.
+- /Volumes/TheBench/Projects/Project CBM is original evidence: no edits, renames,
+  normalization, deduplication, cleanup or execution in place. Preserve inventories
+  and bundles in ProjectCBM-Work/archive/preservation-2026-09-15; verify manifests
+  after preservation changes without replacing a baseline to hide a mismatch.
+- TheBench is unencrypted APFS with ownership disabled, not Linux rootfs storage or
+  an encryption boundary. Product's approved builder uses external-backed ext4.
+  Historical/private records and public artifacts remain separate trust domains.
+- Follow [Product security](../project-cbm/docs/security.md): record sensitive-file
+  presence/type, never private keys, credentials, password hashes, shell history or
+  private device/network identities in Git/output. Keep diagnostics allowlisted and
+  private; do not read credentials to populate information views.
+- Preserve rights/source/license evidence. Private admission of assets/applications
+  is not redistribution approval; freeware, possession and archive inclusion do not
+  establish rights. Do not import historical private content or run automatic content
+  downloaders. Keep original qualification media distinct from third-party references.
+- Full black-box recovery belongs to Product repositories and retained infrastructure.
+  Menu supplies exact source/tag/package/recipe/test identities. Only minimal generated
+  identity belongs in the appliance; no full locks, recipes, archives or closure merely
+  for recovery. Preserve the acyclic checksum design and portable external records.
+- Make additive checkpoints with both repositories' relevant refs/bundles/manifests
+  and verified offline restore/ref/peeled-tag/fsck results. Retain earlier checkpoints.
+  Independent backups and restore drills are required; GitHub/caches or another
+  folder on TheBench are not independent custody. Report remaining gaps honestly.
 
-Ordinary reversible implementation, packaging, testing and documentation
-decisions within this scope do not require additional owner approval.
+## Validation and session close
 
-After supplying and validating the Menu package/input required by the single
-authorized corrective Product candidate, STOP at the Product owner-review
-boundary.
-
-Read CURRENT-STATE.md, docs/provenance.md, docs/VERSIONING.md and the companion
-product docs/recovery.md first. Update
-CURRENT-STATE.md after meaningful work; no prior Codex session is required.
-
-This repo owns independently versioned Menu scripts/assets, interfaces/contracts,
-packaging and focused tests. Companion ../project-cbm owns product/OS integration,
-image builder, VICE/TCPser/Menu mapping, qualification, hardware policy, artifacts
-and product documentation. Do not let public-docs/ become a competing authority.
-
-Future products require a Menu version/tag, peeled commit and artifact SHA-256;
-never arbitrary main. Existing v1.0.0 is immutable and differs from the image's
-exact 17-script runtime. The recovered/image-v1.0.0-runtime tag is forensic evidence,
-not a release. maintenance/1.0 begins at that root recovery; no 1.0.1 exists.
-1.0.x is original Trixie important/security maintenance; 1.1.x is active modernization.
-No Bookworm line exists. Do not reset, force-push, retag or replace release assets.
-
-Keep the Pi 3 performance floor and target Pi 3 through Pi 500+ where qualified.
-No hardware passes may be inferred from OS compatibility or syntax checks. Preserve
-Bash/dialog/SDL2/ALSA architecture; do not silently optimize for Pi 5 only.
-Do not casually broaden sudo, network/listener, service, boot or first-boot behavior.
-
-Canonical source/docs stay under ~/Code. Large inputs/images/build trees/caches
-belong on mounted /Volumes/TheBench/ProjectCBM-Work, never internal-SSD fallback.
-Original /Volumes/TheBench/Projects/Project CBM is evidence: no edits, renames,
-cleanup, normalization, deduplication or execution in place. Preservation inventory
-and bundles are under ProjectCBM-Work/archive/preservation-2026-09-15.
-APFS is not a ready Linux rootfs; no builder is provisioned. Historical evidence
-and public artifacts are separate trust domains. Record sensitive-file presence,
-never private keys, credentials, password hashes or shell history in Git/output.
-
-Run git diff --check, per-file bash -n for scripts/pcbm-* and packaging/*.sh,
-validate JSON/links and inspect staged sizes/secret patterns. Use ShellCheck when
-available and focused tests for behavior changes. See product docs/testing.md and
-docs/security.md. Never execute installer, docs-sync (even --dry-run), release-prep
-or runtime scripts as a static check. Existing packaging/CI defects are recorded,
-not repaired by this phase. Update current state with checks and remaining gaps.
-
-Preservation, owner-accepted cold-start comprehension and final architecture
-reconciliation are complete. Product ADR-0001 accepts Lite + pinned arm64 pi-gen
-with bounded appliance practices. A NEW instruction must authorize the 1.1 POC;
-stop this architecture phase before Linux provisioning, pi-gen, packaging, runtime
-changes, first boot, image build, push or publication.
-
-## Black-box recovery contract
-
-Product docs/recovery.md defines full black-box PROJECT recovery in repositories
-and retained build/release infrastructure: source/input/build/product/qualification
-evidence and independent restore tests. The image carries only minimal installed
-identity; no complete lock, recipes, recovery archive or package closure. No mandated
-8 GB card minimum: qualify actual system footprint and free user-data capacity.
-Menu must supply exact source/tag/peeled commit/artifact hashes, packaging recipe,
-patches/assets/licenses/schema compatibility and focused test evidence. It must
-not create a competing product identity or infer its version from the product.
-Future Menu version displays consume product-generated metadata when integrated.
-All of that runtime work remains deferred. Current local source/TheBench paths are
-deployment choices; accept configured roots and portable locators in future tooling.
-Preserve unknown dirty work after interruption, including work newer than CURRENT-STATE.
-Neither old sessions nor Spitfire/FireComm/reference projects may become dependencies.
-
-## Commit identity and current owner authorization
-
-Use the contributor's GitHub-provided noreply identity when email privacy is enabled.
-Before commits, check effective author/committer identity and repository-local
-overrides; keep privacy protection enabled. Do not hard-code an operator email in
-project tooling. Never repair published history. The 2026-09-15 owner exception
-applied only to eight explicitly scoped unpublished commits and the dependent
-unpublished Menu forensic tag; see the product privacy reconciliation record.
-
-The owner has authorized Milestone 1 contracts/tests and build-host research, with
-a hard approval checkpoint before Linux host provisioning, disk allocation, package
-builds, pi-gen or images. The current identity-repair task authorizes its scoped
-rewrite, additive documentation/checkpoints and normal publication only; stop after
-verified pushes and offline recovery. Earlier phase-specific no-push/no-implementation
-statements above describe those completed phases, not a substitute for current scope.
-
-## Publication resolution and active milestone
-
-Both main branches and Menu maintenance/recovery refs are published. Product
-maintenance/1.0 stays local/bundled by owner decision: public v1.0.0 is the
-authoritative public maintenance baseline. GH007 on the historical commit does
-not authorize rewriting it, changing privacy settings or retrying that branch push.
-The owner now authorizes resuming Milestone 1 on product
-feature/1.1-build-foundation after synchronization/checkpoint verification. Complete
-contracts/tests and retention/package/integration/first-boot design plus Linux host
-research; STOP for the build-host options/recommendation checkpoint before installing
-software, provisioning a VM/container/host, allocating large disks, building packages,
-running pi-gen or building an image. No Menu feature branch without actual Menu work.
-
-## Current POC2 owner authorization
-
-Bounded shared unprivileged launch/F10 behavior, optional product diagnostics and
-truthful engineering setup guidance are authorized on the existing feature branch.
-No broad privilege/settings redesign or SSH. Preserve POC1 package/tag and all
-historical refs. Stop at product POC2 offline validation; no physical test or push.
-Use standard precise terminology in current docs, explain specialized terms, and
-maintain concise how-to guides. Historical build notes remain unchanged evidence.
-
-## Shared UI foundation (latest owner boundary / STOP)
-
-The owner approved Bash/dialog and the Menu/config/info/backend boundaries. The first
-slice adds only the opt-in UI/result library, contract/tests and future package install
-entry. Existing scripts and frozen POC packages/tags remain unchanged. Product owns
-pcbm-info and user preference/profile foundations; read its docs/runtime/foundation-slice.md.
-No new image/package build, broad Menu/CONTROL reorganization, first boot, services,
-SSH, other-model qualification or push. STOP for owner review after tests and recovery.
-Future consumers must use structured pcbm-info output, not duplicate hardware detection
-or parse its human display. Do not interpret arbitrary command exit 2 as UI Back.
-
-## Information and machine consumers (latest completed boundary / STOP)
-
-Owner-authorized source migration is complete. Read CURRENT-STATE and
-`docs/INFORMATION-MACHINES.md`. System Information consumes pcbm-info JSON; MACHINES,
-RUN and shared content/default/cover paths consume the product registry/preferences.
-Do not reintroduce machine tables, hardware probes or privileged default-machine writes.
-Missing state may import legacy once; invalid state requires explicit recovery. Boot
-preference/dormant pcbm-start activation remains deferred. Preserve frozen tags/packages/
-POC1–3. No package/image build, broad CONTROL/settings changes, SSH/services, new Pi test
-or push. STOP for owner review after tests and verified source recovery checkpoint.
-
-
-## Configuration maturation (latest completed boundary / STOP)
-
-The owner-approved final concentrated configuration pass is source-complete. Read
-CURRENT-STATE and the product docs/runtime/configuration-contract.md. Retain the
-pcbm-menu / pcbm-config / read-only pcbm-info / narrow backend boundaries. Ordinary
-preferences remain user-owned; root operations are fixed, validated and readiness-gated.
-Authenticated owner administration remains available after first-boot account setup;
-never replace it with universal credentials or unrestricted passwordless root.
-
-Do not mistake source adapters or saved boot/modem intent for activated runtime behavior.
-Matching packages, account/service integration and constrained storage/modem/boot consumers
-are product gates. Preserve POC1–3, tags and earlier checkpoints. No POC4, package/image
-build, service activation, new hardware test, boot optimization, optional software or
-push is authorized by this completed pass. Next owner review is first-boot/owner-account
-and runtime activation integration, not another Menu framework/architecture study.
-
-## Cover follow-up after frozen POC4 attempt #2
-
-Read CURRENT-STATE and product docs/runtime/covers.md. Preserve COVERS terminology,
-existing artwork names/bytes, registry mapping and shared-launcher transition ownership.
-No root/framebuffer/resolution workaround or per-menu cover mapping. Missing/failed
-covers must not block VICE. Source changes are not in the frozen attempt #2 image.
-New packaging/build needs owner review and a new version/tag/input identity, never
-mutation of completed packages/images. Public constituent-artwork rights remain a
-separate review; owner's existing artwork was identified for private engineering use.
+- Run git diff --check, per-file bash -n for changed scripts/pcbm-* and packaging/*.sh,
+  JSON/link validation and changed-file size/secret review. Use ShellCheck when available
+  and focused behavioral/package/native tests for relevant changes; follow
+  [Product testing](../project-cbm/docs/testing.md). Report contextual failures accurately.
+- Never execute installer, docs-sync (even --dry-run), release-prep, privileged tooling
+  or historical/runtime scripts as a static/documentation check.
+- Preserve PASS/FAIL/UNTESTED/BLOCKED with exact candidate and test identities. Static,
+  VM/headless and offline tests cannot prove physical Cover/KMS/keyboard/VT/audio or
+  another model's support. Product owns hash-bound physical procedures and additive
+  owner attestations; do not fabricate passes or retrospectively prove unknown causes.
+- Before commits check effective author/committer identity and local overrides; use
+  the contributor's GitHub noreply identity when email privacy is enabled. Do not
+  disable privacy, hard-code operator emails or treat GH007 as rewrite authorization.
+- After meaningful work update CURRENT-STATE with checks/limits, exact checkpoint,
+  evidence/recovery links and next action; update relevant canonical docs additively.
+  Leave clear Git status and logical local commits unless the user asks for uncommitted
+  review. Explain confirmed, inferred and unresolved facts; favor concise how-to
+  guidance and canonical links over repeated technical detail or historical ledgers.
