@@ -89,7 +89,7 @@ class CoverLaunch(unittest.TestCase):
         self.write('timeout','#!/bin/bash\n[[ $1 == --signal=TERM && $2 == --kill-after=0.5s && $3 == 2s ]] || exit 1\nshift 3\nexec "$@"\n')
         self.write('tty','#!/bin/bash\necho /dev/tty1\n')
         (self.bin/'python3').symlink_to(sys.executable)
-        (self.lib/'pcbm_cover_view.py').write_text('import os,sys\nwith open(os.environ["TRACE"],"a") as f:f.write("cover:"+sys.argv[1]+"\\n")\nraise SystemExit(int(os.environ.get("COVER_FAIL","0")))\n')
+        (self.lib/'pcbm_cover_view.py').write_text('import os,sys\nif sys.argv[1:] == ["--admit"]: raise SystemExit(0)\nwith open(os.environ["TRACE"],"a") as f:f.write("cover:"+sys.argv[1]+"\\n")\nraise SystemExit(int(os.environ.get("COVER_FAIL","0")))\n')
         for n in ('x64sc','xvic','x128'):
             self.write(n,'#!/bin/bash\nprintf "%s\\n" "vice:'+n+'" "$@" >> "$TRACE"\nexit "${VICE_FAIL:-0}"\n')
         self.env={**os.environ,'PATH':str(self.bin)+':'+os.environ['PATH'],'XDG_CONFIG_HOME':str(self.home/'.config'),'TRACE':str(self.root/'trace')}

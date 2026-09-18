@@ -1,3 +1,26 @@
+# POC4 attempt #5 source correction — 2026-09-18
+
+Standing governance was committed by the owner at Menu `668ff0a` and Product
+`e098244`. AGENTS files remain unchanged; the prior uncommitted handoff is historical.
+The current instruction authorizes coordinated private source/package/image work.
+
+Menu `1.1.0_poc4.3` / Debian `1.1.0~poc4.3-1+pcbm1` corrects Cover admission using
+kernel tty identity, the active VT and foreground group. `/dev/tty` and `/dev/tty1`
+are equivalent only when they denote this session's active tty1. Fixed admission,
+asset-ready and skip events feed the existing bounded Product diagnostics. The
+supervisor, restoration/verification, seven artwork files and registry mapping remain
+unchanged. Existing System Information / CONTROL → Network display authoritative
+pcbm-info per-interface state/type/IP/MAC and safely available active SSID; Menu
+adds no probes or top-level item.
+
+Host and native Linux Menu suites: 76/76 PASS. Product native: 163/163 PASS;
+host has the known macOS mktemp expectation only (162/163). See the
+[correction contract](../project-cbm/docs/runtime/cover-network-correction-2026-09-18.md).
+Native installed packages, exact source tag and attempt #5 frozen build are next.
+Attempt #4 remains owner-reported lifecycle PHYSICALLY PASSING, visible Cover FAIL.
+Corrected rendering and actual network association remain physically UNTESTED.
+Quiet/fast boot remain backlog. Nothing pushed or published.
+
 # Current checkpoint: standing governance refactor — 2026-09-17
 
 [AGENTS.md](AGENTS.md) now defines standing Menu private-engineering authority,

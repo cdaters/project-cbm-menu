@@ -88,6 +88,26 @@ def rows(data):
         network = '; '.join(clean(object_value(x).get('interface')) + ': ' + clean(object_value(x).get('operstate')) for x in links[:8]) or 'No links observed'
     else:
         network = UNKNOWN
+    interfaces = c.get('network_interfaces')
+    if isinstance(interfaces, list):
+        result.append(('NETWORK INTERFACES', None))
+        for item in interfaces[:32]:
+            item = object_value(item)
+            result.append((clean(item.get('interface')), clean(item.get('type')) + '; ' + clean(item.get('state')) + '; link ' + clean(item.get('operstate'))))
+            result.append(('Current MAC', clean(item.get('mac'))))
+            for family in ('ipv4', 'ipv6'):
+                values = item.get(family)
+                rendered = ', '.join(clean(v) for v in values[:8]) if isinstance(values, list) else UNKNOWN
+                result.append((family.upper(), rendered or 'None assigned'))
+            ssid = item.get('ssid')
+            if ssid is not None:
+                # Unlike path/identifier fields, SSIDs may contain a backslash.
+                safe = ssid if isinstance(ssid, str) and 0 < len(ssid.encode('utf-8')) <= 32 and ssid.isprintable() else UNKNOWN
+                result.append(('Wi-Fi SSID', safe))
+        if not interfaces: result.append(('', 'No non-loopback interfaces observed'))
+        result.append(('', 'Addresses and link state do not establish Internet access. IPv6 link-local addresses require the interface as their zone.'))
+    elif 'network_interfaces' in c:
+        result.append(('Interface addresses', UNKNOWN))
     service_rows=[]
     for key,label in [('samba','File Sharing'),('ssh','SSH'),('tcpser','BBS/Modem'),('avahi','mDNS')]:
         state=object_value(services.get(key))

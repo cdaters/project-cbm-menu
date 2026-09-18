@@ -3,6 +3,9 @@
 Existing SDL2/SDL2_image libraries; Python stdlib only. Owns no persistent state.
 The launcher bounds the entire subprocess and waits for exit before starting VICE.
 """
+import array
+import fcntl
+import struct
 import ctypes as C
 import ctypes.util
 import os
@@ -44,6 +47,32 @@ def telemetry(stage, **fields):
 def label(value):
     value=value.decode('ascii',errors='replace') if isinstance(value,bytes) else ''
     return value if re.fullmatch(r'[A-Za-z0-9_-]{1,40}',value) else 'unknown'
+
+
+def admission(fd=0):
+    """Read kernel tty identity, never change a VT, foreground group or tty mode."""
+    if os.geteuid() == 0: return 'skip_root'
+    if not sys.platform.startswith('linux'): return 'skip_non_linux'
+    control = None
+    try:
+        if not os.isatty(fd): return 'skip_nonterminal'
+        control = os.open('/dev/tty', os.O_RDONLY | os.O_NOCTTY | os.O_NONBLOCK)
+        def device(handle):
+            value = array.array('I', [0])
+            fcntl.ioctl(handle, 0x80045432, value, True)  # Linux TIOCGDEV: new_encode_dev
+            return value[0]
+        # Linux console tty1 is major 4, minor 1 (encoded 0x401). This works
+        # for both a direct tty1 descriptor and the controlling /dev/tty alias.
+        if device(fd) != 0x401 or device(control) != 0x401: return 'skip_wrong_tty'
+        state = bytearray(6)
+        fcntl.ioctl(control, 0x5603, state, True)  # VT_GETSTATE, three unsigned shorts
+        if struct.unpack('=HHH', state)[0] != 1: return 'skip_inactive_vt'
+        if os.tcgetpgrp(control) != os.getpgrp(): return 'skip_background'
+        return 'admitted'
+    except OSError:
+        return 'skip_tty_unavailable'
+    finally:
+        if control is not None: os.close(control)
 
 
 def fit(width, height, image_width, image_height):
@@ -148,6 +177,10 @@ def display(path, sdl, img):
 
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
+    if argv == ['--admit']:
+        result = admission()
+        telemetry(result)
+        return 0 if result == 'admitted' else 2
     if os.geteuid() == 0 or len(argv) != 1: return 1
     path = Path(argv[0]); base = Path('/usr/share/project-cbm-menu/covers')
     try:

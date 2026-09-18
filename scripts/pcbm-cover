@@ -41,20 +41,23 @@
 
 # Compatible cover basename/filenames; profile mapping belongs only to the registry.
 set -uo pipefail
-(( EUID != 0 )) || exit 0
-[[ $(tty 2>/dev/null) == /dev/tty1 ]] || exit 0
+skip() { printf 'PCBM_COVER {"stage":"%s"}\n' "$1"; exit 0; }
+(( EUID != 0 )) || skip skip_root
+# Kernel tty identity admits the controlling alias without changing terminal ownership.
+/usr/bin/python3 /usr/libexec/project-cbm-menu/pcbm_cover_view.py --admit || exit 0
 if [[ ${1:-} == --profile && $# == 2 ]]; then
-  machine=$(/usr/bin/pcbm-profiles resolve "$2" --cover) || exit 0
+  machine=$(/usr/bin/pcbm-profiles resolve "$2" --cover) || skip skip_profile
 elif (( $# == 1 )); then
   machine=$1 # Legacy callers may still pass an already resolved cover identity.
 else
-  exit 0 # Never substitute a random or unrelated machine cover.
+  skip skip_arguments # Never substitute a random or unrelated machine cover.
 fi
-[[ $machine =~ ^[a-z0-9]+$ ]] || exit 0
+[[ $machine =~ ^[a-z0-9]+$ ]] || skip skip_profile
 for extension in jpg png; do
   asset="/usr/share/project-cbm-menu/covers/pcbmcover-${machine}.${extension}"
-  if [[ -f $asset && ! -L $asset ]]; then
+  if [[ -f $asset && ! -L $asset && -r $asset ]]; then
+    printf 'PCBM_COVER {"stage":"asset_ready"}\n'
     exec /usr/bin/python3 /usr/libexec/project-cbm-menu/pcbm_cover_view.py "$asset"
   fi
 done
-exit 0
+skip skip_asset

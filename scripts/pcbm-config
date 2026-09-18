@@ -70,7 +70,7 @@ region() {
   done
 }
 network() {
-  while choose "Network" STATUS "Network/Ethernet status" HOSTNAME "Pi hostname" COUNTRY "Wi-Fi country and radio" SCAN "Nearby Wi-Fi networks" WIFI "Join Wi-Fi by name (WPA personal)" DISCONNECT "Disconnect Project CBM Wi-Fi" FORGET "Forget Project CBM Wi-Fi" ONLINE "Enable normal networking" OFFLINE "Stay offline (disable connections)"; do
+  while choose "Network" STATUS "Network information (IP/MAC and status)" HOSTNAME "Pi hostname" COUNTRY "Wi-Fi country and radio" SCAN "Nearby Wi-Fi networks" WIFI "Join Wi-Fi by name (WPA personal)" DISCONNECT "Disconnect Project CBM Wi-Fi" FORGET "Forget Project CBM Wi-Fi" ONLINE "Enable normal networking" OFFLINE "Stay offline (disable connections)"; do
     case $PCBM_UI_CHOICE in
       STATUS) /usr/bin/pcbm-system-info ;;
       HOSTNAME) edit_value hostname "Short hostname: lowercase letters, digits and hyphens; for example project-cbm." ;;

@@ -59,6 +59,15 @@ class InformationView(unittest.TestCase):
             self.assertTrue(all(view.cell_width(line)<=max(14,min(width,100)-6) for line in text.splitlines()))
             self.assertIn('a'*64,text.replace('\n',''))
 
+    def test_network_addresses_ssid_and_legacy_report(self):
+        data=copy.deepcopy(self.data)
+        data['current_state']['network_interfaces']=[{'interface':'wlan0','type':'wifi','state':'connected','operstate':'up','mac':'02:00:00:00:00:01','ipv4':['192.0.2.2/24'],'ipv6':['2001:db8::1234/64','fe80::12/64'],'ssid':'Test: room'}]
+        rendered=view.render(data)
+        for value in ['192.0.2.2/24','2001:db8::1234/64','02:00:00:00:00:01','Test: room','wifi; connected']:self.assertIn(value,rendered)
+        for width in [40,80]:self.assertTrue(all(view.cell_width(line)<=width-6 for line in view.render(data,width).splitlines()))
+        data['current_state']['network_interfaces'][0]['ssid']='bad\x1b[31m';self.assertNotIn('\x1b',view.render(data))
+        del data['current_state']['network_interfaces'];self.assertIn('Network',view.render(data))
+
     def test_contract_failure_duplicate_keys_and_controls(self):
         for raw in ['{}','{"format":"project-cbm.info","schema_version":2}', '{"format":"project-cbm.info","schema_version":1,"schema_version":1}', '['*2000, 'x'*65537]:
             with self.assertRaises((ValueError,RecursionError)):view.parse(raw)
