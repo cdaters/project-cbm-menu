@@ -1,90 +1,79 @@
 # Working on Project CBM Menu
 
-## Current owner scope: POC4 lifecycle-regression investigation
+## Current owner scope: next POC4 corrective candidate
 
-Product POC4 attempt #3 construction and offline validation are complete. The
-frozen Menu package, Cover assets, product image, release lock and checkpoints
-are immutable qualification evidence.
+The POC4 lifecycle-regression investigation and source-correction milestone is
+complete.
 
-The owner physically tested the exact POC4 attempt #3 image on Raspberry Pi 3B.
+The owner accepts the Menu lifecycle, Cover, diagnostic and first-boot source
+corrections from that milestone.
 
-Observed Menu/runtime regressions include:
+All completed Menu packages, tags, Cover assets, candidate inputs,
+qualification evidence and recovery checkpoints remain immutable evidence.
 
-- RUN launches VICE;
-- the expected machine Cover is not visibly presented before VICE;
-- VICE runs and F10 -> Quit works;
-- the Project CBM Menu visually returns after VICE exits;
-- keyboard input is non-responsive after return;
-- Ctrl+Alt+F2 does not switch to diagnostic VT2;
-- Ctrl+C does not respond;
-- POC3 previously physically passed the complete Menu -> VICE -> Menu lifecycle
-  with responsive keyboard and VT switching.
+The owner now authorizes the Menu work required for ONE new corrective Product
+engineering candidate.
 
-The owner authorizes bounded investigation and evidence-based correction of the
-Menu/Cover/shared-launcher portions of this regression in coordination with the
-Product repository.
+Authorized work includes:
+
+- verify the accepted Menu source-correction checkpoint;
+- run required Menu/native regression validation;
+- assign the next appropriate Menu package/version identity according to
+  existing versioning policy;
+- build the new Menu package required by the corrective Product candidate;
+- preserve exact source/tag/peeled-commit/package identities and hashes;
+- provide the package/input identity required by the Product frozen release
+  lock;
+- perform package/install/native validation;
+- update continuity, qualification and recovery documentation.
+
+The candidate Menu must incorporate the accepted corrections for:
+
+- terminal state ownership across Cover/VICE transitions;
+- bounded Cover lifetime;
+- Cover supervision/termination/reaping;
+- Cover diagnostics;
+- failure-open behavior;
+- repeated Menu -> Cover -> VICE -> Menu operation;
+- human-readable first-boot selections;
+- Back/retry/resume behavior;
+- working-state feedback;
+- Wi-Fi/password guidance.
 
 Preserve:
 
 - all seven existing Project CBM Cover artwork files unchanged;
-- existing Cover names and provenance;
-- machine-registry Cover mappings unless evidence establishes a mapping defect;
-- shared-launcher ownership of the Cover/VICE transition;
-- unprivileged Cover presentation;
-- Cover failure-open behavior;
-- bounded Cover lifetime;
-- current machine registry/preferences authority;
+- Cover names/provenance;
+- registry-driven Cover mapping;
+- one shared unprivileged VICE launch path;
+- existing machine registry/preferences authority;
 - POC3 geometry/F10/Quit behavior;
-- existing tags, frozen packages, recovery evidence and rights gates.
+- security/privilege boundaries;
+- existing rights gates.
 
-Investigate rather than assume whether the SDL2 Cover renderer caused or
-contributed to the physical regression.
+Do not implement the proposed MEDIA/TOOLS/POWER/recovery menu restructuring
+during this candidate.
 
-The corrected design must ensure:
-
-- a Cover process cannot retain keyboard, VT, SDL, DRM/KMS or display ownership
-  after its bounded presentation;
-- missing/failed Cover presentation cannot block VICE;
-- VICE launches through the one shared unprivileged path;
-- VICE exit restores terminal/session/input state completely;
-- the returned Project CBM Menu is immediately responsive;
-- diagnostic VT switching remains available according to the Product contract;
-- repeated launch/return cycles behave consistently.
-
-Add focused tests where host/native testing can meaningfully exercise Cover
-selection, renderer lifetime/failure, launcher cleanup, terminal restoration
-and repeated launch/return behavior.
-
-First-boot UI corrections owned by Menu may also be made where required by the
-Product current scope, including predictable Back/Cancel/retry semantics,
-human-readable choices, password-entry feedback and explicit working-state
-presentation.
-
-Do not expose credentials or replace validated Product configuration contracts
-with raw Linux configuration editing.
-
-The recent Dosbian 4.0 analysis is read-only design input. Do not copy Dosbian
-code, reproduce its menu structure, or adopt its broad sudo/raw-configuration
-patterns.
-
-Do not implement the proposed MEDIA/TOOLS/POWER/recovery menu reorganization
-during this regression milestone.
+Do not mutate an existing Menu package or tag. Create the required new
+versioned identity.
 
 This scope does NOT authorize:
 
-- mutation of the frozen POC4 attempt #3 Menu package;
-- mutation of completed images/locks;
-- broad Menu redesign;
-- unrelated feature expansion;
-- another image build;
+- another Menu redesign/architecture study;
 - physical testing by Codex;
+- another candidate after this one;
+- unrelated feature expansion;
 - boot-presentation optimization;
+- mutation of historical packages/images;
 - push;
 - publication.
 
-If source changes are required, create normal logical commits and recovery
-evidence, but stop before new Menu packaging/input freeze/image construction
-unless a later owner scope explicitly authorizes them.
+Ordinary reversible implementation, packaging, testing and documentation
+decisions within this scope do not require additional owner approval.
+
+After supplying and validating the Menu package/input required by the single
+authorized corrective Product candidate, STOP at the Product owner-review
+boundary.
 
 Read CURRENT-STATE.md, docs/provenance.md, docs/VERSIONING.md and the companion
 product docs/recovery.md first. Update
