@@ -18,7 +18,7 @@ service/SSH/local mDNS/dialog checks PASS. Actual image 260 checks, 672 package 
 127 ELF objects, raw/XZ equivalence and host integrity PASS; physical behavior UNTESTED.
 Lock SHA-256 `53d2d25f997613434e16fdecc0057eeea88da74783f9487b2501cbec4d1cce57`.
 Raw SHA-256 `e4bb7f03ed26583097f92e8b8d1c2e9e4e3616d4d39940c78f70618ca3a81c40`.
-Recovery `archive/poc4-attempt8-2026-09-18` external manifest/restore report must verify
+Recovery `archive/poc4-attempt8-final-2026-09-18` external manifest/restore report must verify
 PASS before flashing. Earlier candidates/evidence/refs preserved. Nothing pushed or
 published. Stop for exact-hash owner testing; no further feature/boot work.
 
