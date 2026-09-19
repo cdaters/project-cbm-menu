@@ -1,3 +1,27 @@
+# Attempt #8 performance/account candidate complete — 2026-09-18
+
+**READY FOR OWNER PI 3 B+ PHYSICAL TEST with verified external recovery.**
+[Product report](../project-cbm/docs/build/private-poc4-attempt8.md) and
+[exact-hash procedure](../project-cbm/docs/qualification/poc4-attempt8-pi3b-plus-performance.md).
+Menu `v1.1.0_poc4.6`, source `2ec5f8dcb04b5d86f64a2ce6a96625c3528eac73`, annotated
+object `085ab4bd820709bf0407cdbba35d25060e2541fd`; package 1.1.0~poc4.6-1+pcbm1,
+1,106,624 bytes, SHA-256 `4df04ab44ebd44313f94e77c1130e3d792f7c0ea9911ca51760b3b765a0b7827`.
+
+Fixed first-boot administrator username guidance is pcbm; owner remains the role.
+Product preserves pi console/content, projectcbm name and separate Samba password,
+and supplies portable -O3/x64sc/reSID interpolation plus bounded performance telemetry.
+The Pi 3 B+ performance release blocker still needs physical confirmation. Covers,
+keyboard/VT/session/F10/Menu transition remain unchanged; quiet/fast boot deferred.
+
+Menu host/native 96/96; Product host/native 195/195; lifecycle 10/10 and native account/
+service/SSH/local mDNS/dialog checks PASS. Actual image 260 checks, 672 package identities,
+127 ELF objects, raw/XZ equivalence and host integrity PASS; physical behavior UNTESTED.
+Lock SHA-256 `53d2d25f997613434e16fdecc0057eeea88da74783f9487b2501cbec4d1cce57`.
+Raw SHA-256 `e4bb7f03ed26583097f92e8b8d1c2e9e4e3616d4d39940c78f70618ca3a81c40`.
+Recovery `archive/poc4-attempt8-2026-09-18` external manifest/restore report must verify
+PASS before flashing. Earlier candidates/evidence/refs preserved. Nothing pushed or
+published. Stop for exact-hash owner testing; no further feature/boot work.
+
 # Pi 3 B+ performance/account candidate in progress — 2026-09-18
 
 Menu 1.1.0_poc4.6 changes first-boot login guidance to the fixed administrator username
