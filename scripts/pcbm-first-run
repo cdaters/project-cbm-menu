@@ -51,7 +51,7 @@ while true;do
         else stage=region;fi ;;
       owner)
         if step_done owner;then stage=network;continue;fi
-        if pcbm_ui_secret "Owner administration" "Choose an owner password: 12-128 printable characters, excluding colon. Username: owner. Use this password for Remote Access (SSH) and Advanced administration.";then
+        if pcbm_ui_secret "Owner administration" "Choose an owner password: 12-128 printable characters, excluding colon. Username: pcbm. Use this password for Remote Access (SSH) and Advanced administration.";then
           secret=$PCBM_UI_CHOICE;PCBM_UI_CHOICE=;stage=confirm
         else back $? region;fi ;;
       confirm)

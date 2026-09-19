@@ -1,3 +1,19 @@
+# Pi 3 B+ performance/account candidate in progress — 2026-09-18
+
+Menu 1.1.0_poc4.6 changes first-boot login guidance to the fixed administrator username
+`pcbm`, with matching status/credential tests. Owner remains the role; Product owns
+account creation, SSH/Samba policy and the evidence-supported VICE performance fix.
+Menu lifecycle, artwork, keyboard and service presentation contracts are preserved.
+Host/native Menu 96/96 and Product 195/195 PASS; native installed lifecycle 10/10,
+account/services/SSH/local mDNS/dialog checks PASS within isolated limits.
+
+[Product checkpoint](../project-cbm/CURRENT-STATE.md) and
+[performance decision](../project-cbm/docs/runtime/c64-performance-2026-09-18.md) are the
+current authority. Attempt #7 physical C64 performance FAIL on Pi 3 B+; unreported
+functions remain UNTESTED. Build/validate/recover one new distinct private candidate,
+then stop for exact-hash owner testing. READY TO FLASH: NO until those gates pass.
+Quiet/fast boot deferred. No push/publication; earlier candidate records remain immutable.
+
 # Attempt #7 release-readiness candidate complete — 2026-09-18
 
 **READY FOR OWNER PHYSICAL TEST.** [Product report](../project-cbm/docs/build/private-poc4-attempt7.md)

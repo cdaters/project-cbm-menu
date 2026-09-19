@@ -41,6 +41,7 @@ print(json.dumps({{**result('ok'),'message':'untrusted-fixture-message'}}))
 ''')
     def test_offline_flow_no_secret_in_dialog_arguments_or_output(self):
         secret='synthetic-owner-only'
+        self.assertIn('Username: pcbm.', (ROOT/'scripts/pcbm-first-run').read_text())
         p=self.run_ui('pcbm-first-run',['MESSAGE','en_US.UTF-8','us','UTC',secret,secret,'OFFLINE'])
         self.assertEqual(p.returncode,0,p.stderr)
         self.assertTrue(json.loads(self.state.read_text())['complete'])

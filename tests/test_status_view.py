@@ -7,7 +7,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'lib'))
 import pcbm_status_view as s
 
 def fixture():
-    return {'format':'project-cbm.appliance-info','schema_version':1,'computer_name':'projectcbm','owner_username':'owner','sharing_username':'owner','sharing_password_set':False,'share_name':'Project CBM','interfaces':[],'issues':[],'modem_port':25232,'services':{n:{'state':'off','enabled':False,'listening':False} for n in s.LABELS}}
+    return {'format':'project-cbm.appliance-info','schema_version':1,'computer_name':'projectcbm','owner_username':'pcbm','sharing_username':'pcbm','sharing_password_set':False,'share_name':'Project CBM','interfaces':[],'issues':[],'modem_port':25232,'services':{n:{'state':'off','enabled':False,'listening':False} for n in s.LABELS}}
 
 def nic(kind='ethernet',ip='192.0.2.12/24',name='enp9s4'):
     return {'interface':name,'type':kind,'state':'connected','operstate':'up','mac':'02:00:00:00:00:01','ipv4':[ip],'ipv6':[],'ssid':None}
@@ -32,16 +32,16 @@ class Status(unittest.TestCase):
         out=s.view(d,'network');self.assertIn('Computer Name: projectcbm',out);self.assertNotIn('\\Z',out)
     def test_ssh_username_secret_guidance_ip_and_mdns(self):
         d=fixture();d['interfaces']=[nic()]
-        self.assertIn('ssh owner@192.0.2.12',s.connection(d,'ssh'))
+        self.assertIn('ssh pcbm@192.0.2.12',s.connection(d,'ssh'))
         d['services']['discovery']['state']='on'
-        self.assertIn('ssh owner@projectcbm.local',s.connection(d,'ssh'))
+        self.assertIn('ssh pcbm@projectcbm.local',s.connection(d,'ssh'))
         self.assertIn('first-boot owner password',s.connection(d,'ssh'))
     def test_smb_separate_password_real_share_and_paths(self):
         d=fixture();d['interfaces']=[nic()];out=s.connection(d,'sharing')
-        for value in ('separate password','smb://192.0.2.12/Project%20CBM','owner','Project CBM'):self.assertIn(value,out)
+        for value in ('separate password','smb://192.0.2.12/Project%20CBM','pcbm','Project CBM'):self.assertIn(value,out)
     def test_ipv6_only_connection(self):
         d=fixture();row=nic();row.update(ipv4=[],ipv6=['2001:db8::1/64']);d['interfaces']=[row]
-        self.assertIn('ssh owner@2001:db8::1',s.connection(d,'ssh'))
+        self.assertIn('ssh pcbm@2001:db8::1',s.connection(d,'ssh'))
         self.assertIn('smb://[2001:db8::1]/',s.connection(d,'sharing'))
     def test_secret_extras_never_rendered(self):
         d=fixture();d['password']='fixture-do-not-output';d['services']['ssh']['private']='fixture-do-not-output'
