@@ -1,3 +1,12 @@
+# Attempt #8 live engine identity verified
+
+[Owner SSH readback](../project-cbm/docs/qualification/poc4-attempt8-live-identity.json)
+confirms attempt #8 identity, VICE 3.10-1+pcbm4 and exact x64sc/x64 binary hashes.
+The pending identity statement below is historical. Settings/payload hashes and physical
+A/B remain pending; no Menu/default change or attempt9 build. Performance remains FAIL.
+Additive recovery: `archive/poc4-attempt8-live-identity`, with external manifest and
+offline restore verification; prior checkpoints unchanged.
+
 # Attempt #8 physical performance FAIL — live comparison pending
 
 [Owner report](../project-cbm/docs/qualification/poc4-attempt8-pi3b-plus-performance-fail-2026-09-18.json):
