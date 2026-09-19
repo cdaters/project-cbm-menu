@@ -1,3 +1,23 @@
+# Attempt #8 physical performance FAIL — live comparison pending
+
+[Owner report](../project-cbm/docs/qualification/poc4-attempt8-pi3b-plus-performance-fail-2026-09-18.json):
+Pi 3 B+ C64 graphics/SID remain severely slow with x64sc. O3/reSID interpolation did not
+resolve real time; native improvement is not physical proof. Other functions are not
+newly promoted to PASS. No Menu/package/default change or next image build is authorized.
+
+The [bounded A/B](../project-cbm/docs/qualification/poc4-attempt8-live-c64-ab.md) uses existing
+MACHINES launches (x64sc, then Commodore 64 (fast)/x64), preserving default/preferences,
+Cover/session ownership and F10/Menu return. Exact frozen engines are known; live identity/
+config hashes and owner physical comparisons remain pending. Automated SSH cannot
+authenticate and computer-use terminal access is unavailable; no credentials requested.
+
+No hardware-tier policy, quiet/fast boot, push/publication or attempt9. Product owns the
+physical evidence and next decision. Historical offline READY records below remain intact.
+
+Product retains the additive documentation/evidence recovery checkpoint at
+`archive/poc4-attempt8-physical-ab-2026-09-18`; its external manifest and offline
+restore report are verification authority. Existing candidate recovery is unchanged.
+
 # Attempt #8 performance/account candidate complete — 2026-09-18
 
 **READY FOR OWNER PI 3 B+ PHYSICAL TEST with verified external recovery.**
