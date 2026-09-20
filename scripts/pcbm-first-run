@@ -18,7 +18,7 @@ request() {
       setup-finish) label="Saving configuration..." ;;
       *) return 2 ;;
     esac
-    pcbm_ui_working "$label" || return 1
+    if [[ ${PCBM_SETUP_QUIET:-false} != true ]]; then pcbm_ui_working "$label" || return 1; fi
     reply=$(printf '%s\n' "$@" | /usr/bin/python3 "$bridge" request "$op" | /usr/bin/pcbm-config-operation 2>/dev/null)
     if text=$(printf '%s' "$reply" | /usr/bin/python3 "$bridge" result 2>/dev/null);then return 0;fi
     pcbm_ui_message "Setup not complete" "${text:-This operation could not be confirmed.} Previously applied changes remain. Correct the input and retry; Escape pauses setup safely." || true
@@ -31,7 +31,7 @@ step_done() {
 back() {
     case $1 in 1) stage=$2 ;; 2) unset secret;PCBM_UI_CHOICE=;exit 1 ;; *) exit 3 ;; esac
 }
-if step_done complete;then request setup-finish;exit $?;fi
+if step_done complete;then PCBM_SETUP_QUIET=true request setup-finish;exit $?;fi
 pcbm_ui_message "Welcome to Project CBM" "Set your region, owner password and optional networking. Back revisits a screen; Escape pauses setup. Applied changes survive a restart. Keyboard changes apply after reboot, so passwords use the current layout." || exit 1
 stage=region
 if step_done region;then stage=owner;fi

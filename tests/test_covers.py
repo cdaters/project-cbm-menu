@@ -57,6 +57,21 @@ class CoverRenderer(unittest.TestCase):
             self.assertGreaterEqual(clock[0],duration)
             self.assertLess(clock[0],duration+.05)
         self.assertNotIn('/usr/bin/pcbm-cover\n',(ROOT/'scripts/pcbm-menu').read_text())
+    def test_boot_holds_until_ready_and_minimum_visible_time(self):
+        for ready_time in (0,5):
+            clock=[0.0];sdl=SDL();readfd,writefd=os.pipe();sent=[False]
+            def pause(seconds):
+                clock[0]+=seconds
+                if not sent[0] and clock[0]>=ready_time:
+                    os.write(writefd,b'1');sent[0]=True
+            try:
+                with patch.object(view.time,'monotonic',side_effect=lambda:clock[0]),patch.object(view.time,'sleep',side_effect=pause),patch.object(view,'telemetry'):
+                    self.assertEqual(view.display(Path('fixture.jpg'),sdl,sdl,primary=True,control_fd=readfd),0)
+                self.assertGreaterEqual(clock[0],max(3,ready_time))
+                self.assertLess(clock[0],max(3,ready_time)+.05)
+                self.assertEqual(sdl.calls[-1],'SDL_Quit')
+            finally:os.close(readfd);os.close(writefd)
+
     def test_fit_does_not_stretch_artwork(self):
         for dw,dh,iw,ih in [(1920,1080,600,600),(640,480,1200,600),(320,240,600,1200)]:
             r=view.fit(dw,dh,iw,ih)

@@ -75,6 +75,7 @@ while true; do
   [[ $boot_pending != true ]] || pcbm_boot_mark status_done
   prompt="Default: $current_label\n$network_summary\n\nPlease select a Project CBM option."
   [[ $PCBM_PREFERENCE_STATUS != invalid ]] || prompt+="\nSaved preferences need recovery; using a validated fallback. Review MACHINES."
+  if declare -F pcbm_boot_handoff >/dev/null; then pcbm_boot_handoff || exit 2; fi
   [[ $boot_pending != true ]] || pcbm_boot_mark dialog_dispatch
   pcbm_show_menu "Project CBM Main Menu" "$prompt" "${main_items[@]}"
 

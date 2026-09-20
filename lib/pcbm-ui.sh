@@ -50,6 +50,10 @@ pcbm_ui_invoke() {
     message) options+=(--msgbox "$message" "$lines" "$cols") ;;
     *) pcbm_ui_result 4; return 4 ;;
   esac
+  if [[ -n ${PCBM_BOOT_ACK_FD:-} && -r /usr/libexec/project-cbm/boot-trace.sh ]]; then
+    source /usr/libexec/project-cbm/boot-trace.sh
+    pcbm_boot_handoff || { pcbm_ui_result 5; return 5; }
+  fi
   if raw=$(DIALOG_OK=0 DIALOG_CANCEL=1 DIALOG_ESC=255 DIALOG_ERROR=254 DIALOG_HELP=2 DIALOG_EXTRA=3 "${PCBM_DIALOG_BIN:-/usr/bin/dialog}" "${options[@]}"); then rc=0; else rc=$?; fi
   case "$rc" in
     0) PCBM_UI_STATUS=success; PCBM_UI_CHOICE=$raw; return 0 ;;

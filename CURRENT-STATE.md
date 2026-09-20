@@ -1,3 +1,17 @@
+# RC3 bounded presentation/import correction in progress
+
+Product records RC2 attempt11 physical findings and external photo/live evidence.
+The artwork is visible but late, and USB copies macOS metadata/Trash content.
+Menu starts boot presentation through the Product console supervisor, with a
+readiness handoff before setup/error/Menu UI and a three-second minimum visible
+period. Machine Covers and VICE lifecycle are retained. Completed setup performs
+its recovery/readiness operation silently. USB results separate content files and
+known host metadata. Version1.1.0_rc3 is prepared; no RC3 package/image frozen yet.
+Host/native Menu100/100 and existing native lifecycle12/12 pass; new readiness
+PTY/SDL dummy tests pass. Physical RC3 behavior remains UNTESTED. Product owns
+remaining regression/package/freeze/image/offline/recovery gates and exact Pi4 test.
+No push/publication. Prior immutable candidates and recovery remain unchanged.
+
 # RC2 Menu packaged — owner Pi 4 B physical qualification next
 
 [Product RC2 report](../project-cbm/docs/build/private-rc2.md) and

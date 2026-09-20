@@ -33,7 +33,7 @@ from pathlib import Path
 rejected=Path(os.environ['OPERATIONS']+'.rejected')
 if os.environ.get('REJECT_ONCE')==op and not rejected.exists():
  rejected.touch();print(json.dumps(result('wifi_failed' if 'wifi' in op else 'invalid')));raise SystemExit(2)
-assert '...' in Path(os.environ['DIALOG_ARGS']).read_text(), 'working state must precede backend'
+if not s['complete']:assert '...' in Path(os.environ['DIALOG_ARGS']).read_text(), 'working state must precede backend'
 if op=='setup-finish':s['complete']=True
 elif not op.startswith('setup-wifi-') and op.removeprefix('setup-') not in s['completed']:s['completed'].append(op.removeprefix('setup-'))
 with open(os.environ['SETUP_STATE'],'w') as f:json.dump(s,f)
@@ -87,7 +87,7 @@ print(json.dumps({{**result('ok'),'message':'untrusted-fixture-message'}}))
         self.state.write_text('{"completed":["region","owner","network"],"complete":true}')
         p=self.run_ui('pcbm-first-run',[])
         self.assertEqual(p.returncode,0,p.stderr)
-        self.assertIn('Saving configuration',(self.root/'dialog-args').read_text())
+        self.assertFalse((self.root/'dialog-args').exists())
         self.assertEqual((self.root/'operations').read_text(),'setup-finish\n')
     def test_preference_failure_blocks_finish(self):
         self.state.write_text('{"completed":["region","owner","network"],"complete":false}')

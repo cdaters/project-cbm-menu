@@ -1,3 +1,10 @@
+project-cbm-menu (1.1.0~rc3-1+pcbm1) trixie; urgency=medium
+
+  * Hold primary artwork until the first meaningful screen is ready.
+  * Keep completed setup quiet and separate USB content/metadata counts.
+
+ -- Project CBM contributors <noreply@project-cbm.invalid>  Sun, 20 Sep 2026 06:30:00 +0000
+
 project-cbm-menu (1.1.0~rc2-1+pcbm1) trixie; urgency=medium
 
   * Use the unified pcbm home and canonical content library.

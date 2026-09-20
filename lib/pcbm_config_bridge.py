@@ -85,7 +85,11 @@ def main(argv):
         elif action=='import-result':
             d=json.loads(raw)
             if d['schema_version']!=1 or d['status']!='ok' or any(type(d[k]) is not int or d[k]<0 for k in ('copied','skipped','bytes')):raise ValueError('result')
-            print(f"Copied {d['copied']} files ({d['bytes']} bytes); skipped {d['skipped']}. USB source unmounted. Find imported content through CONTENT.")
+            metadata=d.get('ignored_metadata',0)
+            if type(metadata) is not int or metadata<0:raise ValueError('metadata')
+            print(f"Copied {d['copied']} content files ({d['bytes']} bytes); skipped {d['skipped']} existing or unsupported entries.")
+            if metadata:print(f"Ignored {metadata} host metadata entries/folders.")
+            print("USB source unmounted. Find imported content through CONTENT.")
         elif action=='import-error':
             d=json.loads(raw)
             if d.get('schema_version')!=1 or d.get('status')!='failed':raise ValueError('result')

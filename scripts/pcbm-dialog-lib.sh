@@ -63,6 +63,13 @@ PCBM_JIFFYDOS_CONF="$PCBM_CONFIG_DIR/jiffydos.conf"
 PCBM_USB_MOUNT="/mnt/pcbm-usb"
 PCBM_VICE_LOG="/tmp/pcbm-vice.log"
 
+pcbm_initial_handoff() {
+  if [[ -n ${PCBM_BOOT_ACK_FD:-} && -r /usr/libexec/project-cbm/boot-trace.sh ]]; then
+    source /usr/libexec/project-cbm/boot-trace.sh
+    pcbm_boot_handoff || return 2
+  fi
+}
+
 pcbm_cleanup_terminal() {
   clear
   stty sane 2>/dev/null || true
@@ -224,6 +231,7 @@ pcbm_calc_box_dims() {
 }
 
 pcbm_show_menu() {
+  pcbm_initial_handoff || return 2
   local title="$1"
   local prompt="$2"
   shift 2
@@ -241,6 +249,7 @@ pcbm_show_menu() {
 }
 
 pcbm_show_checklist() {
+  pcbm_initial_handoff || return 2
   local title="$1"
   local prompt="$2"
   shift 2
@@ -258,6 +267,7 @@ pcbm_show_checklist() {
 }
 
 pcbm_show_msg() {
+  pcbm_initial_handoff || return 2
   local title="$1"
   local text="$2"
   text=$(pcbm_expand_text "$text")
@@ -291,6 +301,7 @@ pcbm_show_textbox() {
 }
 
 pcbm_yesno() {
+  pcbm_initial_handoff || return 2
   local title="$1"
   local text="$2"
   text=$(pcbm_expand_text "$text")

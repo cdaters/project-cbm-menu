@@ -13,6 +13,7 @@ import json
 import re
 from pathlib import Path
 import signal
+import select
 import sys
 import time
 
@@ -113,7 +114,7 @@ def libraries():
     return sdl, img
 
 
-def display(path, sdl, img, primary=False):
+def display(path, sdl, img, primary=False, control_fd=None):
     window = renderer = texture = None
     stopping = False
     def stop(signum, frame):
@@ -153,16 +154,22 @@ def display(path, sdl, img, primary=False):
         if sdl.SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255) != 0: return 1
         # First present may block during KMS/driver setup. Start visible dwell
         # only after it returns; initialization must not consume presentation.
-        event = Event(); deadline = None;presented=False
+        event = Event(); deadline = None;presented=False;release_requested=False
         stage('present_begin')
-        while not stopping and (deadline is None or time.monotonic() < deadline):
+        while not stopping:
+            if control_fd is not None and not release_requested and select.select([control_fd],[],[],0)[0]:
+                os.read(control_fd,1);release_requested=True
+            if deadline is not None and time.monotonic() >= deadline:
+                if control_fd is None or release_requested:break
+            # Parent also bounds/reaps us; this protects loss of the coordinator.
+            if time.monotonic()-started>=28:break
             while sdl.SDL_PollEvent(C.byref(event)):
                 if event.type == 0x100: stopping = True  # Window quit, not a held RUN key.
             if sdl.SDL_RenderClear(renderer) != 0: return 1
             if sdl.SDL_RenderCopy(renderer, texture, None, C.byref(rect)) != 0: return 1
             sdl.SDL_RenderPresent(renderer)
             if not presented:
-                deadline = time.monotonic() + (1.5 if primary else DURATION_SECONDS)
+                deadline = time.monotonic() + (3.0 if control_fd is not None else 1.5 if primary else DURATION_SECONDS)
                 stage('presented',width=width.value,height=height.value);presented=True
             time.sleep(0.02)
         return 0
@@ -191,7 +198,8 @@ def main(argv=None):
         result = admission()
         telemetry(result)
         return 0 if result == 'admitted' else 2
-    primary = len(argv)==2 and argv[0]=='--primary'
+    boot = len(argv)==2 and argv[0]=='--boot'
+    primary = boot or len(argv)==2 and argv[0]=='--primary'
     if primary: argv=argv[1:]
     if os.geteuid() == 0 or len(argv) != 1: return 1
     path = Path(argv[0]); base = Path('/usr/share/project-cbm-menu/covers')
@@ -200,7 +208,12 @@ def main(argv=None):
         if path.resolve().parent != base.resolve(): return 1
         if path.suffix not in ('.jpg', '.png') or not 0 < path.stat().st_size <= MAX_FILE_BYTES: return 1
         if primary and path.name!='pcbmcover1.jpg': return 1
-        return display(path, *libraries(), primary=primary)
+        control_fd=None
+        if boot:
+            value=os.environ.get('PCBM_BOOT_CONTROL_FD','')
+            if not value.isdecimal() or not 3<=int(value)<=1024:return 1
+            control_fd=int(value);os.fstat(control_fd)
+        return display(path, *libraries(), primary=primary,control_fd=control_fd)
     except (OSError, ValueError, AttributeError):
         return 1  # Caller always proceeds to VICE; no display/terminal repair commands.
 
