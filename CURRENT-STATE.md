@@ -1,3 +1,20 @@
+# RC1 Menu packaged and validated — Pi 4 B physical test next
+
+[Product RC1 report](../project-cbm/docs/build/private-rc1.md) and
+[exact-hash procedure](../project-cbm/docs/qualification/rc1-pi4b-regression.md)
+own the new private candidate. Menu v1.1.0_rc1, annotated object
+`ae7abc27abf11141e53442251c5e2706bf7e274f`, source
+`4346a350d481f4da3a6abc6524373333637dbb82`; package1.1.0~rc1-1+pcbm1,
+SHA-256 `ff5cca1f1305a2d9b79c76a8a303bf2f4dcc82eb35c9a2a7bc377b86a602eeb9`.
+Host/native97/97 and installed lifecycle/Cover/service/import/dialog checks PASS.
+Product actual-image283 checks,672 package identities,127 ELF objects and raw-XZ/host
+integrity PASS. Recovery `archive/rc1-2026-09-19` external manifest/restore report is
+final authority. No physical RC1 PASS inferred; no push/publication.
+Menu consumes Product machine-family import and gateway/DNS state; FILES starts in
+`/home/pi/pcbm`. Launcher/keyboard/VT/Cover/F10 ownership unchanged. Product owns Pi4+
+policy, quiet presentation and guarded completed root-growth fast path.
+Stop for exact-hash owner Pi4 qualification; do not begin another feature milestone.
+
 # RC1 final polish in progress — 2026-09-19
 
 Owner-authorized Pi4+ policy and final polish supersede the historical Pi3/attempt9
