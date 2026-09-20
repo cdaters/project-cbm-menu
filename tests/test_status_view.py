@@ -52,6 +52,12 @@ class Status(unittest.TestCase):
             with self.assertRaises(ValueError):s.parse(json.dumps(d))
         d=fixture();d['services']['ssh']['enabled']=1
         with self.assertRaises(ValueError):s.parse(json.dumps(d))
+    def test_gateway_dns_only_in_detailed_views(self):
+        d=fixture();row=nic();row.update(gateway_ipv4=['192.0.2.1'],dns_ipv4=['192.0.2.53','198.51.100.53']);d['interfaces']=[row]
+        out=s.view(d,'network')
+        self.assertIn('192.0.2.1',out);self.assertIn('198.51.100.53',out)
+        self.assertNotIn('gateway',s.summary(d));self.assertNotIn('198.51.100.53',s.summary(d))
+        row['dns_ipv4']=['bad\x1b[31m'];self.assertNotIn('\x1b',s.view(d,'network'))
     def test_no_network_commands_in_formatter(self):
         text=(Path(s.__file__)).read_text()
         for value in ('subprocess','socket.','nmcli','systemctl','ip -'):self.assertNotIn(value,text)

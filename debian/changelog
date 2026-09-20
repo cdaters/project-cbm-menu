@@ -1,3 +1,11 @@
+project-cbm-menu (1.1.0~rc1-1+pcbm1) trixie; urgency=medium
+
+  * Select machine-specific content import destinations through Product authority.
+  * Start FILES at the appliance library and clarify content versus owner home.
+  * Show gateway and DNS details without adding network probes to Menu.
+
+ -- Project CBM contributors <noreply@project-cbm.invalid>  Sat, 19 Sep 2026 23:30:00 +0000
+
 project-cbm-menu (1.1.0~poc4.6-1+pcbm1) unstable; urgency=medium
 
   * Identify pcbm as the fixed owner/admin username in first-boot guidance.

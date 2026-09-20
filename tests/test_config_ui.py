@@ -87,11 +87,11 @@ else
  printf '%s' '{"schema_version":1,"status":"ok","copied":2,"skipped":1,"bytes":56}'
 fi
 ''')
-        p=self.run_ui('pcbm-import',['aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','demos','MESSAGE'])
+        p=self.run_ui('pcbm-import',['aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','c64','demos','MESSAGE'])
         self.assertEqual(p.returncode,0,p.stderr)
         text=(self.root/'dialog-args').read_text()
-        self.assertIn('/home/pi/pcbm/demos/Imported',text)
-        self.assertIn('/home/pi/pcbm/music/Imported',text)
+        self.assertIn('/home/pi/pcbm/demos/c64/Imported',text)
+        self.assertIn('/home/pi/pcbm/music/c64/Imported',text)
         self.assertIn('USB source unmounted',text)
 
     def test_system_setting_apply_cancel_and_failure(self):

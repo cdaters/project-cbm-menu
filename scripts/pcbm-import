@@ -15,15 +15,22 @@ if (( ${#options[@]} == 0 ));then
 fi
 pcbm_ui_menu "Import from USB" "Choose the source partition. It will be mounted read-only." "${options[@]}" || exit 0
 token=$PCBM_UI_CHOICE
-pcbm_ui_menu "Import destination" "Supported regular files go into the selected category's Imported folder. SID files always go into Music. Existing files are preserved. This candidate limits one import to 2 GiB and keeps 256 MiB free." programs "Programs / applications" games "Games / disk images" demos "Demos" music "Music / SID" || exit 0
+families=$(/usr/bin/pcbm-profiles content-families) || exit 2
+options=()
+while IFS=$'\t' read -r family label; do
+  [[ -z $family ]] || options+=("$family" "$label")
+done <<< "$families"
+pcbm_ui_menu "Content machine" "Choose the machine this content is for. Shared keeps unclassified material together; it does not make files compatible with every machine." "${options[@]}" || exit 0
+family=$PCBM_UI_CHOICE
+pcbm_ui_menu "Import destination" "Supported regular files go into the selected category and machine's Imported folder. SID files go into music/c64. Existing files are preserved. This candidate limits one import to 2 GiB and keeps 256 MiB free." programs "Programs / applications" games "Games / disk images" demos "Demos" music "Music / SID" || exit 0
 category=$PCBM_UI_CHOICE
 case $category in programs|games|demos|music) ;; *) exit 2 ;; esac
 printf '\nImporting supported content; please leave the USB drive connected...\n'
-reply=$(printf '%s\n' "$token" "$category" | /usr/bin/python3 "$bridge" import-request | /usr/bin/pcbm-import-operation)
+reply=$(printf '%s\n' "$token" "$category" "$family" | /usr/bin/python3 "$bridge" import-request | /usr/bin/pcbm-import-operation)
 if message=$(printf '%s' "$reply" | /usr/bin/python3 "$bridge" import-result);then
   pcbm_ui_message "Import complete" "$message
-Destination: /home/pi/pcbm/$category/Imported
-SID files: /home/pi/pcbm/music/Imported" || true
+Destination: /home/pi/pcbm/$category/$family/Imported
+SID files: /home/pi/pcbm/music/c64/Imported" || true
 else
   pcbm_ui_message "Import incomplete" "Some files may have copied. Existing files were preserved. Check free space and diagnostics before retrying; do not remove a drive whose unmount failed." || true;exit 2
 fi

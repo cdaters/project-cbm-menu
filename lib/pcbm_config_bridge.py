@@ -72,10 +72,16 @@ def main(argv):
                 if not re.fullmatch('[0-9a-f]{32}',row['token']) or not row['label'].isprintable() or len(row['label'])>128:raise ValueError('device')
                 print(row['token']+'\t'+row['label'])
         elif action=='import-request':
-            token,category=raw.decode().splitlines()
+            parts=raw.decode().splitlines()
+            if len(parts) not in (2,3):raise ValueError('import')
+            token,category=parts[:2]
             import re
             if not re.fullmatch('[0-9a-f]{32}',token) or category not in ('games','demos','music','programs'):raise ValueError('import')
-            print(json.dumps({'schema_version':1,'operation':'import','token':token,'category':category}))
+            request={'schema_version':1,'operation':'import','token':token,'category':category}
+            if len(parts)==3:
+                if not re.fullmatch('[a-z][a-z0-9]{1,15}',parts[2]):raise ValueError('family')
+                request['family']=parts[2]
+            print(json.dumps(request))
         elif action=='import-result':
             d=json.loads(raw)
             if d['schema_version']!=1 or d['status']!='ok' or any(type(d[k]) is not int or d[k]<0 for k in ('copied','skipped','bytes')):raise ValueError('result')

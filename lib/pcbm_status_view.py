@@ -4,7 +4,7 @@ import ipaddress
 import json
 import re
 import sys
-from pcbm_info_view import network_summary
+from pcbm_info_view import network_summary, route_values
 
 LABELS={'ssh':'Remote Access (SSH)','sharing':'File Sharing','discovery':'Network Discovery','modem':'BBS / Modem'}
 STATES={'off':'Off','on':'On','pending':'Starting / Pending','unavailable':'Unavailable','failed':'Failed'}
@@ -55,6 +55,11 @@ def view(d,area):
     lines=['Computer Name: '+computer,network(d)]
     if area=='network':
         for row in d.get('interfaces') or []:
+            if row.get('state')=='connected':
+                label=row.get('interface','Interface')
+                if not isinstance(label,str) or not re.fullmatch('[A-Za-z0-9_.:-]{1,15}',label):label='Interface'
+                for key,title in [('gateway_ipv4','IPv4 gateway'),('gateway_ipv6','IPv6 gateway'),('dns_ipv4','IPv4 DNS'),('dns_ipv6','IPv6 DNS')]:
+                    lines.append(label+' '+title+': '+route_values(row.get(key)))
             ssid=row.get('ssid')
             if row.get('state')=='connected' and row.get('type')=='wifi' and isinstance(ssid,str) and ssid.isprintable() and len(ssid.encode())<=32:
                 # Dialog literal data; suppress slash escapes in network-owned labels.
@@ -91,7 +96,7 @@ def connection(d,name):
         if target:
             lines+=['Mac Finder > Go > Connect to Server:', 'smb://'+('['+target+']' if ':' in target else target)+'/Project%20CBM','Windows File Explorer address:', '\\\\'+(target.replace(':','-')+'.ipv6-literal.net' if ':' in target else target)+'\\Project CBM']
         else:lines+=['Connect a network, then return here for connection addresses.']
-        lines+=['Sign in as '+(d.get('sharing_username') or 'the displayed username')+'.','Files appear in CONTENT and FILES.','Windows Network browsing is not guaranteed; use the direct address.']
+        lines+=['Sign in as '+(d.get('sharing_username') or 'the displayed username')+'.','Library: /home/pi/pcbm. Files appear in CONTENT and FILES.','Windows Network browsing is not guaranteed; use the direct address.']
     elif name=='discovery':
         lines+=['When On, try '+computer+'.local.' if computer else 'Computer Name is unavailable.','File Sharing advertises itself to compatible Mac/Linux browsers.','If a name does not resolve, use the current IP.','Windows browsing varies; direct File Explorer access is supported.']
     else:

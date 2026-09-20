@@ -77,7 +77,7 @@ pick_content_file() {
   menu_items+=("RETURN" "<- Return to the content menu")
 
   while true; do
-    prompt="Category: $label\nDefault launch machine: $(pcbm_default_machine_label)\n\nC64 application folders use Commodore 64 without changing your default.\nPlease select a file to launch."
+    prompt="Category: $label\nDefault launch machine: $(pcbm_default_machine_label)\n\nMachine folders choose their matching machine; legacy/shared files use your default.\nPlease select a file to launch."
     pcbm_show_menu "Launch $label" "$prompt" "${menu_items[@]}"
 
     case "$PCBM_STATUS" in
@@ -88,7 +88,7 @@ pick_content_file() {
         if [[ -n "${files[$PCBM_CHOICE]}" ]]; then
           emu=$(/usr/bin/pcbm-profiles content-profile "${files[$PCBM_CHOICE]}") || emu=
           if [[ -z "$emu" ]]; then
-            pcbm_show_msg "Machine unavailable" "This file or machine is unavailable. Application folders require a standard C64 D64 disk. Check the file and runtime installation."
+            pcbm_show_msg "Machine unavailable" "This file or machine is unavailable. ROM/REU resources belong in VICE settings, not autostart. Application folders require a standard C64 D64 disk. Check the file and runtime installation."
             continue
           fi
           pcbm_infobox "Launching Content" "Launching $(basename "${files[$PCBM_CHOICE]}") with $emu..."
@@ -107,7 +107,7 @@ pick_content_file() {
 }
 
 while true; do
-  prompt="Select a content area to browse.\n\nCurrent default machine: $(pcbm_default_machine_label)\n\nTip: Project CBM scans these folders recursively, so machine-specific subfolders such as games/c64 or demos/c128/80col are fine."
+  prompt="Select a content area to browse.\n\nCurrent default machine: $(pcbm_default_machine_label)\n\nTip: Project CBM scans these folders recursively, so machine folders such as games/c64 or demos/c128/80col select the matching machine. The library is /home/pi/pcbm; your administrator home is separate."
   pcbm_show_menu "Project CBM Content" "$prompt" "${category_items[@]}"
 
   case "$PCBM_STATUS" in

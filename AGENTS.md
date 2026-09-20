@@ -2,7 +2,7 @@
 
 Menu is the keyboard-first front panel for Project CBM. Preserve its personality,
 user control and reliable emulator return while simplifying common tasks. Favor
-clear Bash/dialog interfaces and measurable responsiveness on the Pi 3 floor.
+clear Bash/dialog interfaces and measurable responsiveness on the Pi 4 floor.
 
 ## Authority and continuity
 
@@ -76,13 +76,14 @@ private version tags and packages do not grant publication permission.
   workaround or artwork substitution. See [Covers](../project-cbm/docs/runtime/covers.md).
   Private engineering use does not clear constituent artwork for public distribution.
 - Preserve Bash/dialog, console getty/PAM/session behavior, SDL2 VICE and ALSA.
-  Pi 3 is the performance floor; Pi 3A+ needs separate 512 MiB qualification. Target
-  Pi 3 through Pi 500+ only where supportable and individually qualified. No Pi 5-only
-  optimization or renderer migration for novelty.
+  Pi 4 is the 1.1 performance floor. Target Pi 4 B/400 and Pi 5/500/500+ only where
+  supportable and individually qualified. Pi 3/Zero-class hardware is outside the
+  1.1 release target; preserve its historical evidence without further optimization.
+  No renderer migration for novelty.
 - Improve layout where concrete before/after benefit warrants it. Use shared UI/results,
   predictable Back/Cancel/retry/resume, human-readable setup choices and truthful
   working/error/hidden-password feedback. Do not equate arbitrary command exit 2
-  with UI Back. Preserve user preferences and measure Pi 3 cost of material changes.
+  with UI Back. Preserve user preferences and measure Pi 4 cost of material changes.
 
 ## Versioning and immutable integration inputs
 

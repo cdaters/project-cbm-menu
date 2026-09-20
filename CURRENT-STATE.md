@@ -1,3 +1,14 @@
+# RC1 final polish in progress — 2026-09-19
+
+Owner-authorized Pi4+ policy and final polish supersede the historical Pi3/attempt9
+stop below. Product owns the [retained Pi4 performance PASS and boot baseline](../project-cbm/docs/qualification/poc4-attempt8-pi4-owner-report-2026-09-19.json).
+Menu1.1.0_rc1 source adds machine-family USB import through Product registry authority,
+canonical library guidance and FILES start location, and gateway/DNS detail from pcbm-info.
+No VICE launcher, Cover, F10 or session ownership change. Host97/97 tests PASS;
+matching native/packages/image gates pending. No tag/package frozen or image ready yet.
+Product CURRENT-STATE owns the continuing RC1 build/recovery/Pi4 procedure work.
+Nothing pushed/published; historical evidence/tags unchanged.
+
 # Attempt #8 live engine identity verified
 
 [Owner SSH readback](../project-cbm/docs/qualification/poc4-attempt8-live-identity.json)

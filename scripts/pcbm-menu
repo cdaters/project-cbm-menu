@@ -99,7 +99,7 @@ while true; do
         CONTROL)  "$SCRIPT_DIR/pcbm-control" ;;
         FILES)
           pcbm_cleanup_terminal
-          mc
+          mc "$PCBM_CONTENT_BASE" "$PCBM_CONTENT_BASE"
           ;;
         POWER)
           if pcbm_yesno "Shutdown Project CBM" "Shut down Project CBM now?"; then

@@ -49,6 +49,20 @@ def parse(raw):
     return d
 
 
+def route_values(values):
+    if values is None:
+        return UNKNOWN
+    if not isinstance(values, list) or len(values) > 8:
+        return UNKNOWN
+    try:
+        result = [str(ipaddress.ip_address(v)) for v in values if isinstance(v, str) and v.isprintable() and '\\' not in v]
+        if len(result) != len(values):
+            return UNKNOWN
+        return ', '.join(result) or 'None configured'
+    except ValueError:
+        return UNKNOWN
+
+
 def rows(data):
     b = object_value(data.get('built_as'))
     r = object_value(data.get('running_on'))
@@ -101,6 +115,8 @@ def rows(data):
                 values = item.get(family)
                 rendered = ', '.join(clean(v) for v in values[:8]) if isinstance(values, list) else UNKNOWN
                 result.append((family.upper(), rendered or 'None assigned'))
+            for key, label in [('gateway_ipv4','IPv4 gateway'),('gateway_ipv6','IPv6 gateway'),('dns_ipv4','IPv4 DNS'),('dns_ipv6','IPv6 DNS')]:
+                result.append((label, route_values(item.get(key))))
             ssid = item.get('ssid')
             if ssid is not None:
                 # Unlike path/identifier fields, SSIDs may contain a backslash.
