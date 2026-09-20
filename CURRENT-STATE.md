@@ -1,3 +1,21 @@
+# RC4 packaged — owner Pi 4 B qualification next
+
+[Product final report](../project-cbm/docs/build/private-rc4.md) and
+[exact-hash procedure](../project-cbm/docs/qualification/rc4-pi4b-regression.md) own attempt14.
+Menu source `26a5e83e2b4f731245de254f60dec5784695a47b`, private tag `v1.1.0_rc4`
+object `c8ad265f1eb2c6145245b7f9931f7c154a7f62b7` remains unchanged.
+Package `1.1.0~rc4-1+pcbm1`, 1,295,000 bytes, SHA-256
+`f260fe545ca83b6b82a4a9a6c7adbbdd7dafdfe43ef74e65db82f24df8212a81`.
+Host/native Menu102/102, Product244/244 and installed lifecycle12/12 PASS.
+Actual-image324 checks,672 packages,127 ELF; raw/XZ/host/preservation gates PASS.
+Native CCGMS connection/text/hangup/relaunch and C64/C128 G71 PASS; physical UNTESTED.
+
+One RC4 image built; attempt13 freeze failure produced no image and remains retained.
+RC3 is unchanged. `archive/rc4-2026-09-20` external manifest and offline restore PASS
+are the final readiness authority. Independent encrypted custody remains outstanding.
+This later commit records results only; frozen package source/tag are not moved.
+STOP for the owner's exact-image Pi4 B procedure. No final 1.1.0 tag, push or publication.
+
 # RC4 bounded release polish — source ready for packaging
 
 Owner-authorized changes add G71 discovery, retain legitimate dot-prefixed supported
