@@ -1,3 +1,17 @@
+# RC3 Menu packaged — owner Pi 4 B physical qualification next
+
+[Product report](../project-cbm/docs/build/private-rc3.md) and
+[exact procedure](../project-cbm/docs/qualification/rc3-pi4b-regression.md) own attempt12.
+Menu v1.1.0_rc3 object `cbcbb7ad2b4045d32f74ad857aee25916cd389b6`, source `23f0e0b0a0a77fc4ba565a6dd777543f11cce6c0`;
+package1.1.0~rc3-1+pcbm1,1,294,628bytes, SHA-256
+`194a387412cd425d0b9d4f59695c594142f3cb23835e53bf2035fc77c2ccc685`. Host/native100/100 and installed lifecycle12/12 PASS.
+Readiness-held boot art, silent completed setup and separate metadata/content counts
+are packaged. Product actual-image305 checks,672 packages,127 ELF and raw/XZ/host
+gates PASS. Recovery archive/rc3-2026-09-20 manifest/restore PASS is final readiness
+authority. Physical RC3 UNTESTED; STOP for exact-hash Pi4B owner qualification.
+No push/publication. Frozen tag remains at package source; subsequent commits only
+record results. Previous candidates, rights and recovery remain unchanged.
+
 # RC3 bounded presentation/import correction in progress
 
 Product records RC2 attempt11 physical findings and external photo/live evidence.
