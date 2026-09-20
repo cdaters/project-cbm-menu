@@ -45,7 +45,12 @@ skip() { printf 'PCBM_COVER {"stage":"%s"}\n' "$1"; exit 0; }
 (( EUID != 0 )) || skip skip_root
 # Kernel tty identity admits the controlling alias without changing terminal ownership.
 /usr/bin/python3 /usr/libexec/project-cbm-menu/pcbm_cover_view.py --admit || exit 0
-if [[ ${1:-} == --profile && $# == 2 ]]; then
+if [[ ${1:-} == --primary && $# == 1 ]]; then
+  asset=/usr/share/project-cbm-menu/covers/pcbmcover1.jpg
+  [[ -f $asset && ! -L $asset && -r $asset ]] || skip skip_asset
+  printf 'PCBM_COVER {"stage":"asset_ready"}\n'
+  exec /usr/bin/python3 /usr/libexec/project-cbm-menu/pcbm_cover_view.py --primary "$asset"
+elif [[ ${1:-} == --profile && $# == 2 ]]; then
   machine=$(/usr/bin/pcbm-profiles resolve "$2" --cover) || skip skip_profile
 elif (( $# == 1 )); then
   machine=$1 # Legacy callers may still pass an already resolved cover identity.

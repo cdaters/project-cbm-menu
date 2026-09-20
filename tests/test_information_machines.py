@@ -80,7 +80,7 @@ class Consumers(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup)
         self.root=Path(self.tmp.name);self.bin=self.root/'usr/bin';self.bin.mkdir(parents=True)
-        self.home=self.root/'home/pi';(self.home/'pcbm').mkdir(parents=True)
+        self.home=self.root/'home/pcbm';(self.home/'content').mkdir(parents=True)
         self.share=self.root/'usr/share/project-cbm-menu';self.share.mkdir(parents=True)
         shutil.copyfile(ROOT/'lib/pcbm-ui.sh',self.share/'pcbm-ui.sh')
         shutil.copyfile(ROOT/'lib/pcbm-setup-ui.sh',self.share/'pcbm-setup-ui.sh')
@@ -128,7 +128,7 @@ esac
 
     def write(self,name,raw):
         # Redirect absolute deployment paths only in disposable test copies.
-        for prefix in ['/usr/bin/','/usr/share/project-cbm-menu/','/usr/libexec/','/etc/pcbm/','/home/pi']:
+        for prefix in ['/usr/bin/','/usr/share/project-cbm-menu/','/usr/libexec/','/etc/pcbm/','/home/pcbm']:
             raw=raw.replace(prefix,str(self.root)+prefix)
         p=self.bin/name;p.write_text(raw);p.chmod(0o755)
 

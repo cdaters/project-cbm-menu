@@ -86,6 +86,26 @@ def main(argv):
             d=json.loads(raw)
             if d['schema_version']!=1 or d['status']!='ok' or any(type(d[k]) is not int or d[k]<0 for k in ('copied','skipped','bytes')):raise ValueError('result')
             print(f"Copied {d['copied']} files ({d['bytes']} bytes); skipped {d['skipped']}. USB source unmounted. Find imported content through CONTENT.")
+        elif action=='import-error':
+            d=json.loads(raw)
+            if d.get('schema_version')!=1 or d.get('status')!='failed':raise ValueError('result')
+            messages={
+                'access_denied':'The USB files or destination could not be accessed. Check permissions; copying never runs as root.',
+                'space':'There is not enough free space in the content library.',
+                'limit':'The import exceeds the 2 GiB transfer limit.',
+                'depth':'The USB directory tree is too deep for one import.',
+                'entries':'The USB drive has too many entries for one import.',
+                'copy_failed':'Copying could not finish. Check the USB drive and available storage.',
+                'mount_failed':'The USB drive could not be opened read-only. Check its filesystem on another computer.',
+                'unmount_failed':'The USB drive could not be released. Leave it connected and shut down safely before removing it.',
+                'unavailable':'Import is unavailable. Check setup, the USB connection and any other running import.'}
+            code=d.get('error')
+            if code not in messages:raise ValueError('error')
+            released=d.get('source_unmounted')
+            if released is not None and type(released) is not bool:raise ValueError('unmounted')
+            print(messages[code])
+            print('Existing files were preserved. New files copied before the error remain in CONTENT.')
+            print('USB source released; safe to remove.' if released is True else 'Drive release was not confirmed. Leave it connected until a safe shutdown.')
         elif action=='wifi-list':
             d=json.loads(raw)
             if not isinstance(d,dict) or d.get('schema_version')!=1 or d.get('status')!='ok' or not isinstance(d.get('networks'),list) or len(d['networks'])>32:raise ValueError('wifi')

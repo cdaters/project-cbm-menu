@@ -224,15 +224,15 @@ storage() {
   while choose "Content and Storage" SPACE "Capacity and free space" LOCATIONS "Content locations / USB import" BACKUP "Backup and restore guidance"; do
     case $PCBM_UI_CHOICE in
       SPACE) /usr/bin/pcbm-system-info ;;
-      LOCATIONS) notify "Content" "Use CONTENT, FILES and IMPORT on Main Menu. Content remains under /home/pi/pcbm (games, demos, programs, music and ROM resources). IMPORT copies chosen files into the selected content folder and safely disconnects the source. Find them in CONTENT or FILES." ;;
+      LOCATIONS) notify "Content" "Use CONTENT, FILES and IMPORT on Main Menu. Content remains under /home/pcbm/content (games, demos, programs, music and ROM resources). IMPORT copies chosen files into the selected content folder and safely disconnects the source. Find them in CONTENT or FILES." ;;
       BACKUP) notify "Backup and restore" "Keep an external copy of your content, user preferences and VICE configuration. For major/base upgrades: back up, flash a fresh image, then validate a selective restore. Never restore machine identity, host keys or old system configuration wholesale. Automated restore is pending; Advanced owner administration can copy your files." ;;
     esac
   done
 }
 advanced() {
-  while choose "Advanced" TERMINAL "Owner terminal (authenticated; exit returns)" RASPI "Authenticated raspi-config" DIAGNOSTICS "Engineering diagnostics" GUIDE "Administration and recovery guidance"; do
+  while choose "Advanced" TERMINAL "Terminal (pcbm; exit returns)" OWNER "Administrator shell (password required)" RASPI "Authenticated raspi-config" DIAGNOSTICS "Engineering diagnostics" GUIDE "Administration and recovery guidance"; do
     case $PCBM_UI_CHOICE in
-      TERMINAL) if ! /usr/bin/pcbm-admin terminal; then notify "Owner terminal" "Authentication was cancelled or failed, or owner setup is incomplete. Retry with the owner account password."; fi; stty sane 2>/dev/null || true ;;
+      TERMINAL) if ! /usr/bin/pcbm-admin terminal; then notify "Terminal unavailable" "Complete first boot and use the normal pcbm session. No separate runtime password is needed."; fi; stty sane 2>/dev/null || true ;;
       OWNER|RASPI)
         action=owner;[[ $PCBM_UI_CHOICE != RASPI ]] || action=raspi-config
         if pcbm_ui_confirm "Owner administration" "Advanced changes can alter or break the qualified configuration. Recovery may require restoring settings or reflashing. Continue with your owner account password?"; then
@@ -243,7 +243,7 @@ advanced() {
           /usr/bin/pcbm-diagnostics
           read -r -p "Press Enter to return..." _
         else notify "Diagnostics" "Engineering diagnostic capture is unavailable in this installation. System Information and pcbm-info remain available."; fi ;;
-      GUIDE) notify "Your Raspberry Pi" "Use the authenticated owner shell for sudo, apt/dpkg, systemctl, boot configuration and ordinary Linux administration. Type exit to return. Keep backups; advanced changes can affect qualification. The normal appliance account has only fixed configuration operations." ;;
+      GUIDE) notify "Your Raspberry Pi" "Use the authenticated owner shell for sudo, apt/dpkg, systemctl, boot configuration and ordinary Linux administration. Type exit to return. Keep backups; advanced changes can affect qualification. You are signed in as pcbm. General sudo administration requires your first-boot password; ordinary appliance operations use fixed helpers." ;;
     esac
   done
 }

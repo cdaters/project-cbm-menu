@@ -44,6 +44,19 @@ class CoverRenderer(unittest.TestCase):
             self.assertIn(entry['path']+' usr/share/project-cbm-menu/covers',install)
         self.assertNotIn('covers/*',install)
         self.assertIn('third-party',manifest['license_evidence'])
+    def test_primary_is_exact_existing_private_art_and_separate_dwell(self):
+        manifest=json.loads((ROOT/'docs/primary-artwork.json').read_text())
+        entry=manifest['file'];payload=(ROOT/entry['path']).read_bytes()
+        self.assertEqual(len(payload),entry['size_bytes'])
+        self.assertEqual(hashlib.sha256(payload).hexdigest(),entry['sha256'])
+        self.assertIn(entry['path']+' usr/share/project-cbm-menu/covers',(ROOT/'debian/install').read_text())
+        for primary,duration in ((False,.75),(True,1.5)):
+            clock=[0.0];sdl=SDL()
+            with patch.object(view.time,'monotonic',side_effect=lambda:clock[0]),patch.object(view.time,'sleep',side_effect=lambda t:clock.__setitem__(0,clock[0]+t)),patch.object(view,'telemetry'):
+                self.assertEqual(view.display(Path('fixture.jpg'),sdl,sdl,primary=primary),0)
+            self.assertGreaterEqual(clock[0],duration)
+            self.assertLess(clock[0],duration+.05)
+        self.assertNotIn('/usr/bin/pcbm-cover\n',(ROOT/'scripts/pcbm-menu').read_text())
     def test_fit_does_not_stretch_artwork(self):
         for dw,dh,iw,ih in [(1920,1080,600,600),(640,480,1200,600),(320,240,600,1200)]:
             r=view.fit(dw,dh,iw,ih)
@@ -90,14 +103,14 @@ class CoverLaunch(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name);self.bin=self.root/'usr/bin';self.bin.mkdir(parents=True)
-        self.home=self.root/'home/pi';(self.home/'pcbm').mkdir(parents=True)
+        self.home=self.root/'home/pcbm';(self.home/'content').mkdir(parents=True)
         self.covers=self.root/'usr/share/project-cbm-menu/covers';self.covers.mkdir(parents=True)
         self.lib=self.root/'usr/libexec/project-cbm-menu';self.lib.mkdir(parents=True)
         lifecycle=self.root/'usr/libexec/project-cbm/engineering.py';lifecycle.parent.mkdir(parents=True)
         lifecycle.write_text('#!/bin/bash\n[[ $1 == run-with-cover ]] || exit 2\nprofile=$2;shift 2\n'+str(self.bin)+'/pcbm-cover --profile "$profile" || true\nexec "$@"\n');lifecycle.chmod(0o755)
         for name in ('pcbm-run-vice','pcbm-boot','pcbm-cover'):
             text=(ROOT/'scripts'/name).read_text()
-            for prefix in ('/usr/bin/','/usr/libexec/','/usr/share/','/etc/pcbm/','/home/pi'):
+            for prefix in ('/usr/bin/','/usr/libexec/','/usr/share/','/etc/pcbm/','/home/pcbm'):
                 text=text.replace(prefix,str(self.root)+prefix)
             self.write(name,text)
         self.write('pcbm-profiles','#!/bin/bash\nexec '+sys.executable+' '+str(PRODUCT/'runtime/bin/pcbm-profiles')+' "$@"\n')
@@ -125,8 +138,8 @@ class CoverLaunch(unittest.TestCase):
         self.assertEqual(self.trace()[1:3],['vice:x128','-80col'])
     def test_content_profile_wins_over_user_default_and_retains_return(self):
         preferences.update({'default_machine':'xvic'},self.home/'.config/project-cbm')
-        media=self.home/'pcbm/music/Creation/SID-Wizard/test disk.d64';media.parent.mkdir(parents=True); disk=bytearray(174848);disk[357*256:357*256+3]=bytes([18,1,65]);disk[358*256+2]=2;media.write_bytes(disk);media=media.resolve()
-        resolved=application_profile(media,registry(),self.home/'pcbm')
+        media=self.home/'content/music/Creation/SID-Wizard/test disk.d64';media.parent.mkdir(parents=True); disk=bytearray(174848);disk[357*256:357*256+3]=bytes([18,1,65]);disk[358*256+2]=2;media.write_bytes(disk);media=media.resolve()
+        resolved=application_profile(media,registry(),self.home/'content')
         p=self.run_launch(resolved,str(media),VICE_FAIL='9')
         self.assertEqual(p.returncode,9);self.assertTrue(self.trace()[0].endswith('pcbmcover-c64.jpg'))
         self.assertIn('-menukey',self.trace());self.assertIn('291',self.trace());self.assertIn(str(media),self.trace())
@@ -142,7 +155,7 @@ class CoverLaunch(unittest.TestCase):
                 self.assertEqual(self.trace().count('vice:x64sc'),1)
                 if failed=='missing':self.assertFalse(any(x.startswith('cover:') for x in self.trace()))
     def test_invalid_profile_or_SID_never_renders(self):
-        sid=self.home/'pcbm/test.sid';sid.write_bytes(b'synthetic')
+        sid=self.home/'content/test.sid';sid.write_bytes(b'synthetic')
         for args in [('bad;id',),('x64sc',str(sid))]:
             self.assertEqual(self.run_launch(*args).returncode,2)
             self.assertFalse((self.root/'trace').exists())

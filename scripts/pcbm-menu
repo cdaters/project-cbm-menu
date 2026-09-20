@@ -42,17 +42,17 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/pcbm-dialog-lib.sh"
 pcbm_trap_cleanup
 
-if [ "$(tty)" = "/dev/tty1" ] && [ -z "$PCBM_SPLASH_SHOWN" ]; then
-  export PCBM_SPLASH_SHOWN=1
-  /usr/bin/pcbm-cover
-  reset
-  clear
-fi
+# Product's console session owns primary presentation and terminal restoration.
+pcbm_boot_mark() { :; }
+[[ ! -r /usr/libexec/project-cbm/boot-trace.sh ]] || source /usr/libexec/project-cbm/boot-trace.sh
+pcbm_boot_mark menu_entry
+boot_pending=true
 
 # One-time missing-file import is user-only; failure never prompts for sudo.
 if ! /usr/bin/pcbm-profiles initialize >/dev/null 2>&1; then
   pcbm_show_msg "Preferences unavailable" "Using a validated fallback where possible. Choose MACHINES to review saved preferences. No administrator password is needed."
 fi
+pcbm_boot_mark menu_preferences_done
 while true; do
   pcbm_load_default_machine || true
   current_emu=$PCBM_DEFAULT_ID
@@ -64,17 +64,21 @@ while true; do
     "CONTENT"  "Launch games, demos, music, programs, or ROM files"
     "IMPORT"   "Import demos, games, music, or programs from USB"
     "CONTROL"  "Settings, system information and owner administration"
-    "FILES"    "Start the Midnight Commander file browser"
+    "FILES"    "Browse your library or import from USB"
     "POWER"    "Shut down Project CBM safely"
     "REBOOT"   "Restart Project CBM"
   )
 
   # Product owns live IP collection; this JSON projection has a two-second budget.
+  [[ $boot_pending != true ]] || pcbm_boot_mark status_begin
   network_summary=$(/usr/bin/pcbm-info --json --appliance 2>/dev/null | /usr/bin/python3 /usr/libexec/project-cbm-menu/pcbm_status_view.py view main 2>/dev/null) || network_summary="Network: information unavailable"
+  [[ $boot_pending != true ]] || pcbm_boot_mark status_done
   prompt="Default: $current_label\n$network_summary\n\nPlease select a Project CBM option."
   [[ $PCBM_PREFERENCE_STATUS != invalid ]] || prompt+="\nSaved preferences need recovery; using a validated fallback. Review MACHINES."
+  [[ $boot_pending != true ]] || pcbm_boot_mark dialog_dispatch
   pcbm_show_menu "Project CBM Main Menu" "$prompt" "${main_items[@]}"
 
+  if [[ $boot_pending == true ]]; then pcbm_boot_mark first_input; boot_pending=false; fi
   case "$PCBM_STATUS" in
     0)
       case "$PCBM_CHOICE" in
@@ -86,11 +90,6 @@ while true; do
               pcbm_show_msg "VICE Launch Failed" "VICE did not exit successfully. Engineering candidates can collect diagnostics from tty2."
             fi
 
-            if [ "$(tty)" = "/dev/tty1" ]; then
-              /usr/bin/pcbm-cover
-              reset
-              clear
-            fi
           fi
           ;;
         MACHINES) "$SCRIPT_DIR/pcbm-machines" ;;
@@ -99,7 +98,7 @@ while true; do
         CONTROL)  "$SCRIPT_DIR/pcbm-control" ;;
         FILES)
           pcbm_cleanup_terminal
-          mc "$PCBM_CONTENT_BASE" "$PCBM_CONTENT_BASE"
+          "$SCRIPT_DIR/pcbm-files"
           ;;
         POWER)
           if pcbm_yesno "Shutdown Project CBM" "Shut down Project CBM now?"; then

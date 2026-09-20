@@ -113,7 +113,7 @@ def libraries():
     return sdl, img
 
 
-def display(path, sdl, img):
+def display(path, sdl, img, primary=False):
     window = renderer = texture = None
     stopping = False
     def stop(signum, frame):
@@ -162,7 +162,7 @@ def display(path, sdl, img):
             if sdl.SDL_RenderCopy(renderer, texture, None, C.byref(rect)) != 0: return 1
             sdl.SDL_RenderPresent(renderer)
             if not presented:
-                deadline = time.monotonic() + DURATION_SECONDS
+                deadline = time.monotonic() + (1.5 if primary else DURATION_SECONDS)
                 stage('presented',width=width.value,height=height.value);presented=True
             time.sleep(0.02)
         return 0
@@ -191,13 +191,16 @@ def main(argv=None):
         result = admission()
         telemetry(result)
         return 0 if result == 'admitted' else 2
+    primary = len(argv)==2 and argv[0]=='--primary'
+    if primary: argv=argv[1:]
     if os.geteuid() == 0 or len(argv) != 1: return 1
     path = Path(argv[0]); base = Path('/usr/share/project-cbm-menu/covers')
     try:
         if path.parent != base or path.is_symlink() or not path.is_file(): return 1
         if path.resolve().parent != base.resolve(): return 1
         if path.suffix not in ('.jpg', '.png') or not 0 < path.stat().st_size <= MAX_FILE_BYTES: return 1
-        return display(path, *libraries())
+        if primary and path.name!='pcbmcover1.jpg': return 1
+        return display(path, *libraries(), primary=primary)
     except (OSError, ValueError, AttributeError):
         return 1  # Caller always proceeds to VICE; no display/terminal repair commands.
 

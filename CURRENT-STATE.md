@@ -1,3 +1,18 @@
+# RC2 corrective source ready for package validation
+
+Owner RC1 Pi4 results pass core machine Covers/VICE/F10/Menu and performance; primary
+presentation, split-account content usability and USB import fail. Product owns the
+[exact physical record](../project-cbm/docs/qualification/rc1-attempt9-pi4-owner-report.json)
+and [correction decisions](../project-cbm/docs/runtime/rc2-corrections.md).
+Menu source1.1.0_rc2 uses pcbm/home and /home/pcbm/content, explicit supervised
+primary art, boot-phase markers, persistent import errors/release status and FILES
+with library/home browsing plus safe USB import. Seven machine Covers remain unchanged.
+Host/native99/99 tests pass; Product native account/service/SSH/import/lifecycle checks
+pass with physical visibility/USB/timing still UNTESTED. Packages/freeze/image/recovery
+remain pending. No RC2 ready-to-flash claim; no push/publication.
+Next: clean source freeze, changed Menu/Runtime packages, one RC2 image and all gates;
+then stop for exact-hash Pi4 physical regression. Older entries below are historical.
+
 # RC1 Menu packaged and validated — Pi 4 B physical test next
 
 [Product RC1 report](../project-cbm/docs/build/private-rc1.md) and

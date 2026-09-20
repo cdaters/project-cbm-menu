@@ -45,11 +45,11 @@ pcbm_trap_cleanup
 mkdir -p "$PCBM_CONTENT_BASE"/{games,demos,music,programs,roms}
 
 category_items=(
-  "GAMES"    "Browse games in /home/pi/pcbm/games"
-  "DEMOS"    "Browse demos in /home/pi/pcbm/demos"
-  "MUSIC"    "Browse music and SID files in /home/pi/pcbm/music"
-  "PROGRAMS" "Browse programs in /home/pi/pcbm/programs"
-  "ROMS"     "Browse ROM files in /home/pi/pcbm/roms"
+  "GAMES"    "Browse games in /home/pcbm/content/games"
+  "DEMOS"    "Browse demos in /home/pcbm/content/demos"
+  "MUSIC"    "Browse music and SID files in /home/pcbm/content/music"
+  "PROGRAMS" "Browse programs in /home/pcbm/content/programs"
+  "ROMS"     "Browse ROM files in /home/pcbm/content/roms"
   "RETURN"   "<- Return to the content menu"
 )
 
@@ -107,7 +107,7 @@ pick_content_file() {
 }
 
 while true; do
-  prompt="Select a content area to browse.\n\nCurrent default machine: $(pcbm_default_machine_label)\n\nTip: Project CBM scans these folders recursively, so machine folders such as games/c64 or demos/c128/80col select the matching machine. The library is /home/pi/pcbm; your administrator home is separate."
+  prompt="Select a content area to browse.\n\nCurrent default machine: $(pcbm_default_machine_label)\n\nTip: Project CBM scans these folders recursively, so machine folders such as games/c64 or demos/c128/80col select the matching machine. The library is /home/pcbm/content; your SSH/SFTP home is /home/pcbm; use its content folder for this library."
   pcbm_show_menu "Project CBM Content" "$prompt" "${category_items[@]}"
 
   case "$PCBM_STATUS" in

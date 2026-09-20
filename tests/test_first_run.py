@@ -95,7 +95,7 @@ print(json.dumps({{**result('ok'),'message':'untrusted-fixture-message'}}))
         p=self.run_ui('pcbm-first-run',['MESSAGE','OFFLINE'])
         self.assertEqual(p.returncode,2);self.assertNotIn('setup-finish',(self.root/'operations').read_text())
     def test_sid_is_not_autostarted(self):
-        media=self.home/'pcbm'/'test.SID';media.write_bytes(b'synthetic-only')
+        media=self.home/'content'/'test.SID';media.write_bytes(b'synthetic-only')
         p=subprocess.run(['bash',str(self.bin/'pcbm-run-vice'),'x64sc',str(media)],env=self.env,capture_output=True,text=True)
         self.assertEqual(p.returncode,2);self.assertIn('PSID/RSID',p.stderr);self.assertFalse((self.root/'launch').exists())
 

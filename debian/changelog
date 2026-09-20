@@ -1,3 +1,11 @@
+project-cbm-menu (1.1.0~rc2-1+pcbm1) trixie; urgency=medium
+
+  * Use the unified pcbm home and canonical content library.
+  * Restore explicit supervised primary artwork and record boot phases.
+  * Explain USB import failures and provide a clear FILES/import workflow.
+
+ -- Project CBM contributors <noreply@project-cbm.invalid>  Sun, 20 Sep 2026 03:00:00 +0000
+
 project-cbm-menu (1.1.0~rc1-1+pcbm1) trixie; urgency=medium
 
   * Select machine-specific content import destinations through Product authority.

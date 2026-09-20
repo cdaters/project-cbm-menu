@@ -32,3 +32,6 @@ covers/pcbmcover-plus4.jpg usr/share/project-cbm-menu/covers
 covers/pcbmcover-vic20.jpg usr/share/project-cbm-menu/covers
 docs/cover-artwork.json usr/share/doc/project-cbm-menu
 lib/pcbm_status_view.py usr/libexec/project-cbm-menu
+covers/pcbmcover1.jpg usr/share/project-cbm-menu/covers
+docs/primary-artwork.json usr/share/doc/project-cbm-menu
+scripts/pcbm-files usr/bin

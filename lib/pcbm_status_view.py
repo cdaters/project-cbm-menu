@@ -96,7 +96,7 @@ def connection(d,name):
         if target:
             lines+=['Mac Finder > Go > Connect to Server:', 'smb://'+('['+target+']' if ':' in target else target)+'/Project%20CBM','Windows File Explorer address:', '\\\\'+(target.replace(':','-')+'.ipv6-literal.net' if ':' in target else target)+'\\Project CBM']
         else:lines+=['Connect a network, then return here for connection addresses.']
-        lines+=['Sign in as '+(d.get('sharing_username') or 'the displayed username')+'.','Library: /home/pi/pcbm. Files appear in CONTENT and FILES.','Windows Network browsing is not guaranteed; use the direct address.']
+        lines+=['Sign in as '+(d.get('sharing_username') or 'the displayed username')+'.','Library: /home/pcbm/content. Files appear in CONTENT and FILES.','Windows Network browsing is not guaranteed; use the direct address.']
     elif name=='discovery':
         lines+=['When On, try '+computer+'.local.' if computer else 'Computer Name is unavailable.','File Sharing advertises itself to compatible Mac/Linux browsers.','If a name does not resolve, use the current IP.','Windows browsing varies; direct File Explorer access is supported.']
     else:

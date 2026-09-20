@@ -1,0 +1,11 @@
+#!/bin/bash
+# Project CBM files and USB entry point (MIT). Runs as the ordinary appliance user.
+set -uo pipefail
+source /usr/share/project-cbm-menu/pcbm-ui.sh
+pcbm_ui_terminal_size
+while pcbm_ui_menu "Files and USB" "Your library is /home/pcbm/content. USB drives appear in Import from USB; no Linux mounting commands are needed. Import copies supported files safely and leaves the drive unchanged." LIBRARY "Browse files with Midnight Commander" USB "Import from USB into the library"; do
+  case $PCBM_UI_CHOICE in
+    LIBRARY) /usr/bin/mc /home/pcbm/content /home/pcbm ;;
+    USB) /usr/bin/pcbm-import || true ;;
+  esac
+done

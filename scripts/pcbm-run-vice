@@ -13,10 +13,10 @@ while IFS= read -r field; do
 done <<< "$resolved"
 [[ -n $emu ]] || exit 2
 (( $# <= 1 )) || exit 2
-export HOME=/home/pi XDG_CONFIG_HOME=/home/pi/.config XDG_STATE_HOME=/home/pi/.local/state
-export XDG_DATA_HOME=/home/pi/.local/share SDL_AUDIODRIVER=alsa
+export HOME=/home/pcbm XDG_CONFIG_HOME=/home/pcbm/.config XDG_STATE_HOME=/home/pcbm/.local/state
+export XDG_DATA_HOME=/home/pcbm/.local/share SDL_AUDIODRIVER=alsa
 mkdir -p "$XDG_CONFIG_HOME/vice" "$XDG_STATE_HOME/vice" "$XDG_DATA_HOME/vice"
-cd /home/pi/pcbm || exit 1
+cd /home/pcbm/content || exit 1
 # VICE SDL MenuKey: F10 opens the emulator menu; choose Quit to return.
 args+=(-sounddev sdl -menukey 291)
 if (( $# )); then

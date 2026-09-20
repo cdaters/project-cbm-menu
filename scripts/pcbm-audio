@@ -46,8 +46,8 @@ set -u
 
 PCBM_PROJECT_NAME="Project CBM"
 
-PCBM_AUDIO_CONF="${PCBM_AUDIO_CONF:-/home/pi/.config/pcbm/audio.conf}"
-PCBM_ASOUNDRC="${PCBM_ASOUNDRC:-/home/pi/.asoundrc}"
+PCBM_AUDIO_CONF="${PCBM_AUDIO_CONF:-/home/pcbm/.config/pcbm/audio.conf}"
+PCBM_ASOUNDRC="${PCBM_ASOUNDRC:-/home/pcbm/.asoundrc}"
 PCBM_AUDIO_LOG="${PCBM_AUDIO_LOG:-/tmp/pcbm-audio.log}"
 PCBM_DIALOG_LIB="/usr/bin/pcbm-dialog-lib.sh"
 

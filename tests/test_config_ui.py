@@ -68,9 +68,10 @@ printf '%s' '{"format":"project-cbm.config-result","schema_version":1,"status":"
         self.assertNotIn('synthetic-wifi-pass',(self.root/'dialog-args').read_text()+p.stdout+p.stderr)
 
     def test_files_runs_normal_mc_and_returns_to_main_menu(self):
+        self.write('pcbm-files',(ROOT/'scripts/pcbm-files').read_text())
         self.write('mc','#!/bin/bash\nprintf "mc:%s\\n" "$EUID" >> "$ADMIN_ARGS"\n')
         self.env['PATH']=str(self.bin)+os.pathsep+os.environ['PATH']
-        p=self.run_ui('pcbm-menu',['FILES','TEST_EXIT'])
+        p=self.run_ui('pcbm-menu',['FILES','LIBRARY','BACK','TEST_EXIT'])
         self.assertEqual(p.returncode,0,p.stderr)
         self.assertEqual((self.root/'admin-args').read_text().strip(),'mc:'+str(os.geteuid()))
         self.assertFalse((self.root/'requests').exists())
@@ -90,9 +91,29 @@ fi
         p=self.run_ui('pcbm-import',['aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','c64','demos','MESSAGE'])
         self.assertEqual(p.returncode,0,p.stderr)
         text=(self.root/'dialog-args').read_text()
-        self.assertIn('/home/pi/pcbm/demos/c64/Imported',text)
-        self.assertIn('/home/pi/pcbm/music/c64/Imported',text)
+        self.assertIn('/home/pcbm/content/demos/c64/Imported',text)
+        self.assertIn('/home/pcbm/content/music/c64/Imported',text)
         self.assertIn('USB source unmounted',text)
+
+    def test_import_failure_stays_visible_and_never_displays_raw_error(self):
+        self.write('pcbm-import',(ROOT/'scripts/pcbm-import').read_text())
+        self.write('pcbm-import-operation','''#!/bin/bash
+request=$(cat)
+if [[ $request == *'"operation":"list"'* ]]; then
+ printf '%s' '{"schema_version":1,"status":"ok","devices":[{"token":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","label":"Synthetic USB"}]}'
+else
+ printf '%s' '{"schema_version":1,"status":"failed","error":"access_denied","source_unmounted":true,"message":"private-secret-path"}'
+ exit 2
+fi
+''')
+        p=self.run_ui('pcbm-import',['aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','c64','demos','MESSAGE'])
+        self.assertEqual(p.returncode,2,p.stderr)
+        text=(self.root/'dialog-args').read_text()
+        self.assertIn('Import incomplete',text)
+        self.assertIn('could not be accessed',text)
+        self.assertIn('safe to remove',text)
+        self.assertNotIn('private-secret-path',text+p.stdout+p.stderr)
+        self.assertIn('--infobox',text)
 
     def test_system_setting_apply_cancel_and_failure(self):
         p=self.run_ui('pcbm-config',['REGION','TIMEZONE','America.Phoenix','KEYBOARD','ESC','BACK','BACK'])
