@@ -360,14 +360,17 @@ pcbm_filtered_find() {
 
   find "$search_base" \
     \( -type d \( \
-        -name '.*' -o \
         -name '__MACOSX' -o \
+        -name '._*' -o \
+        -name '.AppleDouble' -o \
+        -name '.TemporaryItems' -o \
+        -name 'System Volume Information' -o \
+        -name '$RECYCLE.BIN' -o \
         -name '.Trashes' -o \
         -name '.Spotlight-V100' -o \
         -name '.fseventsd' \
       \) -prune \) -o \
     \( -type f \( \
-        -name '.*' -o \
         -name '._*' -o \
         -name '.DS_Store' -o \
         -name '.AppleDouble' -o \
@@ -389,6 +392,7 @@ pcbm_content_extensions() {
 *.d81
 *.d82
 *.g64
+*.g71
 *.g41
 *.x64
 *.p64
@@ -429,7 +433,6 @@ pcbm_copy_clean() {
 
   if command -v rsync >/dev/null 2>&1; then
     rsync -a --ignore-existing --prune-empty-dirs \
-      --exclude='.*' \
       --exclude='._*' \
       --exclude='.DS_Store' \
       --exclude='.AppleDouble' \
@@ -437,6 +440,11 @@ pcbm_copy_clean() {
       --exclude='.VolumeIcon.icns' \
       --exclude='.apdisk' \
       --exclude='__MACOSX/' \
+      --exclude='.TemporaryItems/' \
+      --exclude='System Volume Information/' \
+      --exclude='$RECYCLE.BIN/' \
+      --exclude='Thumbs.db' \
+      --exclude='desktop.ini' \
       --exclude='.Trashes/' \
       --exclude='.Spotlight-V100/' \
       --exclude='.fseventsd/' \
@@ -446,7 +454,7 @@ pcbm_copy_clean() {
 
   if [[ -f "$src" ]]; then
     case "$(basename "$src")" in
-      .* ) return 0 ;;
+      ._*|.DS_Store|.AppleDouble|.LSOverride|.VolumeIcon.icns|.apdisk|Thumbs.db|desktop.ini ) return 0 ;;
     esac
     cp -n "$src" "$dest/"
     return $?

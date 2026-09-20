@@ -74,7 +74,9 @@ private version tags and packages do not grant publication permission.
 - Preserve COVERS terminology, all seven existing artwork files/names/bytes/provenance
   and Product registry mapping. No per-menu mapping, root/framebuffer/resolution
   workaround or artwork substitution. See [Covers](../project-cbm/docs/runtime/covers.md).
-  Private engineering use does not clear constituent artwork for public distribution.
+  Private engineering use alone does not clear artwork for public distribution.
+  Apply the explicit owner permission and [1.1 release policy](../project-cbm/docs/release/release-policy.md)
+  for the existing Craig Daters branding/Covers; keep artwork licensing separate from MIT code.
 - Preserve Bash/dialog, console getty/PAM/session behavior, SDL2 VICE and ALSA.
   Pi 4 is the 1.1 performance floor. Target Pi 4 B/400 and Pi 5/500/500+ only where
   supportable and individually qualified. Pi 3/Zero-class hardware is outside the

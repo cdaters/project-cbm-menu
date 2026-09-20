@@ -1,3 +1,19 @@
+# RC4 bounded release polish — source ready for packaging
+
+Owner-authorized changes add G71 discovery, retain legitimate dot-prefixed supported
+content while filtering known host metadata, and state the sharing-password colon
+restriction. The shared launcher consumes Product's typed per-content options for
+CCGMS SwiftLink/IP232 and G71 1571 launches; its Cover/VICE/Menu lifecycle is unchanged.
+Menu now requires Runtime >=1.1.0~rc4-1 for that command. Artwork bytes/mappings are
+unchanged; provenance/copyright records Craig Daters' authorized release permission
+separately from MIT code. Version1.1.0_rc4 prepared; no final-release tag or publication.
+
+Host/native Menu102/102 and Product243/243 pass. Installed lifecycle12/12 and existing
+native appliance regression pass; Product owns final focused/package/build/offline/
+recovery checks and exact Pi4 procedure. See [RC4 report](../project-cbm/docs/build/private-rc4.md).
+Next: freeze the clean Menu RC4 source/tag, build changed Runtime/Menu only, complete one
+new private candidate and STOP for owner physical qualification. RC3 stays untouched.
+
 # RC3 Menu packaged — owner Pi 4 B physical qualification next
 
 [Product report](../project-cbm/docs/build/private-rc3.md) and

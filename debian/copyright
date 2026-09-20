@@ -26,3 +26,23 @@ License: MIT
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
+
+Files: covers/pcbmcover1.jpg covers/pcbmcover0.jpg
+Copyright: Craig Daters
+License: Project-CBM-Branding
+ Copyright (c) Craig Daters. All rights reserved.
+ Permission is granted to reproduce and redistribute these Project CBM logos
+ and branding assets as part of Project CBM 1.1.0, including unmodified copies
+ of that release. This permission does not grant a general license to modify
+ or distribute the artwork separately. All other rights are reserved.
+
+Files: covers/pcbmcover-c64.jpg covers/pcbmcover-c128.jpg
+ covers/pcbmcover-cbm2.jpg covers/pcbmcover-cbm5.jpg covers/pcbmcover-pet.jpg
+ covers/pcbmcover-plus4.jpg covers/pcbmcover-vic20.jpg
+Copyright: Craig Daters
+License: Project-CBM-Covers
+ Copyright (c) Craig Daters. All rights reserved.
+ Permission is granted to reproduce and redistribute these Project CBM machine
+ Cover images as part of Project CBM 1.1.0, including unmodified copies of that
+ release. This permission does not grant a general license to modify or
+ distribute the artwork separately. All other rights are reserved.

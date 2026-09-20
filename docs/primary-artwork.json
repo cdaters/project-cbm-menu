@@ -2,12 +2,15 @@
   "schema_version": 1,
   "scope": "primary Project CBM presentation, distinct from seven machine Covers",
   "origin": "Unchanged Menu artwork, byte-identical to released v1.0.0 /opt/pcbm/covers/pcbmcover1.jpg",
-  "admission": "Owner-authorized private RC2 restoration of the released primary boot identity",
-  "license_evidence": "Existing Project CBM artwork; constituent third-party graphics/fonts remain subject to public rights review. No blanket MIT grant.",
+  "admission": "Authorized for Project CBM 1.1.0 inclusion and redistribution",
+  "license_evidence": "Release-specific owner permission; artwork is not licensed under the code MIT license.",
   "presentation": "Historical Model 5 / 500 wordmark retained as artwork; hardware support is governed by Product, not artwork text.",
   "file": {
     "path": "covers/pcbmcover1.jpg",
     "size_bytes": 201479,
     "sha256": "7df4b69a2e94e323130d0ba5ef9833027d6df8d954ca0f9c64bbbef49c4d5218"
-  }
+  },
+  "creator": "Craig Daters",
+  "copyright_owner": "Craig Daters",
+  "owner_statement": "Owner confirms these are his own creations and authorizes inclusion and redistribution as part of Project CBM 1.1.0 (2026-09-20)."
 }

@@ -45,9 +45,13 @@ real TTY/dialog, Linux service/account integration and Pi performance require la
 
 ## Optional C64 applications
 
-The [product application guide](../../project-cbm/docs/runtime/optional-applications.md)
-describes SID-Wizard's admitted native core and owner-supplied StrikeTerm. Their
-normal CONTENT folders use the product registry's C64 profile without changing the
-saved default. This source consumer needs the matching product runtime; it does not
-update any frozen POC image. Other SID/demo rights and playback limits are in the
-[reference content guide](../../project-cbm/docs/runtime/reference-content.md).
+The [product user guide](../../project-cbm/docs/release/user-guide.md#optional-applications)
+describes SID-Wizard and the CCGMS 2021 application disk. Their normal CONTENT folders
+use Product's C64 profile without changing the saved default. CCGMS gets temporary
+SwiftLink/IP232 arguments from the Product `content-options` command; other media
+retain the shared launcher and normal preferences. G71 uses compatible C64/C128
+1571 routing. Menu RC4 requires Runtime >=1.1.0~rc4-1 for this interface.
+
+[CCGMS integration](../../project-cbm/docs/runtime/ccgms-integration.md) owns the exact
+program/source/license identity and modem contract. Artwork permission is recorded
+separately from code licensing in `debian/copyright` and the artwork manifests.

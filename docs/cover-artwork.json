@@ -3,10 +3,10 @@
   "scope": "existing machine-specific Project CBM covers",
   "origin": "existing project-cbm-menu/covers; artwork bytes unchanged",
   "source_revision": "e1f4bfd630712a02725e128a4d8a48b75db8ed2e",
-  "owner_statement": "Owner identifies these as my cover/splash images and requests preservation of the existing /covers/ artwork.",
-  "admission": "owner-authorized private engineering use",
-  "license_evidence": "Owner identification of Project CBM artwork; no new independent clearance of embedded third-party graphics/fonts established. Do not infer blanket MIT coverage for those constituents.",
-  "public_release_review": "Review constituent artwork/font redistribution evidence before public inclusion.",
+  "owner_statement": "Owner confirms these are his own creations and authorizes inclusion and redistribution as part of Project CBM 1.1.0 (2026-09-20).",
+  "admission": "Authorized for Project CBM 1.1.0 inclusion and redistribution",
+  "license_evidence": "Release-specific owner permission; artwork is not licensed under the code MIT license.",
+  "public_release_review": "Owner permission established for Project CBM 1.1.0.",
   "files": [
     {
       "cover_identity": "c64",
@@ -50,5 +50,7 @@
       "size_bytes": 193056,
       "sha256": "4cf2660de2d6bd6a952b633d85891cb69d272d789f7c15fb4f9baf70b1d90523"
     }
-  ]
+  ],
+  "creator": "Craig Daters",
+  "copyright_owner": "Craig Daters"
 }

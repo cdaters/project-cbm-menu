@@ -28,6 +28,10 @@ if (( $# )); then
     IFS= read -r rom < "/etc/pcbm/jiffydos.conf" || true
     [[ -z ${rom:-} || ! -f $rom ]] || args+=(-kernal "$rom")
   fi
+  content_options=$(/usr/bin/pcbm-profiles content-options "$profile" "$1") || exit 2
+  while IFS= read -r option; do
+    [[ -z $option ]] || args+=("$option")
+  done <<< "$content_options"
   args+=(-autostart "$1")
 fi
 # Product's unprivileged lifecycle owner captures the terminal BEFORE Cover,

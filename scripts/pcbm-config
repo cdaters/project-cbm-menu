@@ -80,7 +80,7 @@ connection_help() {
 sharing_password() {
   local secret
   ready sharing-password || return 1
-  if pcbm_ui_secret "File Sharing password" "File Sharing uses a separate password (12-128 printable characters). Sign in with the username shown on its service screen.";then
+  if pcbm_ui_secret "File Sharing password" "File Sharing uses a separate password (12-128 printable characters; colon (:) is not accepted). Sign in with the username shown on its service screen.";then
     secret=$PCBM_UI_CHOICE;PCBM_UI_CHOICE=
     if pcbm_ui_secret "Confirm File Sharing password" "Enter the same password again.";then
       if [[ $secret == "$PCBM_UI_CHOICE" ]];then

@@ -1,3 +1,10 @@
+project-cbm-menu (1.1.0~rc4-1+pcbm1) trixie; urgency=medium
+
+  * Discover G71 and hidden media; correct password guidance and artwork notices.
+  * Consume Product per-content serial/drive options in the shared launcher.
+
+ -- Project CBM contributors <noreply@localhost>  Sun, 20 Sep 2026 21:30:00 +0000
+
 project-cbm-menu (1.1.0~rc3-1+pcbm1) trixie; urgency=medium
 
   * Hold primary artwork until the first meaningful screen is ready.

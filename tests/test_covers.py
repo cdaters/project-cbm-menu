@@ -43,7 +43,7 @@ class CoverRenderer(unittest.TestCase):
             self.assertEqual(hashlib.sha256(payload).hexdigest(),entry['sha256'])
             self.assertIn(entry['path']+' usr/share/project-cbm-menu/covers',install)
         self.assertNotIn('covers/*',install)
-        self.assertIn('third-party',manifest['license_evidence'])
+        self.assertEqual(manifest['copyright_owner'],'Craig Daters');self.assertIn('not licensed under the code MIT',manifest['license_evidence'])
     def test_primary_is_exact_existing_private_art_and_separate_dwell(self):
         manifest=json.loads((ROOT/'docs/primary-artwork.json').read_text())
         entry=manifest['file'];payload=(ROOT/entry['path']).read_bytes()
