@@ -1,3 +1,21 @@
+# RC2 Menu packaged — owner Pi 4 B physical qualification next
+
+[Product RC2 report](../project-cbm/docs/build/private-rc2.md) and
+[exact-hash procedure](../project-cbm/docs/qualification/rc2-pi4b-regression.md) own
+candidate attempt11. Menu tagv1.1.0_rc2 object
+`ab2560a00d3535b5fa4357511bc166f572cab22b`, source
+`bcbf61e9e3d263f409b4983b5c2a30d6bf37f18f`; package1.1.0~rc2-1+pcbm1,
+1294180bytes, SHA-256
+`a6ceb57e4e7565cc9932d2a624027751349c49885a576bce5226d13847475ec6`.
+Host/native99/99; exact package/native primary/Cover/lifecycle/service/import checks
+PASS. Product actual-image294 checks,672 package identities,127 ELF objects and
+raw/XZ/host gates PASS. Recovery archive/rc2-2026-09-19 manifest/restore report is final
+authority. One RC2 image exported after retained pre-export recipe failure; unchanged
+Menu package reused in distinct retry. Pi4 physical behavior remains UNTESTED.
+Single pcbm home/content paths, explicit supervised primary art, fixed import feedback,
+FILES/library/import flow and boot trace are integrated; VICE and seven Covers unchanged.
+No push/publication. Stop for owner exact-hash RC2 Pi4 test. Earlier entries historical.
+
 # RC2 corrective source ready for package validation
 
 Owner RC1 Pi4 results pass core machine Covers/VICE/F10/Menu and performance; primary
