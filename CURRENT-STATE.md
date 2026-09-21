@@ -1,3 +1,13 @@
+# Final 1.1.0 preparation — owner accepted RC4
+
+The owner reports overall RC4 Pi4 B qualification PASS and accepts it as release basis.
+Product records the exact-image attestation without inventing individual checklist results.
+Promote Menu to 1.1.0 / Debian1.1.0-1+pcbm1 using identity/package metadata only.
+Menu scripts, artwork and emulator lifecycle stay byte-identical to qualified RC4.
+Product owns the final-image equivalence audit, complete validation and release staging.
+Prepare local final tags only; no push/publication. Stop for owner review and short final
+image smoke test after the authorized single final construction and recovery verification.
+
 # RC4 packaged — owner Pi 4 B qualification next
 
 [Product final report](../project-cbm/docs/build/private-rc4.md) and
