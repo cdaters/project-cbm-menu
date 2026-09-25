@@ -1,3 +1,15 @@
+# Current version identities
+
+Project CBM image **1.1.0** consumes Menu source **1.1.0** and Debian package
+**1.1.0-1+pcbm1**. Product and Menu versions remain independent. The existing
+annotated `v1.1.0` tags identify their frozen release source; later documentation
+commits do not move those tags or rebuild released packages. Product owns the exact
+image/package mapping. See the [current repository overview](../README.md).
+
+## Historical versioning introduction
+
+The first-release identities below are retained as history, not current-version claims.
+
 # Project CBM Versioning
 
 > Historical source-release documentation. See [reconciliation](provenance.md):

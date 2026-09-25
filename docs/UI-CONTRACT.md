@@ -1,3 +1,14 @@
+# Current UI contract context
+
+For released 1.1.0 behavior use the Product
+[User Manual](https://github.com/cdaters/project-cbm/blob/feature/1.1-build-foundation/docs/release/user-guide.md).
+The appliance account is `pcbm`; first boot sets its password. The dated development
+notes below retain earlier staging/account descriptions and are not setup instructions.
+The structured UI/result interface remains relevant to Menu development; no behavior
+changes are made by this documentation update.
+
+## Historical interface development notes
+
 > Current 1.1 refinement: Menu consumes `pcbm-info --json --appliance` for network
 > and service state, without local probing. Main Menu is concise; submenus and service
 > screens add actual readiness, useful state-aware actions and connection help. Owner

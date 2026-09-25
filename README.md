@@ -1,157 +1,78 @@
-![Platform](https://img.shields.io/badge/platform-raspberry%20pi-C51A4A)
-
-> 2026-09-15 continuity: read [CURRENT-STATE](CURRENT-STATE.md) for the reconciled
-> 1.0 history, maintenance policy and the next 1.1 reproducible-build milestone.
-> [Product ADR-0001](../project-cbm/docs/adr/0001-base-distribution-and-image-architecture.md)
-> accepts the foundation; implementation still needs a new owner instruction.
-[![Project CBM Release](https://img.shields.io/github/v/release/cdaters/project-cbm?label=project-cbm%20release)](https://github.com/cdaters/project-cbm/releases/latest)
-[![Menu Release](https://img.shields.io/github/v/release/cdaters/project-cbm-menu?label=menu%20release)](https://github.com/cdaters/project-cbm-menu/releases/latest)
-[![License: MIT](https://img.shields.io/badge/license-MIT-orange)](LICENSE)
-![GitHub last commit](https://img.shields.io/github/last-commit/cdaters/project-cbm-menu)
-![GitHub Issues](https://img.shields.io/github/issues/cdaters/project-cbm-menu)
+[![Project CBM 1.1.0](https://img.shields.io/badge/Project%20CBM-1.1.0-blue)](https://github.com/cdaters/project-cbm/releases/tag/v1.1.0) [![Menu source 1.1.0](https://img.shields.io/badge/Menu%20source-1.1.0-blue)](https://github.com/cdaters/project-cbm-menu/tree/v1.1.0) [![Code license: MIT](https://img.shields.io/badge/code%20license-MIT-orange)](LICENSE)
 
 # Project CBM Menu
 
-Source repository for the Project CBM menu system, helper scripts, configuration examples, splash cover assets, build notes, release workflow documentation, and bundle packaging tools.
+This is the source repository for the keyboard-operated Bash/dialog front panel
+used by **Project CBM 1.1.0**. Menu owns navigation, presentation, machine Covers,
+interface contracts and its independently versioned Debian package. The main
+[Project CBM repository](https://github.com/cdaters/project-cbm) owns OS/runtime
+integration, image construction, qualification and authoritative user documentation.
 
-Public Project CBM release repo:
+## Download Project CBM
 
-```text
-https://github.com/cdaters/project-cbm
-```
+**Normal users should download the complete [Project CBM 1.1.0 image](https://github.com/cdaters/project-cbm/releases/tag/v1.1.0).**
+This Menu source checkout is not a bootable image or a standalone replacement for
+the installed appliance. Start with the Product [Getting Started guide](https://github.com/cdaters/project-cbm/blob/feature/1.1-build-foundation/docs/release/getting-started.md)
+and [documentation index](https://github.com/cdaters/project-cbm/blob/feature/1.1-build-foundation/docs/README.md).
 
-Menu/build source repo:
+## Current Menu Identity
 
-```text
-https://github.com/cdaters/project-cbm-menu
-```
+- Source version: **1.1.0**; annotated tag [`v1.1.0`](https://github.com/cdaters/project-cbm-menu/tree/v1.1.0).
+- Tagged source commit: `7df45cf40eae1ca64cd5740e4b93347e3717bdb4`.
+- Package shipped in Project CBM 1.1.0: `project-cbm-menu_1.1.0-1+pcbm1_all.deb`.
+- Product and Menu versions are independent; the Product release records the exact
+  Menu source and package identity. There is no separate Menu 1.1.0 GitHub Release.
 
-## Repository purpose
+The existing tag remains the released source snapshot. Later documentation commits
+on `feature/1.1-debian-package` do not change the package inside the 1.1.0 image.
+That branch is the active public development/documentation branch; `main` is retained
+as historical repository history.
 
-This repo is the source repository for the Project CBM menu system.
+## Developer Starting Points
 
-It contains:
+| Area | Location |
+| --- | --- |
+| Menu actions and shared launcher | `scripts/pcbm-*` |
+| Dialog/result helpers and validated bridges | `lib/` |
+| Debian package definition | `debian/` |
+| Focused behavior and interface tests | `tests/` |
+| Artwork and provenance | [Cover manifest](docs/cover-artwork.json), [primary artwork](docs/primary-artwork.json), [provenance](docs/provenance.md) |
+| Engineering checkpoint | [CURRENT-STATE](CURRENT-STATE.md) |
 
-- Project CBM menu scripts
-- System/control panel scripts
-- Import, content, ROM, network, audio, BBS/TCPser, and boot-mode helpers
-- Samba, TCPser, VICE, boot, and sudo config examples
-- Splash screen cover assets
-- Build notes and documentation
-- Public image release workflow documentation
-- Bundle packaging scripts
+Use the Product [developer guide](https://github.com/cdaters/project-cbm/blob/feature/1.1-build-foundation/docs/release/development.md)
+and [build guide](https://github.com/cdaters/project-cbm/blob/feature/1.1-build-foundation/docs/release/build-your-own.md)
+for the supported native arm64 Debian/Lima factory and exact dependency workflow.
+Menu packaging uses the repository's Debian metadata, not the old ZIP installer.
+A Menu build alone does not produce or qualify a Project CBM image.
 
-The public `project-cbm` repo remains the user-facing home for SD card image releases, public documentation, checksums, release notes, screenshots, and the public roadmap.
+[Versioning](docs/VERSIONING.md) and [UI contract](docs/UI-CONTRACT.md) retain the
+independent-version and structured-result interfaces. Their dated development
+notes are historical; current installed behavior is documented by Product.
+Do not use the historical installer or docs-sync tooling to update a released image.
+The `public-docs/` directory is an archived packaging mirror, not the current manual.
 
-## Relationship to Project CBM
+## Future Work
 
-This repository contains the source and packaging workflow for the Project CBM menu system. The user-facing Project CBM image, releases, screenshots, checksums, end-user documentation, and acknowledgements live in the main `project-cbm` repository.
+The accepted [content-ingestion / Online Library design](https://github.com/cdaters/project-cbm/blob/feature/1.1-build-foundation/docs/design/content-ingestion-online-library.md)
+targets provisional Product **1.2.0**. USB preview/selection under CONTENT,
+read-only USB browsing and Assembly64 Online Library are **not implemented**.
+No Menu behavior or version changes are part of this documentation cleanup.
 
-Project CBM exists in appreciation of the path [Carmelo Maiolino's Combian64](https://cmaiolino.wordpress.com/combian-64-v2/) helped establish, but it is not a fork of Combian64 and is not affiliated with or endorsed by Combian64 or Carmelo Maiolino.
+## License and Upstream Software
 
-## Version model
+Project-owned code uses [MIT](LICENSE). Artwork and third-party material have
+separate provenance and conditions; see the Product
+[release policy](https://github.com/cdaters/project-cbm/blob/feature/1.1-build-foundation/docs/release/release-policy.md).
+The code license is not a blanket redistribution grant for every asset or title.
 
-```text
-Project CBM public image/build version: 1.0.0
-Project CBM menu system version:        1.0.0
-Legacy internal menu lineage:           v6.5
-```
+## History / Maintainer Records
 
-`v6.5` is preserved as the historical internal build-notes lineage used during development of the Project CBM v1.0.0 public image.
+- [Historical 1.0.0 build notes](docs/Project%20CBM%20Menu%20v1.0.0%20Build%20Notes%20and%20Documentation.md).
+- [Early Debian packaging checkpoint](docs/DEBIAN-PACKAGE.md).
+- [Historical public-image workflow](docs/PUBLIC-IMAGE-RELEASE-WORKFLOW.md) and [audit notes](docs/AUDIT-NOTES.md).
+- [Product history and corrections](https://github.com/cdaters/project-cbm/blob/feature/1.1-build-foundation/docs/v1.0-current-notes.md).
 
-The first formal repository release of this menu system is:
-
-```text
-Project CBM Menu v1.0.0
-```
-
-## Build a menu bundle
-
-```bash
-make bundle
-```
-
-or:
-
-```bash
-./packaging/build-menu-bundle.sh
-```
-
-The output lands in:
-
-```text
-dist/
-```
-
-Expected v1.0.0 output:
-
-```text
-dist/Project-CBM-v1.0.0-Bundle.zip
-```
-
-## Install onto a source Pi
-
-From an extracted bundle or repo checkout on the Pi:
-
-```bash
-sudo ./packaging/install-menu-bundle.sh
-```
-
-Review the main build notes before using this on a release image:
-
-```text
-docs/Project CBM Menu v1.0.0 Build Notes and Documentation.md
-```
-
-## Documentation Map
-
-- [Project CBM Menu v1.0.0 Build Notes and Documentation](docs/Project%20CBM%20Menu%20v1.0.0%20Build%20Notes%20and%20Documentation.md)
-- [Public Image Release Workflow](docs/PUBLIC-IMAGE-RELEASE-WORKFLOW.md)
-- [Audit Notes](docs/AUDIT-NOTES.md)
-- [Versioning Notes](docs/VERSIONING.md)
-
-## Legal/distribution note
-
-Public distribution requires reviewed software/content rights and required notices.
-The audited product v1.0.0 image contains ROM/media files with incomplete provenance;
-private historical bundles may contain additional unreviewed material. Menu's source
-license does not grant rights to every image asset. See [current product corrections](../project-cbm/docs/v1.0-current-notes.md).
-
-## Public end-user documentation
-
-The `public-docs/` folder is a historical packaging mirror, not the current
-authority. Product documentation and its [corrections](../project-cbm/docs/v1.0-current-notes.md)
-take precedence. Do not run docs-sync, even `--dry-run`; its known write/deletion
-defects remain unfixed. Future packaging should consume an explicit pinned product
-documentation input. Commands below describe historical packaging, not this phase.
-
-Build the public documentation package:
-
-```bash
-make public-docs
-```
-
-Build both the menu bundle and public docs package:
-
-```bash
-make release-kit
-```
-
-Expected outputs:
-
-```text
-dist/Project-CBM-v1.0.0-Bundle.zip
-dist/pcbm-v1.0.0-docs.zip
-```
-
-To preview syncing the public docs into the public repo:
-
-```bash
-./packaging/sync-public-docs.sh ../project-cbm --dry-run
-```
-
-To apply the sync:
-
-```bash
-./packaging/sync-public-docs.sh ../project-cbm --apply
-```
+The internal v6.5 lineage and first formal Menu v1.0.0 release remain historical
+records. They do not identify the current Project CBM image. Project CBM acknowledges
+Combian64's inspiration without being its fork or claiming affiliation; see the
+Product [acknowledgements](https://github.com/cdaters/project-cbm/blob/feature/1.1-build-foundation/ACKNOWLEDGEMENTS.md).

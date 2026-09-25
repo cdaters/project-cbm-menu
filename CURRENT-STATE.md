@@ -1,3 +1,20 @@
+# Post-1.1 documentation cleanup — 2026-09-24
+
+Project CBM 1.1.0 is published and owner-qualified on Pi 4 B. Menu source tag
+`v1.1.0` remains at `7df45cf40eae1ca64cd5740e4b93347e3717bdb4`, annotated object
+`9f471a2ddd7492d041d9563809e301da9c79ed57`; package 1.1.0-1+pcbm1 is unchanged.
+The README now leads with current Menu identity and directs appliance users to
+Product downloads/manuals. Historical packaging/version/interface notes are retained
+under explicit current-context introductions. No scripts, artwork, package metadata
+or runtime interfaces changed.
+
+Owner authorized `feature/1.1-debian-package` as the active GitHub default branch;
+`main` remains historical and unmerged. Product owns the accepted provisional 1.2.0
+content design and documentation verification/recovery record. No implementation
+starts in this task. Next: a separately scoped Phase 1 reporting/contracts task.
+
+Earlier checkpoints below preserve their original dates and scope.
+
 # Final 1.1.0 preparation — owner accepted RC4
 
 The owner reports overall RC4 Pi4 B qualification PASS and accepts it as release basis.
